@@ -6,15 +6,19 @@ import { Role } from '@usability-testing/shared';
 import { prisma } from '../db';
 import { validateRequest } from '../middleware/validate';
 import { requireAuth, AuthRequest } from '../middleware/auth';
+import { config } from '../config';
 
 const router = Router();
-const JWT_SECRET = process.env.JWT_SECRET || 'super-secret-fallback-for-mvp';
+
+function issueToken(id: string, role: Role) {
+  return jwt.sign({ id, role }, config.jwtSecret, { expiresIn: '7d' });
+}
 
 router.post(
   '/register',
   [
-    body('email').isEmail(),
-    body('password').isLength({ min: 6 }),
+    body('email').isEmail().normalizeEmail(),
+    body('password').isLength({ min: 8 }),
     body('role').isIn([Role.OWNER, Role.TESTER])
   ],
   validateRequest,
@@ -24,18 +28,16 @@ router.post(
 
       const existingUser = await prisma.user.findUnique({ where: { email } });
       if (existingUser) {
-        return res.status(400).json({ error: 'Email already exists' });
+        return res.status(409).json({ error: 'Email already exists' });
       }
 
-      const hashedPassword = await bcrypt.hash(password, 10);
+      const hashedPassword = await bcrypt.hash(password, 12);
       const user = await prisma.user.create({
         data: { email, password: hashedPassword, role },
       });
 
-      const token = jwt.sign({ id: user.id, role: user.role }, JWT_SECRET, { expiresIn: '7d' });
-
       res.status(201).json({
-        token,
+        token: issueToken(user.id, user.role),
         user: { id: user.id, email: user.email, role: user.role }
       });
     } catch (error) {
@@ -48,31 +50,24 @@ router.post(
 router.post(
   '/login',
   [
-    body('email').isEmail(),
+    body('email').isEmail().normalizeEmail(),
     body('password').notEmpty()
   ],
   validateRequest,
   async (req: Request, res: Response) => {
     try {
       const { email, password } = req.body;
-
       const user = await prisma.user.findUnique({ where: { email } });
-      if (!user) {
+
+      if (!user || !(await bcrypt.compare(password, user.password))) {
         return res.status(401).json({ error: 'Invalid credentials' });
       }
-
-      const isMatch = await bcrypt.compare(password, user.password);
-      if (!isMatch) {
-        return res.status(401).json({ error: 'Invalid credentials' });
-      }
-
-      const token = jwt.sign({ id: user.id, role: user.role }, JWT_SECRET, { expiresIn: '7d' });
 
       res.json({
-        token,
+        token: issueToken(user.id, user.role),
         user: { id: user.id, email: user.email, role: user.role }
       });
-    } catch (error) {
+    } catch {
       res.status(500).json({ error: 'Server error' });
     }
   }
@@ -84,11 +79,13 @@ router.get('/me', requireAuth, async (req: AuthRequest, res: Response) => {
       where: { id: req.user!.id },
       select: { id: true, email: true, role: true }
     });
+
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
+
     res.json(user);
-  } catch (error) {
+  } catch {
     res.status(500).json({ error: 'Server error' });
   }
 });
