@@ -37,7 +37,7 @@ export interface TaskDTO {
 export interface CreateCampaignDTO {
   targetUrl: string;
   rewardAmount: number;
-  tasks: Omit<TaskDTO, 'id'>[];
+  tasks: Array<{ instruction: string }>;
 }
 
 export interface TestCampaignDTO {
@@ -55,8 +55,11 @@ export interface JobAssignmentDTO {
   campaignId: string;
   testerId: string | null;
   status: JobStatus;
-  createdAt: Date;
-  updatedAt: Date;
+  claimedAt?: string | null;
+  submittedAt?: string | null;
+  reviewedAt?: string | null;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface TaskResponseInputDTO {
