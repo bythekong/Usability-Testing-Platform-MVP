@@ -30,10 +30,6 @@ export default function OwnerDashboard() {
   const [reviews, setReviews] = useState<Record<string, ReviewDetails>>({});
   const [error, setError] = useState('');
 
-  useEffect(() => {
-    void fetchCampaigns();
-  }, []);
-
   async function fetchCampaigns() {
     try {
       const data = await apiFetch('/campaigns');
@@ -42,6 +38,10 @@ export default function OwnerDashboard() {
       setError(caught instanceof Error ? caught.message : 'Failed to load campaigns');
     }
   }
+
+  useEffect(() => {
+    void fetchCampaigns();
+  }, []);
 
   const handleCreate = async (event: React.FormEvent) => {
     event.preventDefault();
