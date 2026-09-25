@@ -1,26 +1,25 @@
 import express from 'express';
 import cors from 'cors';
-import { PrismaClient } from '@prisma/client';
 import dotenv from 'dotenv';
-import { Role } from '@usability-testing/shared';
+
+import { authRoutes } from './routes/auth';
+import { campaignRoutes } from './routes/campaigns';
+import { jobRoutes } from './routes/jobs';
 
 dotenv.config();
 
 const app = express();
-const prisma = new PrismaClient();
 const port = process.env.PORT || 4000;
 
 app.use(cors());
 app.use(express.json());
 
-// Basic health check
+app.use('/auth', authRoutes);
+app.use('/campaigns', campaignRoutes);
+app.use('/jobs', jobRoutes);
+
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', time: new Date().toISOString() });
-});
-
-// Example route demonstrating shared types usage
-app.get('/test-shared', (req, res) => {
-  res.json({ role: Role.OWNER });
 });
 
 app.listen(port, () => {
