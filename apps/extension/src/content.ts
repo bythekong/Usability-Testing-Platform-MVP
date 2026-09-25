@@ -1,24 +1,41 @@
-let currentJob: any = null;
+interface ActiveTask {
+  id: string;
+  stepOrder: number;
+  instruction: string;
+}
+
+interface ActiveJob {
+  id: string;
+  campaign: {
+    targetUrl: string;
+    tasks: ActiveTask[];
+  };
+}
+
+let currentJob: ActiveJob | null = null;
 let currentTaskIndex = 0;
 let responses: { taskId: string; answerText: string }[] = [];
+let submitting = false;
 
 function injectOverlay() {
-  if (document.getElementById('usability-testing-overlay')) return;
+  if (!currentJob || document.getElementById('usability-testing-overlay')) return;
 
   const overlay = document.createElement('div');
   overlay.id = 'usability-testing-overlay';
-  overlay.style.position = 'fixed';
-  overlay.style.bottom = '20px';
-  overlay.style.right = '20px';
-  overlay.style.width = '350px';
-  overlay.style.backgroundColor = 'white';
-  overlay.style.border = '2px solid #2563eb';
-  overlay.style.borderRadius = '8px';
-  overlay.style.padding = '16px';
-  overlay.style.zIndex = '999999';
-  overlay.style.boxShadow = '0 4px 6px -1px rgb(0 0 0 / 0.1)';
-  overlay.style.fontFamily = 'system-ui, sans-serif';
-  overlay.style.color = '#1f2937';
+  Object.assign(overlay.style, {
+    position: 'fixed',
+    bottom: '20px',
+    right: '20px',
+    width: '350px',
+    backgroundColor: 'white',
+    border: '2px solid #2563eb',
+    borderRadius: '8px',
+    padding: '16px',
+    zIndex: '999999',
+    boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
+    fontFamily: 'system-ui, sans-serif',
+    color: '#1f2937'
+  });
 
   const title = document.createElement('h3');
   title.innerText = 'Active Usability Test';
@@ -62,7 +79,6 @@ function injectOverlay() {
 
   actionContainer.appendChild(progress);
   actionContainer.appendChild(nextBtn);
-
   overlay.appendChild(title);
   overlay.appendChild(instruction);
   overlay.appendChild(textarea);
@@ -72,70 +88,103 @@ function injectOverlay() {
   renderTask();
 
   nextBtn.onclick = () => {
+    if (!currentJob || submitting) return;
+
     const activeTask = currentJob.campaign.tasks[currentTaskIndex];
-    responses.push({
+    const response = {
       taskId: activeTask.id,
       answerText: textarea.value
-    });
+    };
+
+    responses[currentTaskIndex] = response;
 
     if (currentTaskIndex < currentJob.campaign.tasks.length - 1) {
-      currentTaskIndex++;
-      textarea.value = '';
+      currentTaskIndex += 1;
+      textarea.value = responses[currentTaskIndex]?.answerText || '';
       renderTask();
-    } else {
-      submitJob();
+      return;
     }
+
+    submitJob();
   };
 }
 
 function renderTask() {
+  if (!currentJob) return;
+
   const instructionEl = document.getElementById('ut-instruction');
   const progressEl = document.getElementById('ut-progress');
-  const nextBtn = document.getElementById('ut-next-btn');
+  const nextBtn = document.getElementById('ut-next-btn') as HTMLButtonElement | null;
+  const textarea = document.getElementById('ut-answer') as HTMLTextAreaElement | null;
 
-  if (!instructionEl || !progressEl || !nextBtn || !currentJob) return;
+  if (!instructionEl || !progressEl || !nextBtn || !textarea) return;
 
   const tasks = currentJob.campaign.tasks;
   const activeTask = tasks[currentTaskIndex];
 
-  instructionEl.innerText = `Task ${currentTaskIndex + 1}: ${activeTask.instruction}`;
-  progressEl.innerText = `${currentTaskIndex + 1} / ${tasks.length}`;
+  instructionEl.innerText = 'Task ' + (currentTaskIndex + 1) + ': ' + activeTask.instruction;
+  progressEl.innerText = (currentTaskIndex + 1) + ' / ' + tasks.length;
+  textarea.value = responses[currentTaskIndex]?.answerText || '';
 
-  if (currentTaskIndex === tasks.length - 1) {
-    nextBtn.innerText = 'Submit Test';
-    nextBtn.style.backgroundColor = '#16a34a';
-  } else {
-    nextBtn.innerText = 'Next Task';
-    nextBtn.style.backgroundColor = '#2563eb';
-  }
+  const isLast = currentTaskIndex === tasks.length - 1;
+  nextBtn.innerText = isLast ? 'Submit Test' : 'Next Task';
+  nextBtn.style.backgroundColor = isLast ? '#16a34a' : '#2563eb';
+  nextBtn.disabled = submitting;
 }
 
 function submitJob() {
-  const nextBtn = document.getElementById('ut-next-btn');
-  if (nextBtn) nextBtn.innerText = 'Submitting...';
+  if (!currentJob || submitting) return;
 
-  chrome.runtime.sendMessage({
-    type: 'SUBMIT_JOB',
-    jobId: currentJob.id,
-    responses
-  }, (res) => {
-    if (res.success) {
-      document.getElementById('usability-testing-overlay')!.innerHTML = '<h3 style="margin:0;color:#16a34a;">Test Submitted Successfully!</h3><p style="margin-top:8px;font-size:14px;">You can now close this page.</p>';
-    } else {
-      alert('Failed to submit job: ' + res.error);
-      if (nextBtn) nextBtn.innerText = 'Try Again';
+  submitting = true;
+  const nextBtn = document.getElementById('ut-next-btn') as HTMLButtonElement | null;
+  if (nextBtn) {
+    nextBtn.disabled = true;
+    nextBtn.innerText = 'Submitting...';
+  }
+
+  chrome.runtime.sendMessage(
+    {
+      type: 'SUBMIT_JOB',
+      jobId: currentJob.id,
+      responses
+    },
+    (response) => {
+      if (chrome.runtime.lastError) {
+        submitting = false;
+        alert('Failed to submit job: ' + (chrome.runtime.lastError.message || 'Chrome runtime error'));
+        renderTask();
+        return;
+      }
+
+      if (response?.success) {
+        const overlay = document.getElementById('usability-testing-overlay');
+        if (overlay) {
+          overlay.innerHTML =
+            '<h3 style="margin:0;color:#16a34a;">Test Submitted Successfully!</h3>' +
+            '<p style="margin-top:8px;font-size:14px;">You can now close this page.</p>';
+        }
+        return;
+      }
+
+      submitting = false;
+      alert('Failed to submit job: ' + (response?.error || 'Unknown error'));
+      renderTask();
     }
-  });
+  );
 }
 
-// Initialization check
-chrome.runtime.sendMessage({ type: 'FETCH_ACTIVE_JOB' }, (response) => {
-  if (response && response.job) {
-    // Only inject if we are on the target URL (rough check)
-    const targetUrl = new URL(response.job.campaign.targetUrl);
-    if (window.location.hostname === targetUrl.hostname) {
-      currentJob = response.job;
+chrome.runtime.sendMessage(
+  { type: 'FETCH_ACTIVE_JOB', currentUrl: window.location.href },
+  (response) => {
+    if (chrome.runtime.lastError) {
+      console.warn('Usability Testing extension:', chrome.runtime.lastError.message);
+      return;
+    }
+
+    if (response?.job) {
+      currentJob = response.job as ActiveJob;
+      currentJob.campaign.tasks.sort((a, b) => a.stepOrder - b.stepOrder);
       injectOverlay();
     }
   }
-});
+);

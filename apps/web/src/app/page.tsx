@@ -1,8 +1,9 @@
 'use client';
+
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Role } from '@usability-testing/shared';
 import { apiFetch } from '../lib/api';
-import { useRouter } from 'next/navigation';
 
 export default function Home() {
   const [email, setEmail] = useState('owner@example.com');
@@ -11,45 +12,39 @@ export default function Home() {
   const [error, setError] = useState('');
   const router = useRouter();
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const persistSessionAndRoute = (data: { token: string; user: { role: Role } }) => {
+    localStorage.setItem('token', data.token);
+    localStorage.setItem('user', JSON.stringify(data.user));
+    router.push(data.user.role === Role.OWNER ? '/owner' : '/tester');
+  };
+
+  const handleLogin = async (event: React.FormEvent) => {
+    event.preventDefault();
     setError('');
+
     try {
       const data = await apiFetch('/auth/login', {
         method: 'POST',
         body: JSON.stringify({ email, password })
       });
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('user', JSON.stringify(data.user));
-
-      if (data.user.role === Role.OWNER) {
-        router.push('/owner');
-      } else {
-        router.push('/tester');
-      }
-    } catch (err: any) {
-      setError(err.message);
+      persistSessionAndRoute(data);
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : 'Login failed');
     }
   };
 
-  const handleRegister = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleRegister = async (event: React.FormEvent) => {
+    event.preventDefault();
     setError('');
+
     try {
       const data = await apiFetch('/auth/register', {
         method: 'POST',
         body: JSON.stringify({ email, password, role })
       });
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('user', JSON.stringify(data.user));
-
-      if (data.user.role === Role.OWNER) {
-        router.push('/owner');
-      } else {
-        router.push('/tester');
-      }
-    } catch (err: any) {
-      setError(err.message);
+      persistSessionAndRoute(data);
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : 'Registration failed');
     }
   };
 
@@ -66,24 +61,26 @@ export default function Home() {
             <input
               type="email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(event) => setEmail(event.target.value)}
               className="w-full border border-gray-300 rounded px-3 py-2"
             />
           </div>
+
           <div>
             <label className="block text-sm font-medium mb-1">Password</label>
             <input
               type="password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(event) => setPassword(event.target.value)}
               className="w-full border border-gray-300 rounded px-3 py-2"
             />
           </div>
+
           <div>
             <label className="block text-sm font-medium mb-1">Role (For Register)</label>
             <select
               value={role}
-              onChange={(e) => setRole(e.target.value as Role)}
+              onChange={(event) => setRole(event.target.value as Role)}
               className="w-full border border-gray-300 rounded px-3 py-2"
             >
               <option value={Role.OWNER}>Owner (Create Tests)</option>

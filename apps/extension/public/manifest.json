@@ -4,9 +4,7 @@
   "version": "1.0",
   "description": "Chrome Extension for Usability Testing",
   "permissions": [
-    "storage",
-    "activeTab",
-    "scripting"
+    "storage"
   ],
   "host_permissions": [
     "http://*/*",
@@ -27,8 +25,7 @@
   },
   "externally_connectable": {
     "matches": [
-      "http://localhost/*",
-      "https://your-production-web-domain.com/*"
+      "http://localhost/*"
     ]
   }
 }

@@ -1,83 +1,159 @@
-# แพลตฟอร์มทดสอบการใช้งานเว็บไซต์ (Usability Testing Platform MVP)
+# Usability Testing Platform MVP
 
-ยินดีต้อนรับสู่ MVP ของแพลตฟอร์มทดสอบการใช้งานเว็บไซต์! โปรเจกต์นี้ทำงานในรูปแบบ Monorepo โดยประกอบไปด้วย Web Application, Backend API, และ Chrome Extension
+แพลตฟอร์ม MVP สำหรับเชื่อม Owner ที่ต้องการทดสอบเว็บไซต์กับ Tester ที่ทำงานผ่าน Web Dashboard + Chrome Extension (Manifest V3) + Express API + PostgreSQL
 
----
+## Architecture
 
-## 🚀 การเริ่มต้นระบบด้วย Docker (วิธีที่แนะนำ)
+```text
+apps/
+  web/        Next.js dashboard for OWNER / TESTER
+  api/        Express + TypeScript + Prisma
+  extension/  Chrome Extension (Manifest V3)
+packages/
+  shared/     Shared TypeScript contracts
+```
 
-คุณสามารถเปิดใช้งานระบบทั้งหมด (Database, API, Web) ได้ง่ายๆ ในคำสั่งเดียวผ่าน Docker Compose
+Core flow:
 
-### สิ่งที่ต้องมีเบื้องต้น
-1. [Docker Desktop](https://www.docker.com/products/docker-desktop/) ติดตั้งและเปิดใช้งานบนเครื่องของคุณ
-2. [Node.js](https://nodejs.org/) & [pnpm](https://pnpm.io/) (จำเป็นสำหรับการ Build Chrome Extension ออกมาใช้งาน)
+```text
+Owner creates campaign
+→ Tester claims one available job
+→ Tester syncs authenticated session to Extension
+→ Extension activates only when the claimed job matches the current target URL
+→ Tester completes every task and submits responses
+→ Owner reads the responses
+→ Owner approves or rejects the submission
+```
 
-### ขั้นตอนการรันระบบ (รัน Web, API, Database)
+Video recording and real payment processing remain intentional MVP placeholders.
 
-1. เปิด Terminal ในโฟลเดอร์หลักของโปรเจกต์
-2. รันคำสั่งต่อไปนี้เพื่อ Build และ Start containers ทั้งหมด:
-   ```bash
-   docker compose up -d --build
-   ```
-3. รอสักครู่ (ระบบกำลังติดตั้ง package, ทำ Database Migration อัตโนมัติ, และรันเซิร์ฟเวอร์)
-4. เมื่อเสร็จสิ้น คุณสามารถเข้าถึง:
-   - **Web Application:** [http://localhost:3000](http://localhost:3000)
-   - **Backend API:** [http://localhost:4000](http://localhost:4000)
+## Local configuration
 
-*หากต้องการหยุดระบบ ให้ใช้คำสั่ง `docker compose down`*
+Do not commit real secrets. Copy the example environment file first:
 
----
+```bash
+cp .env.example .env
+```
 
-## 🧩 วิธีติดตั้งและใช้งาน Chrome Extension
+Set at least:
 
-Chrome Extension จำเป็นสำหรับการให้ฝั่ง Tester เข้าไปทำภารกิจบนเว็บไซต์เป้าหมาย โดยต้อง Build จาก Source code ไปใส่ในเบราว์เซอร์
+```env
+JWT_SECRET=use-a-long-random-development-secret
+NEXT_PUBLIC_API_URL=http://localhost:4000
+NEXT_PUBLIC_EXTENSION_ID=
+```
 
-### ขั้นตอนที่ 1: Build Extension
-รันคำสั่งเหล่านี้ใน Terminal เพื่อสร้างไฟล์ Extension:
+The API intentionally fails to start when `JWT_SECRET` is missing.
+
+For running the API outside Docker, copy `apps/api/.env.example` to `apps/api/.env`.
+
+## Run Web + API + PostgreSQL
+
+```bash
+docker compose up -d --build
+```
+
+Then open:
+
+- Web: http://localhost:3000
+- API health: http://localhost:4000/health
+
+Prisma migrations are applied with `prisma migrate deploy`.
+
+## Build the Chrome Extension
+
+From the repository root:
+
 ```bash
 pnpm install
 cd apps/extension
-pnpm run build
+EXTENSION_API_URL=http://localhost:4000 WEB_APP_ORIGINS='http://localhost/*' pnpm build
 ```
-*(เมื่อรันเสร็จ คุณจะได้โฟลเดอร์ `apps/extension/dist`)*
 
-### ขั้นตอนที่ 2: ติดตั้งเข้า Google Chrome
-1. เปิด Google Chrome แล้วพิมพ์ในช่อง URL ว่า `chrome://extensions/` แล้วกด Enter
-2. ที่มุมขวาบนของหน้าจอ ให้เปิดสวิตช์ **Developer mode (โหมดนักพัฒนาซอฟต์แวร์)**
-3. จะมีเมนูใหม่โผล่ขึ้นมาด้านซ้ายบน ให้คลิกที่ **"Load unpacked" (โหลดส่วนขยายที่แยกไฟล์แล้ว)**
-4. เลือกโฟลเดอร์ `apps/extension/dist` ที่เราเพิ่ง Build ออกมา
-5. จะเห็น "Usability Testing MVP" ปรากฏขึ้นในหน้ารายการ Extension คัดลอก Extension ID ของคุณ (เช่น `abc123xyz...`) ไปใส่แทนที่ใน `apps/web/src/app/tester/page.tsx` ที่บรรทัด `const extensionId = '...';` หากยังไม่ได้ทำ
+Load `apps/extension/dist` from `chrome://extensions` using **Load unpacked**.
 
----
+Copy the generated Extension ID into the root `.env`:
 
-## 🎮 คู่มือการทดสอบระบบ (End-to-End Manual Test)
+```env
+NEXT_PUBLIC_EXTENSION_ID=<your-extension-id>
+```
 
-เพื่อให้แน่ใจว่าทั้ง Flow ทำงานได้จริง โปรดทำตามขั้นตอนนี้:
+Then rebuild/restart the Web app so the public environment variable is embedded into the Next.js build.
 
-### 1. สมัครสมาชิก Owner (ผู้สร้างงาน)
-1. เปิดหน้าจอเบราว์เซอร์โหมดไม่ระบุตัวตน (Incognito) ใหม่ ไปที่ [http://localhost:3000](http://localhost:3000)
-2. กรอก Email: `owner@example.com`, Password: `password123`, เลือกระบบ Role: **Owner** และกด **Register**
-3. ระบบจะพาไปที่ **Owner Dashboard**
-4. ในช่อง "Create New Campaign" ใส่ **Target URL** เป็น `https://example.com`
-5. ใส่ **Tasks** ข้อที่ 1 เป็น "หาหน้า About", ข้อ 2 (กด + Add another task) เป็น "เลื่อนลงมาด้านล่าง"
-6. กด **Create Campaign** คุณจะเห็นงานใหม่โผล่ขึ้นใน "My Campaigns" สถานะคือ "AVAILABLE"
+The source manifest keeps only the permissions required by the current architecture: storage plus host access/content-script injection for arbitrary test targets. The previous broad DNR/CSP/X-Frame-Options rewriting is not used.
 
-### 2. สมัครสมาชิก Tester (ผู้ทดสอบ)
-1. เปิดเบราว์เซอร์ **Google Chrome (หน้าต่างปกติที่ติดตั้ง Extension ไว้แล้ว)** ไปที่ [http://localhost:3000](http://localhost:3000)
-2. กรอก Email: `tester@example.com`, Password: `password123`, เลือกระบบ Role: **Tester** และกด **Register**
-3. ระบบจะพาไปที่ **Tester Dashboard**
-4. **Auth Sync:** กดปุ่ม **"Sync Auth to Chrome Extension"** ให้สังเกตข้อความแจ้งเตือนว่าทำสำเร็จ และเมื่อคลิกไอคอน Extension ขวาบน จะต้องขึ้นว่า Token length: ...
-5. เลื่อนลงมาที่ "Available Jobs" คุณจะเห็นงานของ Owner เมื่อครู่นี้ ให้กดปุ่ม **"Claim Job"** งานจะย้ายไปที่ My Claimed Jobs ทันที
+## Manual end-to-end test
 
-### 3. ทำงานผ่าน Extension
-1. เมื่อรับงานแล้ว ให้เปิดแท็บใหม่และเข้าไปที่ Target URL นั้น (เช่น `https://example.com`)
-2. รอ 1 วินาที **กล่องภารกิจ (Overlay UI) จะปรากฏขึ้นมุมขวาล่าง**
-3. กล่องจะแสดงคำสั่ง `Task 1: หาหน้า About`
-4. ให้คุณทดลองใช้งานเว็บไซต์ จากนั้นพิมพ์ข้อมูลลงในกล่อง เช่น "หาง่ายมาก อยู่บนสุด" แล้วกด **Next Task**
-5. กล่องจะแสดงคำสั่ง Task 2 ให้พิมพ์ข้อมูลทดสอบลงไปแล้วกด **Submit Test**
-6. กล่องจะเปลี่ยนเป็นสีเขียวแจ้งเตือนว่า **Test Submitted Successfully!**
+### 1. Owner
 
-### 4. Owner ตรวจงานและอนุมัติ
-1. กลับไปที่เบราว์เซอร์ของ Owner
-2. กด Refresh (หรือหากหน้า Dashboard ดึงข้อมูลใหม่) คุณจะเห็นใน "My Campaigns" ว่าสถานะเปลี่ยนจาก CLAIMED เป็น **SUBMITTED** แล้ว
-3. จะมีปุ่ม **Approve** และ **Reject** ปรากฏขึ้น ให้ลองกด **Approve** เพื่อจบกระบวนการการทำงาน!
+1. Register `owner@example.com` / `password123` as **OWNER**.
+2. Create a campaign with target `https://example.com`.
+3. Add two tasks.
+4. Confirm one job is shown as `AVAILABLE`.
+
+### 2. Tester
+
+1. Register a second account as **TESTER**.
+2. Click **Sync Auth to Chrome Extension**.
+3. Confirm the Extension popup reports an authenticated state.
+4. Claim the Owner's job.
+5. Use **Open target website**.
+
+### 3. Extension
+
+1. The overlay should appear only when the current URL matches a claimed job's target URL.
+2. Enter a response for every task.
+3. Submit once.
+4. The submit control is disabled while the request is in flight.
+5. API/validation/network failures must be displayed as failures rather than false success.
+
+### 4. Owner review
+
+1. Refresh the Owner dashboard.
+2. The job should show `SUBMITTED`.
+3. Click **View submission**.
+4. Read every task and Tester response.
+5. Only after the submission is loaded, click **Approve** or **Reject**.
+6. A reviewed job cannot be reviewed a second time.
+
+## Integrity rules implemented
+
+- Passwords are bcrypt hashed.
+- JWT signing has no source-code fallback secret.
+- OWNER/TESTER API role checks are enforced.
+- Job claim uses a conditional atomic update so only one Tester can win.
+- A submission must contain every campaign task exactly once.
+- Foreign task IDs and duplicate task IDs are rejected.
+- `TaskResponse(jobId, taskId)` is unique in PostgreSQL.
+- `CLAIMED → SUBMITTED` and `SUBMITTED → APPROVED/REJECTED` are conditional state transitions.
+- Job lifecycle timestamps track claim, submission and review.
+- Owner review verifies campaign ownership.
+- Extension API calls check HTTP status and propagate validation/auth/network errors.
+
+## Verification
+
+With PostgreSQL available and the environment configured:
+
+```bash
+pnpm install
+pnpm --filter @usability-testing/api db:generate
+pnpm --filter @usability-testing/api db:migrate:deploy
+pnpm typecheck
+pnpm build
+pnpm lint
+pnpm test
+```
+
+The API integration test covers:
+
+- register/login authentication infrastructure
+- OWNER/TESTER authorization
+- concurrent job claiming
+- foreign task rejection
+- duplicate task rejection
+- unauthorized submission
+- owner-only submission review
+- one-way approve/reject transition
+- concurrent/double submission
+
+GitHub Actions runs the same build/type/lint/integration-test verification against PostgreSQL for pull requests.
