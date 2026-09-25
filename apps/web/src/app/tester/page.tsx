@@ -42,7 +42,26 @@ export default function TesterDashboard() {
   }
 
   useEffect(() => {
-    void fetchJobs();
+    let cancelled = false;
+
+    Promise.all([
+      apiFetch('/jobs/available'),
+      apiFetch('/jobs/my')
+    ])
+      .then(([available, mine]) => {
+        if (cancelled) return;
+        setAvailableJobs(available);
+        setMyJobs(mine);
+      })
+      .catch((caught) => {
+        if (!cancelled) {
+          setError(caught instanceof Error ? caught.message : 'Failed to load jobs');
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const claimJob = async (id: string) => {
