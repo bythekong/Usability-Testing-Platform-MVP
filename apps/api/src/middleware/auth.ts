@@ -1,8 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { Role } from '@usability-testing/shared';
-
-const JWT_SECRET = process.env.JWT_SECRET || 'super-secret-fallback-for-mvp';
+import { config } from '../config';
 
 export interface AuthRequest extends Request {
   user?: {
@@ -17,13 +16,13 @@ export const requireAuth = (req: AuthRequest, res: Response, next: NextFunction)
     return res.status(401).json({ error: 'Unauthorized: No token provided' });
   }
 
-  const token = authHeader.split(' ')[1];
+  const token = authHeader.slice('Bearer '.length);
 
   try {
-    const decoded = jwt.verify(token, JWT_SECRET) as { id: string; role: Role };
+    const decoded = jwt.verify(token, config.jwtSecret) as { id: string; role: Role };
     req.user = decoded;
     next();
-  } catch (error) {
+  } catch {
     return res.status(401).json({ error: 'Unauthorized: Invalid token' });
   }
 };
@@ -31,7 +30,7 @@ export const requireAuth = (req: AuthRequest, res: Response, next: NextFunction)
 export const requireRole = (role: Role) => {
   return (req: AuthRequest, res: Response, next: NextFunction) => {
     if (!req.user || req.user.role !== role) {
-      return res.status(403).json({ error: `Forbidden: Requires ${role} role` });
+      return res.status(403).json({ error: 'Forbidden: Requires ' + role + ' role' });
     }
     next();
   };

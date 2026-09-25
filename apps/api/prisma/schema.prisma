@@ -15,7 +15,7 @@ enum Role {
 model User {
   id        String   @id @default(uuid())
   email     String   @unique
-  password  String   // Hashed password
+  password  String
   role      Role
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -31,31 +31,33 @@ enum PaymentStatus {
 }
 
 model TestCampaign {
-  id               String        @id @default(uuid())
-  ownerId          String
-  targetUrl        String
-  rewardAmount     Int           // Stored in cents
-  currency         String        @default("USD")
-  paymentStatus    PaymentStatus @default(PENDING)
-  stripePaymentId  String?
-  createdAt        DateTime      @default(now())
-  updatedAt        DateTime      @updatedAt
+  id              String        @id @default(uuid())
+  ownerId         String
+  targetUrl       String
+  rewardAmount    Int
+  currency        String        @default("USD")
+  paymentStatus   PaymentStatus @default(PENDING)
+  stripePaymentId String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
 
-  owner            User          @relation("CampaignOwner", fields: [ownerId], references: [id])
-  tasks            Task[]
-  jobs             JobAssignment[]
+  owner User @relation("CampaignOwner", fields: [ownerId], references: [id])
+  tasks Task[]
+  jobs  JobAssignment[]
 }
 
 model Task {
-  id             String       @id @default(uuid())
-  campaignId     String
-  stepOrder      Int
-  instruction    String
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
+  id          String   @id @default(uuid())
+  campaignId  String
+  stepOrder   Int
+  instruction String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
-  campaign       TestCampaign @relation(fields: [campaignId], references: [id])
-  responses      TaskResponse[]
+  campaign  TestCampaign @relation(fields: [campaignId], references: [id])
+  responses TaskResponse[]
+
+  @@unique([campaignId, stepOrder])
 }
 
 enum JobStatus {
@@ -67,28 +69,33 @@ enum JobStatus {
 }
 
 model JobAssignment {
-  id             String       @id @default(uuid())
-  campaignId     String
-  testerId       String?      // Null until a Tester claims it
-  status         JobStatus    @default(AVAILABLE)
-  videoUrl       String?      // MVP Placeholder for media
-  videoMetadata  Json?        // MVP Placeholder for media metadata
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
+  id            String    @id @default(uuid())
+  campaignId    String
+  testerId      String?
+  status        JobStatus @default(AVAILABLE)
+  videoUrl      String?
+  videoMetadata Json?
+  claimedAt     DateTime?
+  submittedAt   DateTime?
+  reviewedAt    DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 
-  campaign       TestCampaign @relation(fields: [campaignId], references: [id])
-  tester         User?        @relation("JobTester", fields: [testerId], references: [id])
-  responses      TaskResponse[]
+  campaign  TestCampaign  @relation(fields: [campaignId], references: [id])
+  tester    User?         @relation("JobTester", fields: [testerId], references: [id])
+  responses TaskResponse[]
 }
 
 model TaskResponse {
-  id             String        @id @default(uuid())
-  jobId          String
-  taskId         String
-  answerText     String?
-  createdAt      DateTime      @default(now())
-  updatedAt      DateTime      @updatedAt
+  id         String   @id @default(uuid())
+  jobId      String
+  taskId     String
+  answerText String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
-  job            JobAssignment @relation(fields: [jobId], references: [id])
-  task           Task          @relation(fields: [taskId], references: [id])
+  job  JobAssignment @relation(fields: [jobId], references: [id])
+  task Task          @relation(fields: [taskId], references: [id])
+
+  @@unique([jobId, taskId])
 }

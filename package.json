@@ -6,7 +6,9 @@
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
-    "lint": "turbo run lint"
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "test": "pnpm --filter @usability-testing/api test"
   },
   "devDependencies": {
     "turbo": "^1.11.2",
