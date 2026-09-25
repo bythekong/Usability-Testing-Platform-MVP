@@ -1,7 +1,6 @@
 FROM node:20-alpine AS base
-ENV PNPM_HOME="/pnpm"
-ENV PATH="$PNPM_HOME:$PATH"
-RUN corepack enable
+RUN apk add --no-cache openssl
+RUN npm install -g pnpm@9.15.9
 
 FROM base AS builder
 WORKDIR /app
@@ -13,7 +12,7 @@ COPY . .
 RUN pnpm install --frozen-lockfile
 
 WORKDIR /app/apps/api
-RUN pnpm run db:generate
+RUN DATABASE_URL="postgresql://postgres:password@localhost:5432/usability_db?schema=public" pnpm run db:generate
 
 WORKDIR /app
 RUN pnpm run build
