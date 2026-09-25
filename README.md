@@ -1,2 +1,2 @@
-# Usability-Testing-Platform-MVP-
+# Usability-Testing-Platform-MVP
 แพลตฟอร์มตัวกลางเชื่อมระหว่าง เจ้าของเว็บไซต์ (Owner) ที่ต้องการทดสอบการใช้งานเว็บ กับ ผู้ทดสอบ (Tester) โดยทำงานผ่านระบบ 3 ส่วนหลัก:
