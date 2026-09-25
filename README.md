@@ -19,7 +19,7 @@
    ```bash
    docker compose up -d --build
    ```
-3. รอสักครู่ (ระบบกำลังติดตั้ง package, สร้างฐานข้อมูล Prisma อัตโนมัติ, และรันเซิร์ฟเวอร์)
+3. รอสักครู่ (ระบบกำลังติดตั้ง package, ทำ Database Migration อัตโนมัติ, และรันเซิร์ฟเวอร์)
 4. เมื่อเสร็จสิ้น คุณสามารถเข้าถึง:
    - **Web Application:** [http://localhost:3000](http://localhost:3000)
    - **Backend API:** [http://localhost:4000](http://localhost:4000)
@@ -46,35 +46,38 @@ pnpm run build
 2. ที่มุมขวาบนของหน้าจอ ให้เปิดสวิตช์ **Developer mode (โหมดนักพัฒนาซอฟต์แวร์)**
 3. จะมีเมนูใหม่โผล่ขึ้นมาด้านซ้ายบน ให้คลิกที่ **"Load unpacked" (โหลดส่วนขยายที่แยกไฟล์แล้ว)**
 4. เลือกโฟลเดอร์ `apps/extension/dist` ที่เราเพิ่ง Build ออกมา
-5. จะเห็น "Usability Testing MVP" ปรากฏขึ้นในหน้ารายการ Extension แสดงว่าติดตั้งสำเร็จ!
+5. จะเห็น "Usability Testing MVP" ปรากฏขึ้นในหน้ารายการ Extension คัดลอก Extension ID ของคุณ (เช่น `abc123xyz...`) ไปใส่แทนที่ใน `apps/web/src/app/tester/page.tsx` ที่บรรทัด `const extensionId = '...';` หากยังไม่ได้ทำ
 
 ---
 
-## 🎮 คู่มือการใช้งานจริง (End-to-End Flow)
+## 🎮 คู่มือการทดสอบระบบ (End-to-End Manual Test)
 
-เมื่อรัน Docker เสร็จและติดตั้ง Chrome Extension เรียบร้อยแล้ว เรามาลองใช้งานระบบกันเลย!
+เพื่อให้แน่ใจว่าทั้ง Flow ทำงานได้จริง โปรดทำตามขั้นตอนนี้:
 
-### 🧑‍💼 บทบาท Owner (เจ้าของเว็บไซต์ / ผู้จ้าง)
-1. เปิด **Web App** ไปที่ [http://localhost:3000](http://localhost:3000)
-2. (จำลอง) ทำการสร้างแคมเปญทดสอบใหม่ (Test Campaign) โดยระบุ:
-   - **Target URL:** เว็บที่ต้องการให้คนเข้าไปทดสอบ (เช่น `https://example.com`)
-   - **Tasks:** คำสั่งทีละขั้นตอน เช่น "1. หาสินค้า A", "2. กดใส่ตะกร้า"
-   - **Reward:** ค่าตอบแทน
-3. ระบบจะบันทึกงานนี้เข้าสู่ Job Board ของระบบ
+### 1. สมัครสมาชิก Owner (ผู้สร้างงาน)
+1. เปิดหน้าจอเบราว์เซอร์โหมดไม่ระบุตัวตน (Incognito) ใหม่ ไปที่ [http://localhost:3000](http://localhost:3000)
+2. กรอก Email: `owner@example.com`, Password: `password123`, เลือกระบบ Role: **Owner** และกด **Register**
+3. ระบบจะพาไปที่ **Owner Dashboard**
+4. ในช่อง "Create New Campaign" ใส่ **Target URL** เป็น `https://example.com`
+5. ใส่ **Tasks** ข้อที่ 1 เป็น "หาหน้า About", ข้อ 2 (กด + Add another task) เป็น "เลื่อนลงมาด้านล่าง"
+6. กด **Create Campaign** คุณจะเห็นงานใหม่โผล่ขึ้นใน "My Campaigns" สถานะคือ "AVAILABLE"
 
-### 🕵️ บทบาท Tester (ผู้ทดสอบ)
-1. Tester เปิดเข้า **Web App** [http://localhost:3000](http://localhost:3000) และเข้าสู่ระบบ (ระบบจำลอง)
-2. **การซิงค์รหัส (Auth Sync):**
-   - ในหน้า Dashboard จะมีปุ่ม **"Sync Auth to Chrome Extension"** ให้คลิกที่ปุ่มนี้
-   - Web App จะทำการส่ง Token (รหัสยืนยันตัวตน) ทะลุเข้าไปยัง Chrome Extension ของคุณโดยตรง!
-   - คุณสามารถกดเปิดไอคอน Extension ที่แถบขวาบนของ Chrome เพื่อดูสถานะ "Authenticated (Ready to test)" ได้
-3. **การรับงานและเริ่มทดสอบ:**
-   - Tester กดรับงานจาก Job Board
-   - Tester เปิดแท็บใหม่แล้วพิมพ์เข้าเว็บเป้าหมาย (Target URL) ที่ Owner สั่งไว้ (เช่น `https://example.com`)
-4. **ทำภารกิจผ่าน Overlay:**
-   - ทันทีที่เข้าเว็บเป้าหมาย **Chrome Extension จะทำงานอัตโนมัติ!**
-   - Extension จะหลบหลีกระบบป้องกันของเว็บ (ปลด Security Headers ด้วย `declarativeNetRequest`)
-   - จะมี **กล่องข้อความภารกิจ (Overlay UI)** โผล่ขึ้นมาที่มุมขวาล่างของหน้าจอ
-   - Tester อ่านคำสั่งในกล่องนั้น (เช่น "หาสินค้า A"), ทดลองใช้งานจริงบนเว็บนั้น และเมื่อสำเร็จก็กดปุ่ม **"Complete Task"** บนกล่องนั้น
-5. **จบงาน:**
-   - Extension จะส่งผลลัพธ์ผ่าน API กลับเข้าเซิร์ฟเวอร์ (Docker container ของคุณ) และเงินจะถูกส่งให้ Tester!
+### 2. สมัครสมาชิก Tester (ผู้ทดสอบ)
+1. เปิดเบราว์เซอร์ **Google Chrome (หน้าต่างปกติที่ติดตั้ง Extension ไว้แล้ว)** ไปที่ [http://localhost:3000](http://localhost:3000)
+2. กรอก Email: `tester@example.com`, Password: `password123`, เลือกระบบ Role: **Tester** และกด **Register**
+3. ระบบจะพาไปที่ **Tester Dashboard**
+4. **Auth Sync:** กดปุ่ม **"Sync Auth to Chrome Extension"** ให้สังเกตข้อความแจ้งเตือนว่าทำสำเร็จ และเมื่อคลิกไอคอน Extension ขวาบน จะต้องขึ้นว่า Token length: ...
+5. เลื่อนลงมาที่ "Available Jobs" คุณจะเห็นงานของ Owner เมื่อครู่นี้ ให้กดปุ่ม **"Claim Job"** งานจะย้ายไปที่ My Claimed Jobs ทันที
+
+### 3. ทำงานผ่าน Extension
+1. เมื่อรับงานแล้ว ให้เปิดแท็บใหม่และเข้าไปที่ Target URL นั้น (เช่น `https://example.com`)
+2. รอ 1 วินาที **กล่องภารกิจ (Overlay UI) จะปรากฏขึ้นมุมขวาล่าง**
+3. กล่องจะแสดงคำสั่ง `Task 1: หาหน้า About`
+4. ให้คุณทดลองใช้งานเว็บไซต์ จากนั้นพิมพ์ข้อมูลลงในกล่อง เช่น "หาง่ายมาก อยู่บนสุด" แล้วกด **Next Task**
+5. กล่องจะแสดงคำสั่ง Task 2 ให้พิมพ์ข้อมูลทดสอบลงไปแล้วกด **Submit Test**
+6. กล่องจะเปลี่ยนเป็นสีเขียวแจ้งเตือนว่า **Test Submitted Successfully!**
+
+### 4. Owner ตรวจงานและอนุมัติ
+1. กลับไปที่เบราว์เซอร์ของ Owner
+2. กด Refresh (หรือหากหน้า Dashboard ดึงข้อมูลใหม่) คุณจะเห็นใน "My Campaigns" ว่าสถานะเปลี่ยนจาก CLAIMED เป็น **SUBMITTED** แล้ว
+3. จะมีปุ่ม **Approve** และ **Reject** ปรากฏขึ้น ให้ลองกด **Approve** เพื่อจบกระบวนการการทำงาน!

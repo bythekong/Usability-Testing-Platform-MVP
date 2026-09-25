@@ -42,4 +42,4 @@ WORKDIR /app/apps/api
 ENV NODE_ENV=production
 EXPOSE 4000
 # Run migrations (push) then start API
-CMD ["sh", "-c", "pnpm run db:push && pnpm start"]
+CMD ["sh", "-c", "pnpm run db:migrate:deploy && pnpm start"]
