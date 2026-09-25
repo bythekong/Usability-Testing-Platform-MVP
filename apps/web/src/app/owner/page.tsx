@@ -40,7 +40,21 @@ export default function OwnerDashboard() {
   }
 
   useEffect(() => {
-    void fetchCampaigns();
+    let cancelled = false;
+
+    apiFetch('/campaigns')
+      .then((data) => {
+        if (!cancelled) setCampaigns(data);
+      })
+      .catch((caught) => {
+        if (!cancelled) {
+          setError(caught instanceof Error ? caught.message : 'Failed to load campaigns');
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const handleCreate = async (event: React.FormEvent) => {
