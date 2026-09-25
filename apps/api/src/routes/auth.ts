@@ -10,7 +10,7 @@ import { config } from '../config';
 
 const router = Router();
 
-function issueToken(id: string, role: Role) {
+function issueToken(id: string, role: string) {
   return jwt.sign({ id, role }, config.jwtSecret, { expiresIn: '7d' });
 }
 
