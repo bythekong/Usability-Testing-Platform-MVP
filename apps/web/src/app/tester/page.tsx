@@ -28,10 +28,6 @@ export default function TesterDashboard() {
   const [myJobs, setMyJobs] = useState<TesterJob[]>([]);
   const [error, setError] = useState('');
 
-  useEffect(() => {
-    void fetchJobs();
-  }, []);
-
   async function fetchJobs() {
     try {
       const [available, mine] = await Promise.all([
@@ -44,6 +40,10 @@ export default function TesterDashboard() {
       setError(caught instanceof Error ? caught.message : 'Failed to load jobs');
     }
   }
+
+  useEffect(() => {
+    void fetchJobs();
+  }, []);
 
   const claimJob = async (id: string) => {
     try {
