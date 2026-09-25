@@ -34,14 +34,14 @@ export default function OwnerDashboard() {
     void fetchCampaigns();
   }, []);
 
-  const fetchCampaigns = async () => {
+  async function fetchCampaigns() {
     try {
       const data = await apiFetch('/campaigns');
       setCampaigns(data);
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : 'Failed to load campaigns');
     }
-  };
+  }
 
   const handleCreate = async (event: React.FormEvent) => {
     event.preventDefault();
