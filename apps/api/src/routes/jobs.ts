@@ -188,7 +188,7 @@ router.get('/:id/review', requireAuth, requireRole(Role.OWNER), async (req: Auth
     if (job.campaign.ownerId !== req.user!.id) {
       return res.status(403).json({ error: 'This submission does not belong to the current owner.' });
     }
-    if (![JobStatus.SUBMITTED, JobStatus.APPROVED, JobStatus.REJECTED].includes(job.status)) {
+    if (!['SUBMITTED', 'APPROVED', 'REJECTED'].includes(job.status)) {
       return res.status(409).json({ error: 'Job has not been submitted yet.' });
     }
 
