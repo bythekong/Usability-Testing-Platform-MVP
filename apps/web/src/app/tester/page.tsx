@@ -32,7 +32,7 @@ export default function TesterDashboard() {
     void fetchJobs();
   }, []);
 
-  const fetchJobs = async () => {
+  async function fetchJobs() {
     try {
       const [available, mine] = await Promise.all([
         apiFetch('/jobs/available'),
@@ -43,7 +43,7 @@ export default function TesterDashboard() {
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : 'Failed to load jobs');
     }
-  };
+  }
 
   const claimJob = async (id: string) => {
     try {
