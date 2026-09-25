@@ -1,108 +1,80 @@
 # แพลตฟอร์มทดสอบการใช้งานเว็บไซต์ (Usability Testing Platform MVP)
 
-ยินดีต้อนรับสู่ MVP ของแพลตฟอร์มทดสอบการใช้งานเว็บไซต์! โปรเจกต์นี้ถูกสร้างขึ้นในรูปแบบ monorepo เพื่ออำนวยความสะดวกในการทดสอบการใช้งานระหว่าง เจ้าของเว็บไซต์ (Website Owners) และ ผู้ทดสอบ (Testers) ผ่าน Web Application และ Chrome Extension
-
-## 🏗️ โครงสร้างระบบ (Architecture)
-
-Repository นี้ใช้ **pnpm workspaces** และ **Turborepo** ในการจัดการโปรเจกต์ย่อย:
-
-- **`apps/web`**: ส่วน Frontend หลักสำหรับผู้ใช้งาน พัฒนาด้วย **Next.js (App Router)** และ **Tailwind CSS** เป็น Dashboard สำหรับทั้ง Owner และ Tester
-- **`apps/api`**: ส่วน Backend Server พัฒนาด้วย **Express**, **TypeScript**, และ **Prisma ORM** (PostgreSQL) จัดการระบบ Authentication, ฐานข้อมูล, และ Business logic
-- **`apps/extension`**: **Chrome Extension (Manifest V3)** สำหรับ Tester พัฒนาด้วย TypeScript และ Webpack ทำหน้าที่แสดงผล UI ทับซ้อน (Overlay) แนะนำงานบนเว็บไซต์เป้าหมาย และจัดการข้ามข้อจำกัดของ Security Headers
-- **`packages/shared`**: Library กลางที่รวบรวม TypeScript types, DTOs, และ enums ที่ใช้งานร่วมกันระหว่าง web, api, และ extension
+ยินดีต้อนรับสู่ MVP ของแพลตฟอร์มทดสอบการใช้งานเว็บไซต์! โปรเจกต์นี้ทำงานในรูปแบบ Monorepo โดยประกอบไปด้วย Web Application, Backend API, และ Chrome Extension
 
 ---
 
-## 🚀 การเริ่มต้นใช้งาน (Getting Started)
+## 🚀 การเริ่มต้นระบบด้วย Docker (วิธีที่แนะนำ)
+
+คุณสามารถเปิดใช้งานระบบทั้งหมด (Database, API, Web) ได้ง่ายๆ ในคำสั่งเดียวผ่าน Docker Compose
 
 ### สิ่งที่ต้องมีเบื้องต้น
-- [Node.js](https://nodejs.org/) (แนะนำ v18 ขึ้นไป)
-- [pnpm](https://pnpm.io/) (v8 ขึ้นไป)
-- [PostgreSQL](https://www.postgresql.org/) (รันในเครื่องหรือผ่าน Docker)
+1. [Docker Desktop](https://www.docker.com/products/docker-desktop/) ติดตั้งและเปิดใช้งานบนเครื่องของคุณ
+2. [Node.js](https://nodejs.org/) & [pnpm](https://pnpm.io/) (จำเป็นสำหรับการ Build Chrome Extension ออกมาใช้งาน)
 
-### 1. การติดตั้ง (Installation)
+### ขั้นตอนการรันระบบ (รัน Web, API, Database)
 
-Clone repository และติดตั้ง dependencies จากโฟลเดอร์หลัก:
+1. เปิด Terminal ในโฟลเดอร์หลักของโปรเจกต์
+2. รันคำสั่งต่อไปนี้เพื่อ Build และ Start containers ทั้งหมด:
+   ```bash
+   docker compose up -d --build
+   ```
+3. รอสักครู่ (ระบบกำลังติดตั้ง package, สร้างฐานข้อมูล Prisma อัตโนมัติ, และรันเซิร์ฟเวอร์)
+4. เมื่อเสร็จสิ้น คุณสามารถเข้าถึง:
+   - **Web Application:** [http://localhost:3000](http://localhost:3000)
+   - **Backend API:** [http://localhost:4000](http://localhost:4000)
 
+*หากต้องการหยุดระบบ ให้ใช้คำสั่ง `docker compose down`*
+
+---
+
+## 🧩 วิธีติดตั้งและใช้งาน Chrome Extension
+
+Chrome Extension จำเป็นสำหรับการให้ฝั่ง Tester เข้าไปทำภารกิจบนเว็บไซต์เป้าหมาย โดยต้อง Build จาก Source code ไปใส่ในเบราว์เซอร์
+
+### ขั้นตอนที่ 1: Build Extension
+รันคำสั่งเหล่านี้ใน Terminal เพื่อสร้างไฟล์ Extension:
 ```bash
 pnpm install
+cd apps/extension
+pnpm run build
 ```
+*(เมื่อรันเสร็จ คุณจะได้โฟลเดอร์ `apps/extension/dist`)*
 
-### 2. การตั้งค่าฐานข้อมูล (Database Setup)
-
-1. สร้างไฟล์ `.env` ใน `apps/api` และกำหนด PostgreSQL connection string:
-   ```env
-   DATABASE_URL="postgresql://user:password@localhost:5432/usability_db?schema=public"
-   ```
-2. ดัน Prisma schema เข้าสู่ฐานข้อมูลเพื่อสร้างตารางต่างๆ:
-   ```bash
-   cd apps/api
-   pnpm run db:push
-   ```
-3. สร้าง Prisma Client (ปกติจะทำงานอัตโนมัติในขั้นตอน install แต่ทำเผื่อไว้เพื่อความแน่ใจ):
-   ```bash
-   pnpm run db:generate
-   ```
-
-### 3. การรันเซิร์ฟเวอร์สำหรับพัฒนา (Running the Development Servers)
-
-คุณสามารถเริ่มการทำงานของ web และ api servers พร้อมกันจากโฟลเดอร์หลักโดยใช้ Turbo:
-
-```bash
-pnpm run dev
-```
-
-คำสั่งนี้จะรัน:
-- **Web App**: http://localhost:3000
-- **API Server**: (รันผ่าน ts-node บนพอร์ตที่กำหนดในโค้ด API หรือ `.env`)
-
-### 4. การ Build และติดตั้ง Chrome Extension
-
-คุณต้อง build Chrome Extension ก่อนที่จะสามารถโหลดเข้าเบราว์เซอร์ได้
-
-1. Build extension ใน watch mode (สำหรับการพัฒนา):
-   ```bash
-   cd apps/extension
-   pnpm run dev
-   ```
-   *หรือหากต้องการ build สำหรับใช้งานจริงครั้งเดียว ให้รัน `pnpm run build`*
-
-2. โหลดเข้าสู่ Google Chrome:
-   - เปิด Chrome และไปที่ URL `chrome://extensions/`
-   - เปิดการใช้งาน **Developer mode** ที่มุมขวาบน
-   - คลิก **Load unpacked**
-   - เลือกโฟลเดอร์ `apps/extension/dist`
-
-3. **ข้อควรระวังเรื่อง Auth Sync**: Extension นี้ใช้ `externally_connectable` เพื่อรับ JWT tokens โดยตรงจาก Web App โปรดตรวจสอบให้แน่ใจว่า Web App ของคุณกำลังรันอยู่ที่ `http://localhost:3000` (หรือโดเมน production ที่ระบุไว้ใน `manifest.json` ของ extension) เพื่อให้ระบบ Sync ทำงานได้
+### ขั้นตอนที่ 2: ติดตั้งเข้า Google Chrome
+1. เปิด Google Chrome แล้วพิมพ์ในช่อง URL ว่า `chrome://extensions/` แล้วกด Enter
+2. ที่มุมขวาบนของหน้าจอ ให้เปิดสวิตช์ **Developer mode (โหมดนักพัฒนาซอฟต์แวร์)**
+3. จะมีเมนูใหม่โผล่ขึ้นมาด้านซ้ายบน ให้คลิกที่ **"Load unpacked" (โหลดส่วนขยายที่แยกไฟล์แล้ว)**
+4. เลือกโฟลเดอร์ `apps/extension/dist` ที่เราเพิ่ง Build ออกมา
+5. จะเห็น "Usability Testing MVP" ปรากฏขึ้นในหน้ารายการ Extension แสดงว่าติดตั้งสำเร็จ!
 
 ---
 
-## 🎨 ภาพรวมของ UX/UI Flow (MVP Preview)
+## 🎮 คู่มือการใช้งานจริง (End-to-End Flow)
 
-แพลตฟอร์มนี้ออกแบบมาสำหรับ 2 บทบาทหลัก คือ **OWNER** (เจ้าของงาน) และ **TESTER** (ผู้ทดสอบ)
+เมื่อรัน Docker เสร็จและติดตั้ง Chrome Extension เรียบร้อยแล้ว เรามาลองใช้งานระบบกันเลย!
 
-### โฟลว์สำหรับ Owner (The Owner Flow)
-1. **Dashboard & Creation:** Owner เข้าสู่ระบบผ่าน Web App และจะพบกับหน้า Dashboard ที่แสดงแคมเปญทดสอบต่างๆ
-2. **Create a Test:** Owner สร้างแคมเปญใหม่ โดยระบุข้อมูลดังนี้:
-   - Target URL (เว็บไซต์ที่ต้องการทดสอบ)
-   - Reward Amount (จำนวนเงินรางวัลสำหรับ Tester)
-   - Step-by-step Task Instructions (คำสั่งทีละขั้นตอน เช่น "หาหน้าดูราคาแพ็กเกจ", "หยิบสินค้าลงตะกร้า")
-3. **Review:** เมื่อ Tester ทำงานเสร็จ Owner สามารถดูผลการทดสอบ (และในอนาคตจะสามารถดูวิดีโอ/ข้อมูลหน้าจอที่บันทึกไว้ได้) ผ่าน Dashboard เพื่อทำการกด Approve หรือ Reject งานนั้นๆ
+### 🧑‍💼 บทบาท Owner (เจ้าของเว็บไซต์ / ผู้จ้าง)
+1. เปิด **Web App** ไปที่ [http://localhost:3000](http://localhost:3000)
+2. (จำลอง) ทำการสร้างแคมเปญทดสอบใหม่ (Test Campaign) โดยระบุ:
+   - **Target URL:** เว็บที่ต้องการให้คนเข้าไปทดสอบ (เช่น `https://example.com`)
+   - **Tasks:** คำสั่งทีละขั้นตอน เช่น "1. หาสินค้า A", "2. กดใส่ตะกร้า"
+   - **Reward:** ค่าตอบแทน
+3. ระบบจะบันทึกงานนี้เข้าสู่ Job Board ของระบบ
 
-### โฟลว์สำหรับ Tester (The Tester Flow)
-1. **Job Board:** Tester เข้าสู่ระบบและค้นหางานทดสอบที่เปิดรับใน Job Board
-2. **Auth Sync:** ในหน้า Dashboard จะมีสถานะ UI แจ้งว่า Chrome Extension เชื่อมต่ออยู่หรือไม่ หากเชื่อมต่อแล้ว การคลิกปุ่มจะส่ง Authentication Token (JWT) ไปยัง Extension โดยอัตโนมัติอย่างปลอดภัย
-3. **Claim & Test:**
-   - Tester กดรับงาน (Claim job)
-   - ระบบพานำทางไปยัง Target URL
-   - **Chrome Extension** ตรวจพบว่ากำลังทำการทดสอบอยู่ และจะทำการปลดล็อค Security Headers (เช่น `X-Frame-Options`) ด้วย `declarativeNetRequest` พร้อมแสดงหน้าต่าง UI แบบลอย (Overlay) บนหน้าเว็บนั้นๆ
-4. **Execution:** Tester อ่านคำสั่งในกรอบ UI ที่ลอยอยู่ ทำตามขั้นตอนบนหน้าเว็บนั้น และเมื่อทำเสร็จ ให้กดปุ่ม "Complete Task" ใน Overlay
-5. **Submission:** Extension จะส่งผลลัพธ์และคำตอบต่างๆ กลับมายัง API อย่างปลอดภัย
-
----
-
-## 🛠️ เหตุผลในการเลือก Tech Stack
-- **Prisma:** เลือกใช้ Prisma เพื่อความปลอดภัยของ Type ในการ query ข้อมูล
-- **Next.js App Router:** เพื่อสร้าง Web Frontend ที่รวดเร็วทันสมัย
-- **Express:** เลือกใช้แทน NestJS สำหรับ MVP เพื่อให้โปรเจกต์มีขนาดเล็ก เร็ว และแยกส่วนกับ Web client อย่างชัดเจน
-- **Manifest V3:** Extension ใช้โครงสร้างใหม่ล่าสุดของ Chrome Extension เพื่อความเข้ากันได้กับเบราว์เซอร์ยุคใหม่และมาตรฐานความปลอดภัยที่ดีขึ้น
+### 🕵️ บทบาท Tester (ผู้ทดสอบ)
+1. Tester เปิดเข้า **Web App** [http://localhost:3000](http://localhost:3000) และเข้าสู่ระบบ (ระบบจำลอง)
+2. **การซิงค์รหัส (Auth Sync):**
+   - ในหน้า Dashboard จะมีปุ่ม **"Sync Auth to Chrome Extension"** ให้คลิกที่ปุ่มนี้
+   - Web App จะทำการส่ง Token (รหัสยืนยันตัวตน) ทะลุเข้าไปยัง Chrome Extension ของคุณโดยตรง!
+   - คุณสามารถกดเปิดไอคอน Extension ที่แถบขวาบนของ Chrome เพื่อดูสถานะ "Authenticated (Ready to test)" ได้
+3. **การรับงานและเริ่มทดสอบ:**
+   - Tester กดรับงานจาก Job Board
+   - Tester เปิดแท็บใหม่แล้วพิมพ์เข้าเว็บเป้าหมาย (Target URL) ที่ Owner สั่งไว้ (เช่น `https://example.com`)
+4. **ทำภารกิจผ่าน Overlay:**
+   - ทันทีที่เข้าเว็บเป้าหมาย **Chrome Extension จะทำงานอัตโนมัติ!**
+   - Extension จะหลบหลีกระบบป้องกันของเว็บ (ปลด Security Headers ด้วย `declarativeNetRequest`)
+   - จะมี **กล่องข้อความภารกิจ (Overlay UI)** โผล่ขึ้นมาที่มุมขวาล่างของหน้าจอ
+   - Tester อ่านคำสั่งในกล่องนั้น (เช่น "หาสินค้า A"), ทดลองใช้งานจริงบนเว็บนั้น และเมื่อสำเร็จก็กดปุ่ม **"Complete Task"** บนกล่องนั้น
+5. **จบงาน:**
+   - Extension จะส่งผลลัพธ์ผ่าน API กลับเข้าเซิร์ฟเวอร์ (Docker container ของคุณ) และเงินจะถูกส่งให้ Tester!
