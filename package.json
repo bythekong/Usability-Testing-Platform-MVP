@@ -1,0 +1,15 @@
+{
+  "name": "usability-testing-platform",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Usability Testing Platform MVP",
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint"
+  },
+  "devDependencies": {
+    "turbo": "^1.11.2",
+    "typescript": "^5.3.3"
+  }
+}

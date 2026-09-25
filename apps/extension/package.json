@@ -1,0 +1,19 @@
+{
+  "name": "@usability-testing/extension",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "webpack --mode production",
+    "dev": "webpack --mode development --watch"
+  },
+  "dependencies": {
+    "@usability-testing/shared": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.0.258",
+    "copy-webpack-plugin": "^12.0.2",
+    "ts-loader": "^9.5.1",
+    "typescript": "^5.3.3",
+    "webpack": "^5.90.1",
+    "webpack-cli": "^5.1.4"
+  }
+}
