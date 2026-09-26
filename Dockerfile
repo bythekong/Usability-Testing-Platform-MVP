@@ -1,23 +1,22 @@
-# Base node image
 FROM node:20-alpine AS base
-ENV PNPM_HOME="/pnpm"
-ENV PATH="$PNPM_HOME:$PATH"
-RUN corepack enable
+RUN apk add --no-cache openssl
+RUN npm install -g pnpm@9.15.9
 
-# Builder stage - builds all workspaces via turbo
 FROM base AS builder
 WORKDIR /app
+ARG NEXT_PUBLIC_API_URL=http://localhost:4000
+ARG NEXT_PUBLIC_EXTENSION_ID=
+ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
+ENV NEXT_PUBLIC_EXTENSION_ID=$NEXT_PUBLIC_EXTENSION_ID
 COPY . .
 RUN pnpm install --frozen-lockfile
 
-# Generate Prisma client and build all apps
 WORKDIR /app/apps/api
-RUN pnpm run db:generate
+RUN DATABASE_URL="postgresql://postgres:password@localhost:5432/usability_db?schema=public" pnpm run db:generate
 
 WORKDIR /app
 RUN pnpm run build
 
-# Web Production Image
 FROM base AS web
 WORKDIR /app
 COPY --from=builder /app/package.json ./
@@ -30,7 +29,6 @@ ENV NODE_ENV=production
 EXPOSE 3000
 CMD ["pnpm", "start"]
 
-# API Production Image
 FROM base AS api
 WORKDIR /app
 COPY --from=builder /app/package.json ./
@@ -41,5 +39,4 @@ COPY --from=builder /app/apps/api ./apps/api
 WORKDIR /app/apps/api
 ENV NODE_ENV=production
 EXPOSE 4000
-# Run migrations (push) then start API
 CMD ["sh", "-c", "pnpm run db:migrate:deploy && pnpm start"]
