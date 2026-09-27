@@ -147,10 +147,12 @@ export default function TesterDashboard() {
         title="Tester Dashboard"
         description="Find usability tests, claim jobs, and earn rewards."
         actions={
-          <Button onClick={handleSyncExtension}>
+          <div id="extension-sync">
+            <Button onClick={handleSyncExtension}>
             <RefreshCw className="mr-2 h-4 w-4" />
-            Sync Extension
-          </Button>
+              Sync Extension
+            </Button>
+          </div>
         }
       />
 
