@@ -47,15 +47,7 @@ function matchesTarget(currentUrl: string, targetUrl: string): boolean {
     const target = new URL(targetUrl);
 
     if (current.origin !== target.origin) return false;
-
-    const targetPath = target.pathname.endsWith('/')
-      ? target.pathname
-      : target.pathname + '/';
-
-    return (
-      current.pathname === target.pathname ||
-      current.pathname.startsWith(targetPath)
-    );
+    return true;
   } catch {
     return false;
   }
@@ -185,6 +177,18 @@ chrome.runtime.onMessage.addListener((request, _sender, sendResponse) => {
     })();
     return true;
   }
+
+  if (request.type === 'UPLOAD_PROGRESS') {
+    chrome.tabs.query({}, (tabs) => {
+      tabs.forEach((tab) => {
+        if (tab.id) {
+          chrome.tabs.sendMessage(tab.id, request).catch(() => {});
+        }
+      });
+    });
+    return false;
+  }
+
   
   if (request.type === 'ABORT_UPLOAD') {
     chrome.runtime.sendMessage({ type: 'ABORT_UPLOAD' });
