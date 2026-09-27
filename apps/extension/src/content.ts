@@ -40,7 +40,8 @@ function injectWelcomeModal() {
     justifyContent: 'center',
     alignItems: 'center',
     zIndex: '9999999',
-    fontFamily: 'system-ui, sans-serif'
+    fontFamily: 'system-ui, sans-serif',
+    opacity: '1'
   });
 
   const content = document.createElement('div');
@@ -51,7 +52,8 @@ function injectWelcomeModal() {
     maxWidth: '600px',
     width: '90%',
     maxHeight: '80vh',
-    overflowY: 'auto'
+    overflowY: 'auto',
+    opacity: '1'
   });
 
   const scenarioText = currentJob.campaign.scenario || 'Please follow the instructions on the bottom right to complete the test.';
@@ -62,7 +64,7 @@ function injectWelcomeModal() {
     <div style="margin:24px 0; color:#374151; font-size:16px; line-height:1.5;">
       ${htmlScenario}
     </div>
-    <button id="ut-understand-btn" style="width:100%; background-color:#2563eb; color:white; border:none; padding:12px; border-radius:8px; cursor:pointer; font-weight:bold; font-size:16px;">I Understand & Continue</button>
+    <button id="ut-understand-btn" style="width:100%; background-color:#2563eb !important; color:white !important; border:none !important; padding:12px !important; border-radius:8px !important; cursor:pointer !important; font-weight:bold !important; font-size:16px !important; opacity: 1 !important;">I Understand & Continue</button>
   `;
 
   modal.appendChild(content);
@@ -87,7 +89,8 @@ function injectOverlay() {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'flex-end',
-    gap: '12px'
+    gap: '12px',
+    opacity: '1'
   });
 
   // Floating Minimized Button
@@ -108,7 +111,8 @@ function injectOverlay() {
     fontSize: '24px',
     fontWeight: 'bold',
     transition: 'transform 0.2s',
-    padding: '0'
+    padding: '0',
+    opacity: '1'
   });
   minBtn.innerHTML = '📋';
   minBtn.title = 'Open Usability Test Panel';
@@ -123,39 +127,40 @@ function injectOverlay() {
     padding: '16px',
     boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
     color: '#1f2937',
-    display: 'block'
+    display: 'block',
+    opacity: '1'
   });
 
   overlay.innerHTML = `
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-      <h3 style="margin: 0; font-size: 16px; font-weight: bold;">Active Usability Test</h3>
+      <h3 style="margin: 0; font-size: 16px; font-weight: bold; color: #1f2937 !important;">Active Usability Test</h3>
       <div style="display: flex; gap: 8px;">
-        <button id="ut-view-brief-btn" style="background: none; border: none; color: #2563eb; font-size: 12px; cursor: pointer; text-decoration: underline;">📖 Brief</button>
-        <button id="ut-minimize-btn" style="background: none; border: none; color: #6b7280; font-size: 14px; cursor: pointer; padding: 0 4px;" title="Minimize">_</button>
+        <button id="ut-view-brief-btn" style="background: none !important; border: none !important; color: #2563eb !important; font-size: 12px !important; cursor: pointer !important; text-decoration: underline !important; opacity: 1 !important; padding: 0 !important; font-weight: normal !important;">📖 Brief</button>
+        <button id="ut-minimize-btn" style="background: none !important; border: none !important; color: #6b7280 !important; font-size: 14px !important; cursor: pointer !important; padding: 0 4px !important; opacity: 1 !important; font-weight: normal !important;" title="Minimize">_</button>
       </div>
     </div>
-    <div id="ut-progress-text" style="font-size: 12px; margin-bottom: 8px; color: #6b7280;"></div>
-    <p id="ut-instruction" style="margin: 0 0 12px 0; font-size: 14px; font-weight: bold;"></p>
-    <div id="ut-timer" style="margin-bottom: 12px; font-size: 18px; font-weight: bold; color: #dc2626; display: none;"></div>
+    <div id="ut-progress-text" style="font-size: 12px; margin-bottom: 8px; color: #6b7280 !important;"></div>
+    <p id="ut-instruction" style="margin: 0 0 12px 0; font-size: 14px; font-weight: bold; color: #1f2937 !important;"></p>
+    <div id="ut-timer" style="margin-bottom: 12px; font-size: 18px; font-weight: bold; color: #dc2626 !important; display: none;"></div>
     
     <div id="ut-upload-container" style="display: none; margin-bottom: 12px;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-        <span style="font-size: 12px; font-weight: bold;">Uploading Video... <span id="ut-upload-percent">0</span>%</span>
-        <button id="ut-cancel-btn" style="background: none; border: none; cursor: pointer; color: #dc2626; font-weight: bold;">✕</button>
+        <span style="font-size: 12px; font-weight: bold; color: #1f2937 !important;">Uploading Video... <span id="ut-upload-percent">0</span>%</span>
+        <button id="ut-cancel-btn" style="background: none !important; border: none !important; cursor: pointer !important; color: #dc2626 !important; font-weight: bold !important; opacity: 1 !important; padding: 0 !important;">✕</button>
       </div>
-      <div style="width: 100%; background-color: #e5e7eb; border-radius: 4px; height: 8px;">
-        <div id="ut-upload-bar" style="width: 0%; background-color: #2563eb; height: 100%; border-radius: 4px; transition: width 0.2s;"></div>
+      <div style="width: 100%; background-color: #e5e7eb !important; border-radius: 4px; height: 8px;">
+        <div id="ut-upload-bar" style="width: 0%; background-color: #2563eb !important; height: 100%; border-radius: 4px; transition: width 0.2s;"></div>
       </div>
     </div>
 
     <div style="display: flex; justify-content: space-between; gap: 8px;">
-      <button id="ut-start-btn" style="flex: 1; background-color: #2563eb; color: white; border: none; padding: 8px; border-radius: 4px; cursor: pointer;">Start Task</button>
-      <button id="ut-retake-btn" style="flex: 1; background-color: #ef4444; color: white; border: none; padding: 8px; border-radius: 4px; cursor: pointer; display: none;">Retake</button>
-      <button id="ut-submit-btn" style="flex: 1; background-color: #16a34a; color: white; border: none; padding: 8px; border-radius: 4px; cursor: pointer; display: none;">Submit Task</button>
+      <button id="ut-start-btn" style="flex: 1; background-color: #2563eb !important; color: white !important; border: none !important; padding: 8px !important; border-radius: 4px !important; cursor: pointer !important; font-weight: bold !important; font-size: 14px !important; opacity: 1 !important;">Start Task</button>
+      <button id="ut-retake-btn" style="flex: 1; background-color: #ef4444 !important; color: white !important; border: none !important; padding: 8px !important; border-radius: 4px !important; cursor: pointer !important; display: none; font-weight: bold !important; font-size: 14px !important; opacity: 1 !important;">Retake</button>
+      <button id="ut-submit-btn" style="flex: 1; background-color: #16a34a !important; color: white !important; border: none !important; padding: 8px !important; border-radius: 4px !important; cursor: pointer !important; display: none; font-weight: bold !important; font-size: 14px !important; opacity: 1 !important;">Submit Task</button>
     </div>
     
     <div id="ut-final-submit" style="display: none; margin-top: 12px;">
-      <button id="ut-finish-job-btn" style="width: 100%; background-color: #16a34a; color: white; border: none; padding: 12px; border-radius: 4px; cursor: pointer; font-weight: bold;">Finish Recording</button>
+      <button id="ut-finish-job-btn" style="width: 100%; background-color: #16a34a !important; color: white !important; border: none !important; padding: 12px !important; border-radius: 4px !important; cursor: pointer !important; font-weight: bold !important; font-size: 14px !important; opacity: 1 !important;">Finish Recording</button>
     </div>
   `;
 
