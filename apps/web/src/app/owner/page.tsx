@@ -78,8 +78,12 @@ function OwnerDashboardContent() {
     let cancelled = false;
     try {
       const u = JSON.parse(localStorage.getItem('user') || '{}');
-      if (u.email) setUserEmail(u.email);
-    } catch (e) {}
+      if (u.email) {
+        Promise.resolve().then(() => setUserEmail(u.email));
+      }
+    } catch {
+      // ignore
+    }
 
     apiFetch('/campaigns')
       .then((data) => {
@@ -210,9 +214,9 @@ function OwnerDashboardContent() {
                     </div>
 
                     <div className="space-y-2">
-                      {campaign.jobs.map((job: any) => {
+                      {campaign.jobs.map((job) => {
                         const review = reviews[job.id];
-                        const canInspect = [JobStatus.SUBMITTED, JobStatus.APPROVED, JobStatus.REJECTED].includes(job.status);
+                        const canInspect = [JobStatus.SUBMITTED, JobStatus.APPROVED, JobStatus.REJECTED].includes(job.status as JobStatus);
                         const expanded = expandedJobId === job.id;
 
                         return (
@@ -260,11 +264,11 @@ function OwnerDashboardContent() {
                                           <p className="mt-1 whitespace-pre-wrap text-sm leading-6 text-foreground">
                                             {response.answerText || '(No text answer)'}
                                           </p>
-                                          {(response as any).videoUrl && (
+                                          {response.videoUrl && (
                                             <div className="mt-4">
                                               <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted">Task Recording</p>
                                               <video 
-                                                src={`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}${(response as any).videoUrl}`} 
+                                                src={`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}${response.videoUrl}`} 
                                                 controls 
                                                 className="w-full rounded-md border border-border" 
                                                 style={{ maxHeight: '300px' }}
@@ -485,7 +489,7 @@ function OwnerDashboardContent() {
             <h3 className="font-semibold text-blue-900">Tips for Good Tasks</h3>
           </div>
           <ul className="text-sm text-blue-800 space-y-3 list-disc pl-4">
-            <li><strong>Be specific:</strong> Instead of "Explore the site", use "Find the return policy page."</li>
+            <li><strong>Be specific:</strong> Instead of &quot;Explore the site&quot;, use &quot;Find the return policy page.&quot;</li>
             <li><strong>Avoid leading questions:</strong> Let the user find the answer naturally.</li>
             <li><strong>Time limits:</strong> Most tasks should take 1-2 minutes. Only use 5 minutes for complex workflows.</li>
             <li><strong>Think out loud:</strong> Ask testers to speak their thoughts as they complete the task.</li>

@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   Briefcase,
   FolderKanban,
@@ -38,7 +38,6 @@ export function Sidebar({
   isMobileOpen,
   setIsMobileOpen,
 }: SidebarProps) {
-  const pathname = usePathname();
   const searchParams = useSearchParams();
   const router = useRouter();
   

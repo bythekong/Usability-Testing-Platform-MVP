@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState, Suspense } from 'react';
-import { ExternalLink, RefreshCw, Plug, Settings } from 'lucide-react';
+import { ExternalLink, RefreshCw, Plug } from 'lucide-react';
 import { JobStatus } from '@usability-testing/shared';
 import { apiFetch } from '../../lib/api';
 import { Button } from '@/components/ui/Button';
@@ -81,8 +81,12 @@ function TesterDashboardContent() {
     // Load email for settings
     try {
       const u = JSON.parse(localStorage.getItem('user') || '{}');
-      if (u.email) setUserEmail(u.email);
-    } catch (e) {}
+      if (u.email) {
+        Promise.resolve().then(() => setUserEmail(u.email));
+      }
+    } catch {
+      // ignore
+    }
 
     Promise.all([
       apiFetch('/jobs/available'),
@@ -264,7 +268,7 @@ function TesterDashboardContent() {
               <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gray-100 font-semibold text-gray-600">3</div>
               <div>
                 <h3 className="font-semibold text-foreground">Start Testing</h3>
-                <p className="mt-1 text-sm text-muted">Go to "Available Jobs" or "My Jobs" and open the target URL to begin your session.</p>
+                <p className="mt-1 text-sm text-muted">Go to &quot;Available Jobs&quot; or &quot;My Jobs&quot; and open the target URL to begin your session.</p>
               </div>
             </div>
           </div>
