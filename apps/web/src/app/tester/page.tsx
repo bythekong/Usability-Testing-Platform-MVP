@@ -233,9 +233,15 @@ function TesterDashboardContent() {
                         Locked by Owner
                       </div>
                     )}
-                    <Button className="flex-1" onClick={() => setReviewingJobId(job.id)}>
-                      Write Review
-                    </Button>
+                    {job.responses && job.responses.length >= job.campaign.tasks.length ? (
+                      <Button className="flex-1" onClick={() => setReviewingJobId(job.id)}>
+                        Write Review
+                      </Button>
+                    ) : (
+                      <Button className="flex-1 opacity-50 cursor-not-allowed" disabled title="Record videos using extension first">
+                        Record Video First
+                      </Button>
+                    )}
                   </div>
                 </article>
               ))}

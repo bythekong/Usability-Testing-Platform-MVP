@@ -248,6 +248,37 @@ test('MVP vertical slice enforces auth, ownership, and lifecycle integrity', asy
     assert.equal(secondReview.status, 409);
   });
 
+  await t.test('tester cannot claim multiple jobs from the same campaign', async () => {
+    // Create a campaign with 2 available jobs
+    const multiJobCampaign = await request('/campaigns', {
+      method: 'POST',
+      headers: auth(owner.token),
+      body: JSON.stringify({
+        targetUrl: 'https://example.com/multi',
+        rewardAmount: 1000,
+        testerCount: 2,
+        tasks: [{ instruction: 'Do something' }]
+      })
+    });
+    const jobs = multiJobCampaign.data.jobs;
+    assert.equal(jobs.length, 2);
+
+    // Claim first job
+    const claim1 = await request('/jobs/' + jobs[0].id + '/claim', {
+      method: 'POST',
+      headers: auth(testerTwo.token)
+    });
+    assert.equal(claim1.status, 200);
+
+    // Attempt to claim second job
+    const claim2 = await request('/jobs/' + jobs[1].id + '/claim', {
+      method: 'POST',
+      headers: auth(testerTwo.token)
+    });
+    assert.equal(claim2.status, 409);
+    assert.equal(claim2.data.error, 'You have already claimed a job for this campaign.');
+  });
+
   await t.test('concurrent double submission yields one success', async () => {
     const secondCampaign = await createCampaign(owner.token, 'double-submit');
     const secondJobId = secondCampaign.jobs[0].id;

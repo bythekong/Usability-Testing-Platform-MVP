@@ -31,10 +31,23 @@ const upload = multer({
   limits: { fileSize: 100 * 1024 * 1024 } // 100MB max
 });
 
-router.get('/available', requireAuth, requireRole(Role.TESTER), async (_req: AuthRequest, res: Response) => {
+router.get('/available', requireAuth, requireRole(Role.TESTER), async (req: AuthRequest, res: Response) => {
   try {
+    // Find all campaigns this tester has already interacted with
+    const myJobs = await prisma.jobAssignment.findMany({
+      where: { testerId: req.user!.id },
+      select: { campaignId: true }
+    });
+    const myCampaignIds = myJobs.map(j => j.campaignId);
+
     const jobs = await prisma.jobAssignment.findMany({
-      where: { status: JobStatus.AVAILABLE, testerId: null, campaign: { isLocked: false } },
+      where: { 
+        status: JobStatus.AVAILABLE, 
+        testerId: null, 
+        campaign: { isLocked: false },
+        campaignId: { notIn: myCampaignIds }
+      },
+      distinct: ['campaignId'],
       include: {
         campaign: {
           include: { tasks: true }
@@ -88,6 +101,26 @@ router.get('/my', requireAuth, requireRole(Role.TESTER), async (req: AuthRequest
 
 router.post('/:id/claim', requireAuth, requireRole(Role.TESTER), async (req: AuthRequest, res: Response) => {
   try {
+    const jobToClaim = await prisma.jobAssignment.findUnique({
+      where: { id: req.params.id },
+      select: { campaignId: true, status: true, testerId: true }
+    });
+
+    if (!jobToClaim || jobToClaim.status !== JobStatus.AVAILABLE || jobToClaim.testerId !== null) {
+      return res.status(409).json({ error: 'Job is no longer available or does not exist.' });
+    }
+
+    const existingJob = await prisma.jobAssignment.findFirst({
+      where: {
+        campaignId: jobToClaim.campaignId,
+        testerId: req.user!.id
+      }
+    });
+
+    if (existingJob) {
+      return res.status(409).json({ error: 'You have already claimed a job for this campaign.' });
+    }
+
     const result = await prisma.jobAssignment.updateMany({
       where: {
         id: req.params.id,
