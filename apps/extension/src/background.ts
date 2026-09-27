@@ -46,7 +46,11 @@ function matchesTarget(currentUrl: string, targetUrl: string): boolean {
     const current = new URL(currentUrl);
     const target = new URL(targetUrl);
 
-    if (current.origin !== target.origin) return false;
+    // Remove 'www.' prefix for comparison to allow cross-subdomain testing
+    const currentHost = current.hostname.replace(/^www\./, '');
+    const targetHost = target.hostname.replace(/^www\./, '');
+
+    if (currentHost !== targetHost) return false;
     return true;
   } catch {
     return false;
