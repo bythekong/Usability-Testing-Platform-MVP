@@ -24,6 +24,7 @@ interface TesterJob {
     targetUrl: string;
     rewardAmount: number;
     currency: string;
+    isLocked: boolean;
     tasks: Task[];
   };
   responses?: ResponseInfo[];
