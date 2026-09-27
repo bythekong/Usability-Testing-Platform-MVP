@@ -15,8 +15,9 @@ module.exports = {
     popup: './src/popup.ts',
     offscreen: './src/offscreen.ts'
   },
+  devtool: false,
   output: {
-    path: path.resolve(__dirname, 'dist'),
+    path: path.resolve(__dirname, process.env.EXTENSION_OUT_DIR || 'dist'),
     filename: '[name].js',
   },
   module: {

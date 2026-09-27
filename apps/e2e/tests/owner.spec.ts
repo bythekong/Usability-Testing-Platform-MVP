@@ -6,12 +6,13 @@ test.describe('Owner Experience', () => {
     resetDb();
 
     // Register and login as OWNER
-    await page.goto('http://localhost:3000/');
-    await page.fill('input[type="email"]', 'owner@example.com');
+    await page.goto('/');
+    const ownerEmail = `owner_ux_${Date.now()}@example.com`;
+    await page.fill('input[type="email"]', ownerEmail);
     await page.fill('input[type="password"]', 'password123');
     await page.selectOption('select', 'OWNER');
     await page.click('button:has-text("Register New Account")');
-    await expect(page).toHaveURL('http://localhost:3000/owner');
+    await expect(page).toHaveURL('/owner');
   });
 
   test('Owner can create a campaign', async ({ page }) => {
@@ -23,7 +24,7 @@ test.describe('Owner Experience', () => {
     // Fill task
     // It already has 1 empty task by default
     await page.fill('textarea[placeholder*="Brief the tester"]', 'This is a scenario');
-    await page.fill('textarea[placeholder*="What should the tester do"]', 'Find the pricing page');
+    await page.fill('input[aria-label="Task 1"]', 'Find the pricing page');
 
     // Submit
     await page.click('button:has-text("Launch Campaign")');
@@ -32,7 +33,7 @@ test.describe('Owner Experience', () => {
     await expect(page.locator('text=Campaign created successfully')).toBeVisible();
 
     // Check if it appears in Campaigns tab
-    await page.click('button:has-text("Campaigns")');
+    await page.click('text="Manage Campaigns"');
     await expect(page.locator('article')).toContainText('https://example.com');
     await expect(page.locator('article')).toContainText('$15.00');
     await expect(page.locator('article')).toContainText('0'); // 0 Job Submissions initially wait it says 3 jobs but submissions are initially 3 total but not submitted, wait it shows length of campaign.jobs which is testerCount (3).

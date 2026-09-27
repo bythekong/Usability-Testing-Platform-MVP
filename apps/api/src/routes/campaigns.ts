@@ -13,7 +13,7 @@ router.post(
   requireAuth,
   requireRole(Role.OWNER),
   [
-    body('targetUrl').isURL(),
+    body('targetUrl').isURL({ require_tld: false }),
     body('rewardAmount').isInt({ min: 1 }),
     body('testerCount').isInt({ min: 1 }),
     body('scenario').optional().isString(),

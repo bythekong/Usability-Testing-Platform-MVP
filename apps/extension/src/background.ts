@@ -75,16 +75,20 @@ async function setupOffscreenDocument(path: string) {
 
 chrome.runtime.onMessageExternal.addListener(
   (request, _sender, sendResponse) => {
+    console.log('RECEIVED EXTERNAL MESSAGE:', request.type);
     if (request.type !== 'SYNC_AUTH') return;
 
     const token = request.token;
     if (typeof token !== 'string' || token.length < 20) {
+      console.log('INVALID TOKEN:', token);
       sendResponse({ success: false, error: 'Invalid token payload.' });
       return;
     }
 
+    console.log('FETCHING API WITH TOKEN...');
     void apiRequest('/auth/me', token)
-      .then(async () => {
+      .then(async (user) => {
+        console.log('API SUCCESS:', user);
         await chrome.storage.local.set({ authToken: token });
         sendResponse({ success: true });
       })
@@ -97,6 +101,7 @@ chrome.runtime.onMessageExternal.addListener(
 );
 
 chrome.runtime.onMessage.addListener((request, _sender, sendResponse) => {
+  console.log('SW: RECEIVED INTERNAL MESSAGE:', request.type);
   if (request.type === 'GET_AUTH_TOKEN') {
     void chrome.storage.local.get(['authToken']).then((result) => {
       sendResponse({ token: result.authToken || null });
