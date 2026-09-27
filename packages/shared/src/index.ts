@@ -48,6 +48,7 @@ export interface TestCampaignDTO {
   rewardAmount: number;
   testerCount: number;
   scenario?: string;
+  isLocked: boolean;
   currency: string;
   paymentStatus: PaymentStatus;
   tasks: TaskDTO[];

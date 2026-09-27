@@ -119,7 +119,7 @@ chrome.runtime.onMessage.addListener((request, _sender, sendResponse) => {
         const jobs = await apiRequest('/jobs/my', result.authToken) as Array<{
           id: string;
           status: string;
-          campaign: { targetUrl: string };
+          campaign: { targetUrl: string, scenario?: string };
         }>;
 
         const activeJob = jobs.find(
@@ -140,32 +140,7 @@ chrome.runtime.onMessage.addListener((request, _sender, sendResponse) => {
     return true;
   }
 
-  if (request.type === 'SUBMIT_JOB') {
-    void chrome.storage.local.get(['authToken']).then(async (result) => {
-      if (!result.authToken) {
-        sendResponse({ success: false, error: 'Extension is not authenticated.' });
-        return;
-      }
 
-      try {
-        const data = await apiRequest(
-          '/jobs/' + request.jobId + '/submit',
-          result.authToken,
-          {
-            method: 'POST',
-            body: JSON.stringify({ responses: request.responses })
-          }
-        );
-        sendResponse({ success: true, data });
-      } catch (error) {
-        sendResponse({
-          success: false,
-          error: error instanceof Error ? error.message : 'Submission failed.'
-        });
-      }
-    });
-    return true;
-  }
   
   if (request.type === 'START_RECORDING') {
     void (async () => {
