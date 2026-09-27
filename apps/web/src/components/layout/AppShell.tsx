@@ -17,14 +17,20 @@ export function AppShell({ children }: AppShellProps) {
 
   React.useEffect(() => {
     const savedState = localStorage.getItem("sidebarCollapsed");
-    if (savedState !== null) {
-      try {
-        setIsCollapsed(JSON.parse(savedState));
-      } catch {
-        localStorage.removeItem("sidebarCollapsed");
+    const currentUser = getUser();
+
+    const timer = window.setTimeout(() => {
+      if (savedState !== null) {
+        try {
+          setIsCollapsed(JSON.parse(savedState));
+        } catch {
+          localStorage.removeItem("sidebarCollapsed");
+        }
       }
-    }
-    setUser(getUser());
+      setUser(currentUser);
+    }, 0);
+
+    return () => window.clearTimeout(timer);
   }, []);
 
   const handleSetCollapsed = (value: boolean) => {
