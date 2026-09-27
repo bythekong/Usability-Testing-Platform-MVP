@@ -115,7 +115,7 @@ function OwnerDashboardContent() {
 
     setCreating(true);
     
-    const payload: any = {
+    const payload: Record<string, unknown> = {
       targetUrl: url,
       rewardAmount: Math.round(rewardAmount * 100), // Convert to cents
       testerCount,

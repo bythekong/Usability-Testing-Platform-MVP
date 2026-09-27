@@ -100,8 +100,8 @@ function TesterDashboardContent() {
       });
       toast.success('Profile saved successfully');
       fetchJobs(); // Re-fetch available jobs in case targeting matches changed
-    } catch (err: any) {
-      toast.error(err.message || 'Failed to save profile');
+    } catch (err: unknown) {
+      toast.error((err as Error).message || 'Failed to save profile');
     }
   }
 
