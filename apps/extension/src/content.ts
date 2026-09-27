@@ -208,7 +208,6 @@ function renderTask() {
   if (isFinished) {
     document.getElementById('ut-instruction')!.innerText = 'All tasks completed!';
     document.getElementById('ut-progress-text')!.innerText = '';
-    document.getElementById('ut-answer')!.style.display = 'none';
     document.getElementById('ut-start-btn')!.style.display = 'none';
     document.getElementById('ut-retake-btn')!.style.display = 'none';
     document.getElementById('ut-submit-btn')!.style.display = 'none';
