@@ -1,0 +1,71 @@
+name: End-to-End Tests
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    timeout-minutes: 15
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: usability_db_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=10
+
+    env:
+      DATABASE_URL: postgresql://postgres:password@localhost:5432/usability_db_test?schema=public
+      JWT_SECRET: ci-only-secret-that-is-long-enough-for-tests
+
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20
+        
+    - name: Install pnpm
+      uses: pnpm/action-setup@v4
+      with:
+        version: 9
+        
+    - name: Install dependencies
+      run: pnpm install --frozen-lockfile
+      
+    - name: Generate Prisma and Migrate
+      run: |
+        pnpm --filter @usability-testing/api db:generate
+        pnpm --filter @usability-testing/api db:migrate:deploy
+      
+    - name: Install Playwright dependencies in apps/e2e
+      run: cd apps/e2e && pnpm install
+
+    - name: Install Playwright Browsers
+      run: cd apps/e2e && npx playwright install --with-deps chromium
+      
+    - name: Build projects (API, Web, Extension)
+      run: pnpm build
+
+    - name: Run Playwright tests
+      run: cd apps/e2e && pnpm test
+      
+    - name: Upload Playwright traces
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: playwright-report
+        path: apps/e2e/playwright-report/
+        retention-days: 7
