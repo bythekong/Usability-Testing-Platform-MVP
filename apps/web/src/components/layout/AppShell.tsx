@@ -1,9 +1,9 @@
 "use client";
 
 import * as React from "react";
+import { Menu } from "lucide-react";
 import { Sidebar } from "./Sidebar";
 import { cn } from "@/lib/utils";
-import { Menu } from "lucide-react";
 import { getUser } from "@/lib/auth";
 
 interface AppShellProps {
@@ -16,21 +16,15 @@ export function AppShell({ children }: AppShellProps) {
   const [user, setUser] = React.useState<{ role: "OWNER" | "TESTER"; email: string; id: string } | null>(null);
 
   React.useEffect(() => {
-    // Load sidebar state from localStorage
     const savedState = localStorage.getItem("sidebarCollapsed");
     if (savedState !== null) {
-      setTimeout(() => {
+      try {
         setIsCollapsed(JSON.parse(savedState));
-      }, 0);
+      } catch {
+        localStorage.removeItem("sidebarCollapsed");
+      }
     }
-
-    // Get current user for the sidebar
-    const currentUser = getUser();
-    if (currentUser) {
-       setTimeout(() => {
-         setUser(currentUser);
-       }, 0);
-    }
+    setUser(getUser());
   }, []);
 
   const handleSetCollapsed = (value: boolean) => {
@@ -50,24 +44,23 @@ export function AppShell({ children }: AppShellProps) {
 
       <main
         className={cn(
-          "transition-all duration-300 ease-in-out min-h-screen flex flex-col",
-          "md:pl-64", // default expanded
-          isCollapsed && "md:pl-20" // collapsed state
+          "min-h-screen transition-[padding] duration-200 ease-out",
+          isCollapsed ? "md:pl-20" : "md:pl-64"
         )}
       >
-        {/* Mobile Header (visible only on mobile) */}
-        <div className="md:hidden flex items-center h-16 px-4 border-b border-border bg-surface shrink-0">
+        <div className="flex h-16 items-center border-b border-border bg-surface px-4 md:hidden">
           <button
+            type="button"
             onClick={() => setIsMobileOpen(true)}
-            className="p-2 -ml-2 rounded-md hover:bg-gray-100 text-muted"
+            className="-ml-2 rounded-md p-2 text-muted transition hover:bg-gray-100 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            aria-label="Open navigation"
           >
-            <Menu className="w-6 h-6" />
+            <Menu className="h-5 w-5" />
           </button>
-          <span className="ml-2 font-semibold text-foreground">Usability Testing</span>
+          <span className="ml-2 font-semibold text-foreground">Usability Hub</span>
         </div>
 
-        {/* Main Content Area */}
-        <div className="flex-1 p-4 md:p-8 max-w-6xl mx-auto w-full">
+        <div className="mx-auto w-full max-w-7xl p-4 sm:p-6 md:p-8">
           {children}
         </div>
       </main>
