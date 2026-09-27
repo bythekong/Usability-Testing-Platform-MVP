@@ -40,13 +40,15 @@ export function AppShell({ children }: AppShellProps) {
 
   return (
     <div className="min-h-screen bg-background">
-      <Sidebar
-        user={user}
-        isCollapsed={isCollapsed}
-        setIsCollapsed={handleSetCollapsed}
-        isMobileOpen={isMobileOpen}
-        setIsMobileOpen={setIsMobileOpen}
-      />
+      <React.Suspense fallback={<div className="hidden w-20 bg-surface md:block" />}>
+        <Sidebar
+          user={user}
+          isCollapsed={isCollapsed}
+          setIsCollapsed={handleSetCollapsed}
+          isMobileOpen={isMobileOpen}
+          setIsMobileOpen={setIsMobileOpen}
+        />
+      </React.Suspense>
 
       <main
         className={cn(

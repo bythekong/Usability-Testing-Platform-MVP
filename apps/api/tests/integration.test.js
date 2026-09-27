@@ -50,6 +50,7 @@ async function createCampaign(token, suffix = '') {
     body: JSON.stringify({
       targetUrl: 'https://example.com/' + suffix,
       rewardAmount: 1000,
+      testerCount: 1,
       tasks: [
         { instruction: 'Find the About section' },
         { instruction: 'Scroll to the bottom of the page' }
@@ -101,6 +102,7 @@ test('MVP vertical slice enforces auth, ownership, and lifecycle integrity', asy
       body: JSON.stringify({
         targetUrl: 'https://example.com',
         rewardAmount: 1000,
+        testerCount: 1,
         tasks: [{ instruction: 'Unauthorized attempt' }]
       })
     });

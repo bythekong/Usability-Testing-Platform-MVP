@@ -36,6 +36,8 @@ model TestCampaign {
   targetUrl       String
   rewardAmount    Int
   currency        String        @default("USD")
+  testerCount     Int           @default(1)
+  scenario        String?       @db.Text
   paymentStatus   PaymentStatus @default(PENDING)
   stripePaymentId String?
   createdAt       DateTime      @default(now())
@@ -47,12 +49,13 @@ model TestCampaign {
 }
 
 model Task {
-  id          String   @id @default(uuid())
-  campaignId  String
-  stepOrder   Int
-  instruction String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id           String   @id @default(uuid())
+  campaignId   String
+  stepOrder    Int
+  instruction  String
+  maxTimeLimit Int      @default(300)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
   campaign  TestCampaign @relation(fields: [campaignId], references: [id])
   responses TaskResponse[]
@@ -91,6 +94,7 @@ model TaskResponse {
   jobId      String
   taskId     String
   answerText String?
+  videoUrl   String?
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 

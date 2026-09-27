@@ -34,6 +34,8 @@ services:
       JWT_SECRET: ${JWT_SECRET}
     ports:
       - "4000:4000"
+    volumes:
+      - ./uploads:/app/uploads
 
   web:
     build:

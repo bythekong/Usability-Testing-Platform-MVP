@@ -37,13 +37,17 @@ export interface TaskDTO {
 export interface CreateCampaignDTO {
   targetUrl: string;
   rewardAmount: number;
-  tasks: Array<{ instruction: string }>;
+  testerCount: number;
+  scenario?: string;
+  tasks: Array<{ instruction: string, maxTimeLimit?: number }>;
 }
 
 export interface TestCampaignDTO {
   id: string;
   targetUrl: string;
   rewardAmount: number;
+  testerCount: number;
+  scenario?: string;
   currency: string;
   paymentStatus: PaymentStatus;
   tasks: TaskDTO[];

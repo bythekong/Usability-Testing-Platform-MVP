@@ -3,16 +3,43 @@ import { body } from 'express-validator';
 import { Role, JobStatus } from '@usability-testing/shared';
 import { Prisma } from '@prisma/client';
 import { prisma } from '../db';
+import multer from 'multer';
+import fs from 'fs';
+import path from 'path';
 import { requireAuth, requireRole, AuthRequest } from '../middleware/auth';
 import { validateRequest } from '../middleware/validate';
 
 const router = Router();
 
+// Setup Multer for video uploads
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const dir = path.join(process.cwd(), 'uploads', 'videos');
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+    cb(null, dir);
+  },
+  filename: (req, file, cb) => {
+    // Generate filename based on jobId and taskId
+    const { id, taskId } = req.params;
+    cb(null, `${id}_${taskId}.webm`);
+  }
+});
+const upload = multer({
+  storage,
+  limits: { fileSize: 100 * 1024 * 1024 } // 100MB max
+});
+
 router.get('/available', requireAuth, requireRole(Role.TESTER), async (_req: AuthRequest, res: Response) => {
   try {
     const jobs = await prisma.jobAssignment.findMany({
       where: { status: JobStatus.AVAILABLE, testerId: null },
-      include: { campaign: true },
+      include: {
+        campaign: {
+          include: { tasks: true }
+        }
+      },
       orderBy: { createdAt: 'desc' }
     });
     res.json(jobs);
@@ -139,13 +166,24 @@ router.post(
           return false;
         }
 
-        await tx.taskResponse.createMany({
-          data: responses.map((response) => ({
-            jobId: job.id,
-            taskId: response.taskId,
-            answerText: response.answerText
-          }))
-        });
+        for (const response of responses) {
+          await tx.taskResponse.upsert({
+            where: {
+              jobId_taskId: {
+                jobId: job.id,
+                taskId: response.taskId
+              }
+            },
+            update: {
+              answerText: response.answerText
+            },
+            create: {
+              jobId: job.id,
+              taskId: response.taskId,
+              answerText: response.answerText
+            }
+          });
+        }
 
         return true;
       });
@@ -199,6 +237,65 @@ router.get('/:id/review', requireAuth, requireRole(Role.OWNER), async (req: Auth
     res.status(500).json({ error: 'Server error' });
   }
 });
+
+router.post(
+  '/:id/tasks/:taskId/video',
+  requireAuth,
+  requireRole(Role.TESTER),
+  upload.single('video'),
+  async (req: AuthRequest, res: Response) => {
+    try {
+      const { id, taskId } = req.params;
+      
+      const job = await prisma.jobAssignment.findUnique({
+        where: { id },
+        include: { campaign: { include: { tasks: true } } }
+      });
+
+      if (!job) {
+        return res.status(404).json({ error: 'Job not found' });
+      }
+      if (job.testerId !== req.user!.id) {
+        return res.status(403).json({ error: 'Unauthorized' });
+      }
+      if (job.status !== JobStatus.CLAIMED) {
+        return res.status(409).json({ error: 'Job must be claimed to upload video' });
+      }
+
+      const task = job.campaign.tasks.find((t: any) => t.id === taskId);
+      if (!task) {
+        return res.status(404).json({ error: 'Task not found in this job' });
+      }
+
+      if (!req.file) {
+        return res.status(400).json({ error: 'No video file provided' });
+      }
+
+      // We use upsert since task responses might be submitted later or we can create a partial response
+      await prisma.taskResponse.upsert({
+        where: {
+          jobId_taskId: {
+            jobId: id,
+            taskId: taskId
+          }
+        },
+        update: {
+          videoUrl: `/uploads/videos/${req.file.filename}`
+        },
+        create: {
+          jobId: id,
+          taskId: taskId,
+          videoUrl: `/uploads/videos/${req.file.filename}`
+        }
+      });
+
+      res.json({ success: true, url: `/uploads/videos/${req.file.filename}` });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Server error' });
+    }
+  }
+);
 
 router.post(
   '/:id/review',
