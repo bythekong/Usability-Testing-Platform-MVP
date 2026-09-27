@@ -10,7 +10,7 @@ test.describe('Owner Experience', () => {
     await page.fill('input[type="email"]', 'owner@example.com');
     await page.fill('input[type="password"]', 'password123');
     await page.selectOption('select', 'OWNER');
-    await page.click('button:has-text("Sign Up")');
+    await page.click('button:has-text("Register New Account")');
     await expect(page).toHaveURL('http://localhost:3000/owner');
   });
 

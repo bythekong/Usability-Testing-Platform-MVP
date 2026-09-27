@@ -24,17 +24,17 @@ export default defineConfig({
   ],
   webServer: [
     {
-      command: 'pnpm --filter @usability-testing/api start',
+      command: (process.env.CI ? 'pnpm' : 'npx pnpm') + ' --filter @usability-testing/api start',
       url: 'http://localhost:4001/health',
       reuseExistingServer: !process.env.CI,
       timeout: 120 * 1000,
       env: {
-        DATABASE_URL: process.env.DATABASE_URL || 'postgresql://postgres:postgres@localhost:5432/usability_db_test?schema=public',
+        DATABASE_URL: process.env.DATABASE_URL || (process.env.CI ? 'postgresql://postgres:postgres@localhost:5432/usability_db_test?schema=public' : 'postgresql://postgres:postgres@localhost:5433/usability_db_test?schema=public'),
         PORT: '4001'
       }
     },
     {
-      command: 'pnpm --filter web dev',
+      command: (process.env.CI ? 'pnpm' : 'npx pnpm') + ' --filter web dev',
       url: 'http://localhost:3000',
       reuseExistingServer: !process.env.CI,
       timeout: 120 * 1000,

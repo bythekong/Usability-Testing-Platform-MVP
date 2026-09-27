@@ -14,7 +14,7 @@ test.describe('Authentication & Access Control', () => {
     await page.fill('input[type="email"]', 'owner@example.com');
     await page.fill('input[type="password"]', 'password123');
     await page.selectOption('select', 'OWNER');
-    await page.click('button:has-text("Sign Up")');
+    await page.click('button:has-text("Register New Account")');
 
     // Should redirect to /owner
     await expect(page).toHaveURL('http://localhost:3000/owner');
@@ -43,7 +43,7 @@ test.describe('Authentication & Access Control', () => {
     await page.fill('input[type="email"]', 'tester@example.com');
     await page.fill('input[type="password"]', 'password123');
     await page.selectOption('select', 'TESTER');
-    await page.click('button:has-text("Sign Up")');
+    await page.click('button:has-text("Register New Account")');
 
     // Should redirect to /tester
     await expect(page).toHaveURL('http://localhost:3000/tester');
@@ -58,7 +58,7 @@ test.describe('Authentication & Access Control', () => {
     await page.fill('input[type="email"]', 'owner2@example.com');
     await page.fill('input[type="password"]', 'password123');
     await page.selectOption('select', 'OWNER');
-    await page.click('button:has-text("Sign Up")');
+    await page.click('button:has-text("Register New Account")');
 
     await expect(page).toHaveURL('http://localhost:3000/owner');
 

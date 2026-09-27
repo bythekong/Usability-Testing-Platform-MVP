@@ -40,7 +40,7 @@ test.describe('Extension Flow', () => {
     await page.fill('input[type="email"]', 'owner_ext@example.com');
     await page.fill('input[type="password"]', 'password123');
     await page.selectOption('select', 'OWNER');
-    await page.click('button:has-text("Sign Up")');
+    await page.click('button:has-text("Register New Account")');
     await expect(page).toHaveURL('http://localhost:3000/owner');
 
     await page.fill('input#target-url', 'https://example.com');
@@ -54,7 +54,7 @@ test.describe('Extension Flow', () => {
     await page.fill('input[type="email"]', 'tester_ext@example.com');
     await page.fill('input[type="password"]', 'password123');
     await page.selectOption('select', 'TESTER');
-    await page.click('button:has-text("Sign Up")');
+    await page.click('button:has-text("Register New Account")');
     await expect(page).toHaveURL('http://localhost:3000/tester');
     
     await page.click('button:has-text("Claim Job")');
