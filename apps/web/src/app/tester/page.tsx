@@ -17,6 +17,7 @@ interface TesterJob {
     targetUrl: string;
     rewardAmount: number;
     currency: string;
+    tasks: { maxTimeLimit: number }[];
   };
 }
 
@@ -32,6 +33,12 @@ interface ExternalChromeRuntime {
 function formatReward(amount: number, currency: string) {
   if (currency === 'USD') return '$' + (amount / 100).toFixed(2);
   return (amount / 100).toFixed(2) + ' ' + currency;
+}
+
+function calculateEstimatedTime(tasks: { maxTimeLimit: number }[]) {
+  if (!tasks || tasks.length === 0) return '0 min';
+  const totalSeconds = tasks.reduce((sum, task) => sum + (task.maxTimeLimit || 300), 0);
+  return Math.ceil(totalSeconds / 60) + ' min';
 }
 
 function badgeTone(status: JobStatus): 'success' | 'warning' | 'danger' | 'neutral' {
@@ -186,9 +193,10 @@ export default function TesterDashboard() {
                   <h3 className="truncate text-base font-semibold text-foreground">{job.campaign.targetUrl}</h3>
                 </div>
 
-                <p className="mt-3 text-sm leading-5 text-muted">
-                  Open this URL in a new tab with the extension connected to start testing.
-                </p>
+                <div className="mt-3 flex flex-col gap-1 text-sm text-muted">
+                  <p>Open this URL in a new tab with the extension connected to start testing.</p>
+                  <p className="font-medium">Estimated time: ~{calculateEstimatedTime(job.campaign.tasks)}</p>
+                </div>
 
                 <a
                   href={job.campaign.targetUrl}
@@ -227,7 +235,10 @@ export default function TesterDashboard() {
                   </span>
                 </div>
                 <h3 className="mt-4 truncate text-base font-semibold text-foreground">{job.campaign.targetUrl}</h3>
-                <p className="mt-1 text-sm text-muted">Usability testing job</p>
+                <div className="mt-1 flex items-center justify-between text-sm text-muted">
+                  <span>Usability testing job</span>
+                  <span>~{calculateEstimatedTime(job.campaign.tasks)}</span>
+                </div>
                 <Button className="mt-5 w-full" onClick={() => void claimJob(job.id)}>
                   Claim Job
                 </Button>

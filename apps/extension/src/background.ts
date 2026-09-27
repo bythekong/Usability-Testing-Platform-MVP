@@ -1,3 +1,4 @@
+export {};
 declare const __API_BASE_URL__: string;
 
 const API_BASE_URL = __API_BASE_URL__.replace(/\/$/, '');
@@ -58,6 +59,22 @@ function matchesTarget(currentUrl: string, targetUrl: string): boolean {
   } catch {
     return false;
   }
+}
+
+let creatingOffscreen: Promise<void> | null = null;
+async function setupOffscreenDocument(path: string) {
+  if (await chrome.offscreen.hasDocument()) return;
+  if (creatingOffscreen) {
+    await creatingOffscreen;
+    return;
+  }
+  creatingOffscreen = chrome.offscreen.createDocument({
+    url: path,
+    reasons: [chrome.offscreen.Reason.USER_MEDIA, chrome.offscreen.Reason.DISPLAY_MEDIA],
+    justification: 'Recording usability test sessions'
+  });
+  await creatingOffscreen;
+  creatingOffscreen = null;
 }
 
 chrome.runtime.onMessageExternal.addListener(
@@ -148,5 +165,64 @@ chrome.runtime.onMessage.addListener((request, _sender, sendResponse) => {
       }
     });
     return true;
+  }
+  
+  if (request.type === 'START_RECORDING') {
+    void (async () => {
+      try {
+        await setupOffscreenDocument('offscreen.html');
+        const response = await chrome.runtime.sendMessage({ target: 'offscreen', type: 'START_RECORDING' });
+        sendResponse(response);
+      } catch (e) {
+        sendResponse({ error: e instanceof Error ? e.message : 'Failed to start recording' });
+      }
+    })();
+    return true;
+  }
+  
+  if (request.type === 'STOP_RECORDING') {
+    void (async () => {
+      try {
+        const { authToken } = await chrome.storage.local.get(['authToken']);
+        const response = await chrome.runtime.sendMessage({
+          target: 'offscreen', 
+          type: 'STOP_RECORDING', 
+          jobId: request.jobId, 
+          taskId: request.taskId, 
+          token: authToken 
+        });
+        sendResponse(response);
+      } catch (e) {
+        sendResponse({ error: e instanceof Error ? e.message : 'Failed to stop recording' });
+      }
+    })();
+    return true;
+  }
+  
+  if (request.type === 'RETAKE_RECORDING') {
+    void (async () => {
+      try {
+        const response = await chrome.runtime.sendMessage({ target: 'offscreen', type: 'RETAKE_RECORDING' });
+        sendResponse(response);
+      } catch (e) {
+        sendResponse({ error: e instanceof Error ? e.message : 'Failed to retake' });
+      }
+    })();
+    return true;
+  }
+  
+  if (request.type === 'ABORT_UPLOAD') {
+    chrome.runtime.sendMessage({ type: 'ABORT_UPLOAD' });
+    sendResponse({ success: true });
+    // return false because it's sync
+  }
+
+  if (request.type === 'UPLOAD_PROGRESS') {
+    // Relay to content scripts
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      if (tabs[0]?.id) {
+        chrome.tabs.sendMessage(tabs[0].id, request);
+      }
+    });
   }
 });

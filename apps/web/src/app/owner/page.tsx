@@ -14,6 +14,7 @@ import { TargetIcon } from '@/components/ui/TargetIcon';
 interface ReviewResponse {
   id: string;
   answerText: string | null;
+  videoUrl: string | null;
   task: {
     id: string;
     stepOrder: number;
@@ -25,8 +26,6 @@ interface ReviewDetails {
   id: string;
   status: JobStatus;
   tester: { id: string; email: string } | null;
-  videoUrl: string | null;
-  videoMetadata: unknown;
   responses: ReviewResponse[];
 }
 
@@ -49,7 +48,7 @@ function shortId(id: string) {
 export default function OwnerDashboard() {
   const [campaigns, setCampaigns] = useState<TestCampaignDTO[]>([]);
   const [url, setUrl] = useState('');
-  const [tasks, setTasks] = useState([{ instruction: '' }]);
+  const [tasks, setTasks] = useState([{ instruction: '', maxTimeLimit: 300 }]);
   const [reviews, setReviews] = useState<Record<string, ReviewDetails>>({});
   const [expandedJobId, setExpandedJobId] = useState<string | null>(null);
   const [error, setError] = useState('');
@@ -99,7 +98,7 @@ export default function OwnerDashboard() {
         })
       });
       setUrl('');
-      setTasks([{ instruction: '' }]);
+      setTasks([{ instruction: '', maxTimeLimit: 300 }]);
       await fetchCampaigns();
     } catch (caught) {
       alert(caught instanceof Error ? caught.message : 'Failed to create campaign');
@@ -178,37 +177,59 @@ export default function OwnerDashboard() {
 
             <div>
               <p className="mb-2 text-sm font-medium text-foreground">Task Instructions</p>
-              <div className="space-y-2">
+              <div className="space-y-4">
                 {tasks.map((task, index) => (
-                  <div key={index} className="flex items-center gap-2">
+                  <div key={index} className="flex flex-col gap-2 rounded-lg border border-border p-4">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-semibold">Task {index + 1}</span>
+                      {tasks.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => setTasks((current) => current.filter((_, taskIndex) => taskIndex !== index))}
+                          className="rounded-md p-1 text-muted transition hover:bg-red-50 hover:text-red-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                          title="Remove task"
+                        >
+                          <X className="h-4 w-4" />
+                        </button>
+                      )}
+                    </div>
+                    
                     <Input
                       required
                       value={task.instruction}
                       onChange={(event) => {
                         const nextTasks = [...tasks];
-                        nextTasks[index] = { instruction: event.target.value };
+                        nextTasks[index] = { ...nextTasks[index], instruction: event.target.value };
                         setTasks(nextTasks);
                       }}
-                      placeholder={'Step ' + (index + 1) + ' (e.g. Find pricing)'}
+                      placeholder="e.g. Find pricing"
                       aria-label={'Task ' + (index + 1)}
                     />
-                    {tasks.length > 1 && (
-                      <button
-                        type="button"
-                        onClick={() => setTasks((current) => current.filter((_, taskIndex) => taskIndex !== index))}
-                        className="rounded-md p-2 text-muted transition hover:bg-red-50 hover:text-red-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-                        title="Remove task"
-                      >
-                        <X className="h-4 w-4" />
-                      </button>
-                    )}
+                    
+                    <div className="flex items-center gap-2">
+                      <label className="text-xs text-muted">Time Limit (mins):</label>
+                      <Input
+                        required
+                        type="number"
+                        min="1"
+                        max="5"
+                        value={task.maxTimeLimit / 60}
+                        onChange={(event) => {
+                          const val = parseInt(event.target.value) || 1;
+                          const nextTasks = [...tasks];
+                          nextTasks[index] = { ...nextTasks[index], maxTimeLimit: Math.min(5, Math.max(1, val)) * 60 };
+                          setTasks(nextTasks);
+                        }}
+                        className="w-20 h-8 text-sm"
+                      />
+                    </div>
                   </div>
                 ))}
               </div>
 
               <button
                 type="button"
-                onClick={() => setTasks([...tasks, { instruction: '' }])}
+                onClick={() => setTasks([...tasks, { instruction: '', maxTimeLimit: 300 }])}
                 className="mt-3 inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
               >
                 <Plus className="h-4 w-4" />
@@ -262,7 +283,7 @@ export default function OwnerDashboard() {
                     </div>
 
                     <div className="space-y-2">
-                      {campaign.jobs.map((job) => {
+                      {campaign.jobs.map((job: any) => {
                         const review = reviews[job.id];
                         const canInspect = [JobStatus.SUBMITTED, JobStatus.APPROVED, JobStatus.REJECTED].includes(job.status);
                         const expanded = expandedJobId === job.id;
@@ -305,13 +326,24 @@ export default function OwnerDashboard() {
                                         <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">
                                           {response.task.stepOrder}
                                         </span>
-                                        <div className="min-w-0">
+                                        <div className="min-w-0 w-full">
                                           <p className="text-xs font-semibold uppercase tracking-wide text-muted">Task</p>
                                           <p className="mt-1 text-sm font-medium text-foreground">{response.task.instruction}</p>
                                           <p className="mt-3 text-xs font-semibold uppercase tracking-wide text-muted">Tester response</p>
                                           <p className="mt-1 whitespace-pre-wrap text-sm leading-6 text-foreground">
-                                            {response.answerText || '(No answer)'}
+                                            {response.answerText || '(No text answer)'}
                                           </p>
+                                          {(response as any).videoUrl && (
+                                            <div className="mt-4">
+                                              <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted">Task Recording</p>
+                                              <video 
+                                                src={`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}${(response as any).videoUrl}`} 
+                                                controls 
+                                                className="w-full rounded-md border border-border" 
+                                                style={{ maxHeight: '300px' }}
+                                              />
+                                            </div>
+                                          )}
                                         </div>
                                       </div>
                                     </li>

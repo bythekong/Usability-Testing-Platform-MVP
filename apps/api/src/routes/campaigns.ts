@@ -31,7 +31,8 @@ router.post(
           tasks: {
             create: tasks.map((task: any, index: number) => ({
               stepOrder: index + 1,
-              instruction: task.instruction
+              instruction: task.instruction,
+              maxTimeLimit: task.maxTimeLimit || 300
             }))
           },
           // Create 1 available job for this MVP by default
