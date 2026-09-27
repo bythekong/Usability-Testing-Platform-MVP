@@ -28,7 +28,7 @@ let remainingTime = 0;
 let uploadProgress = 0;
 
 function injectWelcomeModal() {
-  if (!currentJob || !currentJob.campaign.scenario || document.getElementById('ut-welcome-modal')) return;
+  if (!currentJob || document.getElementById('ut-welcome-modal')) return;
 
   const modal = document.createElement('div');
   modal.id = 'ut-welcome-modal';
@@ -54,7 +54,8 @@ function injectWelcomeModal() {
     overflowY: 'auto'
   });
 
-  const htmlScenario = marked.parse(currentJob.campaign.scenario) as string;
+  const scenarioText = currentJob.campaign.scenario || 'Please follow the instructions on the bottom right to complete the test.';
+  const htmlScenario = marked.parse(scenarioText) as string;
 
   content.innerHTML = `
     <h2 style="margin-top:0; color:#111827; font-size:24px;">Welcome to this Usability Test</h2>
@@ -75,27 +76,63 @@ function injectWelcomeModal() {
 function injectOverlay() {
   if (!currentJob || document.getElementById('usability-testing-overlay')) return;
 
-  const overlay = document.createElement('div');
-  overlay.id = 'usability-testing-overlay';
-  Object.assign(overlay.style, {
+  const overlayContainer = document.createElement('div');
+  overlayContainer.id = 'usability-testing-overlay-container';
+  Object.assign(overlayContainer.style, {
     position: 'fixed',
     bottom: '20px',
     right: '20px',
+    zIndex: '999999',
+    fontFamily: 'system-ui, sans-serif',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'flex-end',
+    gap: '12px'
+  });
+
+  // Floating Minimized Button
+  const minBtn = document.createElement('button');
+  minBtn.id = 'ut-minimized-btn';
+  Object.assign(minBtn.style, {
+    width: '48px',
+    height: '48px',
+    borderRadius: '50%',
+    backgroundColor: '#2563eb',
+    color: 'white',
+    border: 'none',
+    boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
+    cursor: 'pointer',
+    display: 'none',
+    justifyContent: 'center',
+    alignItems: 'center',
+    fontSize: '24px',
+    fontWeight: 'bold',
+    transition: 'transform 0.2s',
+    padding: '0'
+  });
+  minBtn.innerHTML = '📋';
+  minBtn.title = 'Open Usability Test Panel';
+
+  const overlay = document.createElement('div');
+  overlay.id = 'usability-testing-overlay';
+  Object.assign(overlay.style, {
     width: '350px',
     backgroundColor: 'white',
     border: '2px solid #2563eb',
     borderRadius: '8px',
     padding: '16px',
-    zIndex: '999999',
     boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
-    fontFamily: 'system-ui, sans-serif',
-    color: '#1f2937'
+    color: '#1f2937',
+    display: 'block'
   });
 
   overlay.innerHTML = `
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
       <h3 style="margin: 0; font-size: 16px; font-weight: bold;">Active Usability Test</h3>
-      ${currentJob.campaign.scenario ? '<button id="ut-view-brief-btn" style="background: none; border: none; color: #2563eb; font-size: 12px; cursor: pointer; text-decoration: underline;">📖 View Brief</button>' : ''}
+      <div style="display: flex; gap: 8px;">
+        <button id="ut-view-brief-btn" style="background: none; border: none; color: #2563eb; font-size: 12px; cursor: pointer; text-decoration: underline;">📖 Brief</button>
+        <button id="ut-minimize-btn" style="background: none; border: none; color: #6b7280; font-size: 14px; cursor: pointer; padding: 0 4px;" title="Minimize">_</button>
+      </div>
     </div>
     <div id="ut-progress-text" style="font-size: 12px; margin-bottom: 8px; color: #6b7280;"></div>
     <p id="ut-instruction" style="margin: 0 0 12px 0; font-size: 14px; font-weight: bold;"></p>
@@ -122,7 +159,19 @@ function injectOverlay() {
     </div>
   `;
 
-  document.body.appendChild(overlay);
+  overlayContainer.appendChild(minBtn);
+  overlayContainer.appendChild(overlay);
+  document.body.appendChild(overlayContainer);
+
+  document.getElementById('ut-minimize-btn')!.onclick = () => {
+    overlay.style.display = 'none';
+    minBtn.style.display = 'flex';
+  };
+
+  minBtn.onclick = () => {
+    minBtn.style.display = 'none';
+    overlay.style.display = 'block';
+  };
 
   document.getElementById('ut-start-btn')!.onclick = startTask;
   document.getElementById('ut-retake-btn')!.onclick = retakeTask;
@@ -133,8 +182,12 @@ function injectOverlay() {
   const briefBtn = document.getElementById('ut-view-brief-btn');
   if (briefBtn) {
     briefBtn.onclick = () => {
-      const modal = document.getElementById('ut-welcome-modal');
-      if (modal) modal.style.display = 'flex';
+      let modal = document.getElementById('ut-welcome-modal');
+      if (modal) {
+        modal.style.display = 'flex';
+      } else {
+        injectWelcomeModal();
+      }
     };
   }
 

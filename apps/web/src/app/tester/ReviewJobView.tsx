@@ -139,8 +139,8 @@ export function ReviewJobView({ job, onBack, onSubmitted }: Props) {
       <div className="flex justify-end pt-4 border-t border-border">
         <Button
           onClick={handleSubmit}
-          disabled={submitting}
-          className="px-8 py-2 font-bold text-white bg-green-600 hover:bg-green-700"
+          disabled={submitting || !job.campaign.tasks.every(t => !!answers[t.id]?.trim())}
+          className="px-8 py-2 font-bold text-white bg-green-600 hover:bg-green-700 disabled:opacity-50"
         >
           {submitting ? 'Submitting...' : 'Submit Final Review to Owner'}
         </Button>
