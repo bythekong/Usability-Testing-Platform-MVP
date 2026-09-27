@@ -20,6 +20,12 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  // Tester Profile fields
+  age            Int?
+  gender         String?
+  occupation     String?
+  itExpertise    String?
+
   ownedCampaigns TestCampaign[]  @relation("CampaignOwner")
   jobAssignments JobAssignment[] @relation("JobTester")
 }
@@ -41,6 +47,13 @@ model TestCampaign {
   paymentStatus   PaymentStatus @default(PENDING)
   stripePaymentId String?
   isLocked        Boolean       @default(false)
+
+  // Targeting fields
+  targetMinAge       Int?
+  targetMaxAge       Int?
+  targetGenders      String[]
+  targetItExpertises String[]
+
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
 

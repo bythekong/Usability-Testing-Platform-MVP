@@ -65,6 +65,12 @@ function TesterDashboardContent() {
   const [userEmail, setUserEmail] = useState('');
   const [reviewingJobId, setReviewingJobId] = useState<string | null>(null);
 
+  // Profile states
+  const [age, setAge] = useState<string>('');
+  const [gender, setGender] = useState<string>('');
+  const [occupation, setOccupation] = useState<string>('');
+  const [itExpertise, setItExpertise] = useState<string>('');
+
   async function fetchJobs() {
     try {
       const [available, mine] = await Promise.all([
@@ -80,18 +86,38 @@ function TesterDashboardContent() {
     }
   }
 
+  async function saveProfile() {
+    try {
+      const payload = {
+        age: age ? parseInt(age) : null,
+        gender: gender || null,
+        occupation: occupation || null,
+        itExpertise: itExpertise || null,
+      };
+      await apiFetch('/auth/profile', {
+        method: 'PUT',
+        body: JSON.stringify(payload)
+      });
+      toast.success('Profile saved successfully');
+      fetchJobs(); // Re-fetch available jobs in case targeting matches changed
+    } catch (err: unknown) {
+      toast.error((err as Error).message || 'Failed to save profile');
+    }
+  }
+
   useEffect(() => {
     let cancelled = false;
 
-    // Load email for settings
-    try {
-      const u = JSON.parse(localStorage.getItem('user') || '{}');
-      if (u.email) {
-        Promise.resolve().then(() => setUserEmail(u.email));
+    // Load email and profile for settings
+    apiFetch('/auth/me').then(u => {
+      if (!cancelled) {
+        if (u.email) setUserEmail(u.email);
+        if (u.age) setAge(u.age.toString());
+        if (u.gender) setGender(u.gender);
+        if (u.occupation) setOccupation(u.occupation);
+        if (u.itExpertise) setItExpertise(u.itExpertise);
       }
-    } catch {
-      // ignore
-    }
+    }).catch(() => {});
 
     Promise.all([
       apiFetch('/jobs/available'),
@@ -322,14 +348,49 @@ function TesterDashboardContent() {
   if (currentTab === 'settings') {
     return (
       <>
-        <PageHeader title="Account Settings" description="Manage your account and payout methods." />
+        <PageHeader title="Account Settings" description="Manage your account, demographics, and payout methods." />
         <div className="max-w-2xl space-y-6">
           <section className="rounded-xl border border-border bg-surface p-6 shadow-sm">
             <h2 className="text-lg font-semibold text-foreground mb-4">Profile Information</h2>
             <FormField label="Email Address" htmlFor="email">
               <Input id="email" type="email" value={userEmail} readOnly disabled />
             </FormField>
-            <p className="mt-2 text-xs text-muted">Your email is managed by your authentication provider.</p>
+            <p className="mt-2 text-xs text-muted mb-4">Your email is managed by your authentication provider.</p>
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              <FormField label="Age" htmlFor="age">
+                <Input id="age" type="number" min="13" max="120" value={age} onChange={e => setAge(e.target.value)} placeholder="e.g. 25" />
+              </FormField>
+              
+              <div className="space-y-1">
+                <label className="text-sm font-medium leading-none text-foreground">Gender</label>
+                <select 
+                  className="flex h-10 w-full rounded-md border border-input bg-surface px-3 py-2 text-sm ring-offset-background placeholder:text-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  value={gender} onChange={e => setGender(e.target.value)}>
+                  <option value="">Select...</option>
+                  <option value="MALE">Male</option>
+                  <option value="FEMALE">Female</option>
+                  <option value="OTHER">Other</option>
+                </select>
+              </div>
+
+              <FormField label="Occupation" htmlFor="occupation">
+                <Input id="occupation" type="text" value={occupation} onChange={e => setOccupation(e.target.value)} placeholder="e.g. Student, Designer" />
+              </FormField>
+              
+              <div className="space-y-1">
+                <label className="text-sm font-medium leading-none text-foreground">IT Expertise</label>
+                <select 
+                  className="flex h-10 w-full rounded-md border border-input bg-surface px-3 py-2 text-sm ring-offset-background placeholder:text-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  value={itExpertise} onChange={e => setItExpertise(e.target.value)}>
+                  <option value="">Select...</option>
+                  <option value="BEGINNER">Beginner</option>
+                  <option value="INTERMEDIATE">Intermediate</option>
+                  <option value="EXPERT">Expert</option>
+                </select>
+              </div>
+            </div>
+            <Button className="mt-6" onClick={saveProfile}>Save Profile</Button>
           </section>
 
           <section className="rounded-xl border border-border bg-surface p-6 shadow-sm">

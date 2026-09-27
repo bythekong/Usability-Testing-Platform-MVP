@@ -18,12 +18,16 @@ router.post(
     body('testerCount').isInt({ min: 1 }),
     body('scenario').optional().isString(),
     body('tasks').isArray({ min: 1 }),
-    body('tasks.*.instruction').isString().notEmpty()
+    body('tasks.*.instruction').isString().notEmpty(),
+    body('targetMinAge').optional().isInt(),
+    body('targetMaxAge').optional().isInt(),
+    body('targetGenders').optional().isArray(),
+    body('targetItExpertises').optional().isArray()
   ],
   validateRequest,
   async (req: AuthRequest, res: Response) => {
     try {
-      const { targetUrl, rewardAmount, testerCount, scenario, tasks } = req.body;
+      const { targetUrl, rewardAmount, testerCount, scenario, tasks, targetMinAge, targetMaxAge, targetGenders, targetItExpertises } = req.body;
 
       const campaign = await prisma.testCampaign.create({
         data: {
@@ -32,6 +36,10 @@ router.post(
           rewardAmount,
           testerCount,
           scenario,
+          targetMinAge,
+          targetMaxAge,
+          targetGenders: targetGenders || [],
+          targetItExpertises: targetItExpertises || [],
           tasks: {
             create: tasks.map((task: any, index: number) => ({
               stepOrder: index + 1,
