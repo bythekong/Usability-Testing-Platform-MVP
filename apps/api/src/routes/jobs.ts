@@ -33,6 +33,11 @@ const upload = multer({
 
 router.get('/available', requireAuth, requireRole(Role.TESTER), async (req: AuthRequest, res: Response) => {
   try {
+    const user = await prisma.user.findUnique({ where: { id: req.user!.id } });
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
     // Find all campaigns this tester has already interacted with
     const myJobs = await prisma.jobAssignment.findMany({
       where: { testerId: req.user!.id },
@@ -55,8 +60,35 @@ router.get('/available', requireAuth, requireRole(Role.TESTER), async (req: Auth
       },
       orderBy: { createdAt: 'desc' }
     });
-    res.json(jobs);
-  } catch {
+
+    // In-memory filter for demographic targeting
+    const filteredJobs = jobs.filter(job => {
+      const c = job.campaign;
+      
+      // Age Check
+      if (c.targetMinAge !== null) {
+        if (!user.age || user.age < c.targetMinAge) return false;
+      }
+      if (c.targetMaxAge !== null) {
+        if (!user.age || user.age > c.targetMaxAge) return false;
+      }
+
+      // Gender Check
+      if (c.targetGenders && c.targetGenders.length > 0) {
+        if (!user.gender || !c.targetGenders.includes(user.gender)) return false;
+      }
+
+      // IT Expertise Check
+      if (c.targetItExpertises && c.targetItExpertises.length > 0) {
+        if (!user.itExpertise || !c.targetItExpertises.includes(user.itExpertise)) return false;
+      }
+
+      return true;
+    });
+
+    res.json(filteredJobs);
+  } catch (error) {
+    console.error(error);
     res.status(500).json({ error: 'Server error' });
   }
 });

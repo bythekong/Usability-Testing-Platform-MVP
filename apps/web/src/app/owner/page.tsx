@@ -57,6 +57,13 @@ function OwnerDashboardContent() {
   const [rewardAmount, setRewardAmount] = useState(10);
   const [testerCount, setTesterCount] = useState(1);
   const [scenario, setScenario] = useState('');
+  
+  // Targeting
+  const [targetMinAge, setTargetMinAge] = useState<string>('');
+  const [targetMaxAge, setTargetMaxAge] = useState<string>('');
+  const [targetGender, setTargetGender] = useState<string>('');
+  const [targetItExpertise, setTargetItExpertise] = useState<string>('');
+
   const [tasks, setTasks] = useState([{ instruction: '', maxTimeLimit: 300 }]);
   const [reviews, setReviews] = useState<Record<string, ReviewDetails>>({});
   const [expandedJobId, setExpandedJobId] = useState<string | null>(null);
@@ -107,20 +114,31 @@ function OwnerDashboardContent() {
     if (!cleanTasks.length) return;
 
     setCreating(true);
+    
+    const payload: any = {
+      targetUrl: url,
+      rewardAmount: Math.round(rewardAmount * 100), // Convert to cents
+      testerCount,
+      scenario: scenario.trim() || undefined,
+      tasks: cleanTasks
+    };
+    if (targetMinAge) payload.targetMinAge = parseInt(targetMinAge);
+    if (targetMaxAge) payload.targetMaxAge = parseInt(targetMaxAge);
+    if (targetGender) payload.targetGenders = [targetGender];
+    if (targetItExpertise) payload.targetItExpertises = [targetItExpertise];
+
     const createPromise = apiFetch('/campaigns', {
       method: 'POST',
-      body: JSON.stringify({
-        targetUrl: url,
-        rewardAmount: Math.round(rewardAmount * 100), // Convert to cents
-        testerCount,
-        scenario: scenario.trim() || undefined,
-        tasks: cleanTasks
-      })
+      body: JSON.stringify(payload)
     }).then(async () => {
       setUrl('');
       setRewardAmount(10);
       setTesterCount(1);
       setScenario('');
+      setTargetMinAge('');
+      setTargetMaxAge('');
+      setTargetGender('');
+      setTargetItExpertise('');
       setTasks([{ instruction: '', maxTimeLimit: 300 }]);
       await fetchCampaigns();
     });
@@ -416,6 +434,47 @@ function OwnerDashboardContent() {
                   placeholder="5"
                 />
               </FormField>
+            </div>
+
+            <div className="p-4 rounded-lg border border-blue-200 bg-blue-50/50 space-y-4">
+              <h3 className="text-sm font-semibold text-blue-900 flex items-center gap-2">
+                <TargetIcon url="https://a" /> Tester Targeting (Optional)
+              </h3>
+              <p className="text-xs text-blue-700 mb-2">Leave blank to accept any tester. Fill these out to filter who can see and claim this job.</p>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <FormField label="Minimum Age" htmlFor="targetMinAge">
+                  <Input id="targetMinAge" type="number" min="13" max="120" value={targetMinAge} onChange={e => setTargetMinAge(e.target.value)} placeholder="e.g. 18" />
+                </FormField>
+                <FormField label="Maximum Age" htmlFor="targetMaxAge">
+                  <Input id="targetMaxAge" type="number" min="13" max="120" value={targetMaxAge} onChange={e => setTargetMaxAge(e.target.value)} placeholder="e.g. 35" />
+                </FormField>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <label className="text-sm font-medium leading-none text-foreground">Gender</label>
+                  <select 
+                    className="flex h-10 w-full rounded-md border border-input bg-surface px-3 py-2 text-sm ring-offset-background placeholder:text-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                    value={targetGender} onChange={e => setTargetGender(e.target.value)}>
+                    <option value="">Any</option>
+                    <option value="MALE">Male</option>
+                    <option value="FEMALE">Female</option>
+                    <option value="OTHER">Other</option>
+                  </select>
+                </div>
+                <div className="space-y-1">
+                  <label className="text-sm font-medium leading-none text-foreground">IT Expertise</label>
+                  <select 
+                    className="flex h-10 w-full rounded-md border border-input bg-surface px-3 py-2 text-sm ring-offset-background placeholder:text-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                    value={targetItExpertise} onChange={e => setTargetItExpertise(e.target.value)}>
+                    <option value="">Any</option>
+                    <option value="BEGINNER">Beginner</option>
+                    <option value="INTERMEDIATE">Intermediate</option>
+                    <option value="EXPERT">Expert</option>
+                  </select>
+                </div>
+              </div>
             </div>
 
             <FormField label="Scenario / Context (Markdown Supported)" htmlFor="scenario">

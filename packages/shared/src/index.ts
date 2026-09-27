@@ -21,6 +21,10 @@ export interface UserDTO {
   id: string;
   email: string;
   role: Role;
+  age?: number | null;
+  gender?: string | null;
+  occupation?: string | null;
+  itExpertise?: string | null;
 }
 
 export interface AuthResponseDTO {
@@ -40,6 +44,10 @@ export interface CreateCampaignDTO {
   testerCount: number;
   scenario?: string;
   tasks: Array<{ instruction: string, maxTimeLimit?: number }>;
+  targetMinAge?: number;
+  targetMaxAge?: number;
+  targetGenders?: string[];
+  targetItExpertises?: string[];
 }
 
 export interface TestCampaignDTO {
@@ -53,6 +61,10 @@ export interface TestCampaignDTO {
   paymentStatus: PaymentStatus;
   tasks: TaskDTO[];
   jobs: JobAssignmentDTO[];
+  targetMinAge?: number | null;
+  targetMaxAge?: number | null;
+  targetGenders?: string[];
+  targetItExpertises?: string[];
 }
 
 export interface JobAssignmentDTO {
