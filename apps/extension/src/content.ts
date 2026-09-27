@@ -348,6 +348,7 @@ function submitJob() {
 chrome.runtime.sendMessage(
   { type: 'FETCH_ACTIVE_JOB', currentUrl: window.location.href },
   (response) => {
+    console.log('CONTENT SCRIPT: RECEIVED RESPONSE', response, chrome.runtime.lastError);
     if (chrome.runtime.lastError) return;
     if (response?.job) {
       currentJob = response.job as ActiveJob;

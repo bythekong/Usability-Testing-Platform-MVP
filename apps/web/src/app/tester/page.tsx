@@ -160,7 +160,8 @@ function TesterDashboardContent() {
   };
 
   const handleSyncExtension = () => {
-    const extensionId = process.env.NEXT_PUBLIC_EXTENSION_ID;
+    // @ts-ignore
+    const extensionId = window.TEST_EXTENSION_ID || process.env.NEXT_PUBLIC_EXTENSION_ID;
     const token = localStorage.getItem('token');
 
     if (!extensionId) {
@@ -182,21 +183,25 @@ function TesterDashboardContent() {
     }
 
     const syncPromise = new Promise((resolve, reject) => {
-      chromeRuntime.sendMessage(
-        extensionId,
-        { type: 'SYNC_AUTH', token },
-        (response) => {
-          if (chromeRuntime.lastError) {
-            reject(new Error('Extension sync failed: ' + (chromeRuntime.lastError.message || 'Unknown error')));
-            return;
+      try {
+        chromeRuntime.sendMessage(
+          extensionId,
+          { type: 'SYNC_AUTH', token },
+          (response) => {
+            if (chromeRuntime.lastError) {
+              reject(new Error('Extension sync failed: ' + (chromeRuntime.lastError.message || 'Unknown error')));
+              return;
+            }
+            if (response?.success) {
+              resolve('Authentication synchronized with the extension.');
+            } else {
+              reject(new Error(response?.error || 'Extension did not accept the session.'));
+            }
           }
-          if (response?.success) {
-            resolve('Authentication synchronized with the extension.');
-          } else {
-            reject(new Error(response?.error || 'Extension did not accept the session.'));
-          }
-        }
-      );
+        );
+      } catch (e: any) {
+        reject(new Error('Extension sync failed synchronously: ' + e.message));
+      }
     });
 
     toast.promise(syncPromise, {

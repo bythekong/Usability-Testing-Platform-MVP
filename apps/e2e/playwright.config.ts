@@ -7,13 +7,14 @@ dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 
 export default defineConfig({
   testDir: './tests',
+  globalSetup: require.resolve('./global-setup'),
   fullyParallel: false, // Run sequentially for simplicity with DB state
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   workers: 1, // Avoid DB conflicts by running 1 worker
   reporter: 'html',
   use: {
-    baseURL: 'http://localhost:3000',
+    baseURL: 'http://localhost:3001',
     trace: 'on-first-retry',
   },
   projects: [
@@ -26,7 +27,7 @@ export default defineConfig({
     {
       command: (process.env.CI ? 'pnpm' : 'npx pnpm') + ' --filter @usability-testing/api start',
       url: 'http://localhost:4001/health',
-      reuseExistingServer: !process.env.CI,
+      reuseExistingServer: false,
       timeout: 120 * 1000,
       env: {
         DATABASE_URL: process.env.DATABASE_URL || (process.env.CI ? 'postgresql://postgres:postgres@localhost:5432/usability_db_test?schema=public' : 'postgresql://postgres:postgres@localhost:5433/usability_db_test?schema=public'),
@@ -34,13 +35,13 @@ export default defineConfig({
       }
     },
     {
-      command: (process.env.CI ? 'pnpm' : 'npx pnpm') + ' --filter web dev',
-      url: 'http://localhost:3000',
-      reuseExistingServer: !process.env.CI,
+      command: (process.env.CI ? 'pnpm' : 'npx pnpm') + ' --filter web dev --port 3001',
+      url: 'http://localhost:3001',
+      reuseExistingServer: false,
       timeout: 120 * 1000,
       env: {
-        NEXT_PUBLIC_API_URL: 'http://localhost:4001/api',
-        PORT: '3000'
+        NEXT_PUBLIC_API_URL: 'http://localhost:4001',
+        PORT: '3001'
       }
     }
   ],
