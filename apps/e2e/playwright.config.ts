@@ -24,8 +24,8 @@ export default defineConfig({
   ],
   webServer: [
     {
-      command: 'npx pnpm --filter @usability-testing/api start',
-      url: 'http://localhost:4001',
+      command: 'pnpm --filter @usability-testing/api start',
+      url: 'http://localhost:4001/health',
       reuseExistingServer: !process.env.CI,
       timeout: 120 * 1000,
       env: {
@@ -34,7 +34,7 @@ export default defineConfig({
       }
     },
     {
-      command: 'npx pnpm --filter web dev',
+      command: 'pnpm --filter web dev',
       url: 'http://localhost:3000',
       reuseExistingServer: !process.env.CI,
       timeout: 120 * 1000,
