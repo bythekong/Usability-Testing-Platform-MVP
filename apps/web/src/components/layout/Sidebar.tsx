@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import {
   Briefcase,
   FolderKanban,
@@ -11,8 +11,10 @@ import {
   PanelLeftClose,
   PanelLeftOpen,
   Search,
+  Settings,
   User as UserIcon,
   X,
+  Plug,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { logout } from "@/lib/auth";
@@ -37,7 +39,10 @@ export function Sidebar({
   setIsMobileOpen,
 }: SidebarProps) {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const router = useRouter();
+  
+  const currentTab = searchParams.get("tab");
 
   const handleLogout = () => {
     logout();
@@ -46,13 +51,15 @@ export function Sidebar({
 
   const navItems = user?.role === "OWNER"
     ? [
-        { name: "Dashboard", href: "/owner", icon: LayoutDashboard },
-        { name: "Campaigns", href: "/owner#campaigns", icon: FolderKanban },
+        { name: "Create Campaign", href: "/owner", id: null, icon: LayoutDashboard },
+        { name: "Manage Campaigns", href: "/owner?tab=campaigns", id: "campaigns", icon: FolderKanban },
+        { name: "Settings", href: "/owner?tab=settings", id: "settings", icon: Settings },
       ]
     : [
-        { name: "Available Jobs", href: "/tester#available-jobs", icon: Search },
-        { name: "My Jobs", href: "/tester#my-jobs", icon: Briefcase },
-        { name: "Extension Sync", href: "/tester#extension-sync", icon: LayoutDashboard },
+        { name: "Available Jobs", href: "/tester", id: null, icon: Search },
+        { name: "My Jobs", href: "/tester?tab=my-jobs", id: "my-jobs", icon: Briefcase },
+        { name: "Extension Setup", href: "/tester?tab=extension-sync", id: "extension-sync", icon: Plug },
+        { name: "Settings", href: "/tester?tab=settings", id: "settings", icon: Settings },
       ];
 
   const sidebarContent = (
@@ -82,10 +89,7 @@ export function Sidebar({
 
       <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-4">
         {navItems.map((item) => {
-          const routeHref = item.href.split("#")[0];
-          const isActive =
-            (user?.role === "OWNER" && item.name === "Dashboard" && pathname === routeHref) ||
-            (user?.role === "TESTER" && item.name === "Available Jobs" && pathname === routeHref);
+          const isActive = currentTab === item.id;
           const Icon = item.icon;
 
           return (

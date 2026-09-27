@@ -36,6 +36,8 @@ model TestCampaign {
   targetUrl       String
   rewardAmount    Int
   currency        String        @default("USD")
+  testerCount     Int           @default(1)
+  scenario        String?       @db.Text
   paymentStatus   PaymentStatus @default(PENDING)
   stripePaymentId String?
   createdAt       DateTime      @default(now())

@@ -166,13 +166,24 @@ router.post(
           return false;
         }
 
-        await tx.taskResponse.createMany({
-          data: responses.map((response) => ({
-            jobId: job.id,
-            taskId: response.taskId,
-            answerText: response.answerText
-          }))
-        });
+        for (const response of responses) {
+          await tx.taskResponse.upsert({
+            where: {
+              jobId_taskId: {
+                jobId: job.id,
+                taskId: response.taskId
+              }
+            },
+            update: {
+              answerText: response.answerText
+            },
+            create: {
+              jobId: job.id,
+              taskId: response.taskId,
+              answerText: response.answerText
+            }
+          });
+        }
 
         return true;
       });

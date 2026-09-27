@@ -12,10 +12,15 @@ export const metadata: Metadata = {
   description: "Usability testing campaigns and tester workflows",
 };
 
+import { Toaster } from 'react-hot-toast';
+
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={`${inter.variable} h-full antialiased`}>
-      <body className="min-h-full">{children}</body>
+      <body className="min-h-full">
+        {children}
+        <Toaster position="bottom-right" />
+      </body>
     </html>
   );
 }

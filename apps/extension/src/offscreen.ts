@@ -93,7 +93,7 @@ function uploadVideo(blob: Blob, jobId: string, taskId: string, token: string) {
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
     
-    xhr.open('POST', `${__API_BASE_URL__}/api/jobs/${jobId}/tasks/${taskId}/video`, true);
+    xhr.open('POST', `${__API_BASE_URL__}/jobs/${jobId}/tasks/${taskId}/video`, true);
     xhr.setRequestHeader('Authorization', `Bearer ${token}`);
     
     xhr.upload.onprogress = (e) => {

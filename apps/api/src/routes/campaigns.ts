@@ -15,19 +15,23 @@ router.post(
   [
     body('targetUrl').isURL(),
     body('rewardAmount').isInt({ min: 1 }),
+    body('testerCount').isInt({ min: 1 }),
+    body('scenario').optional().isString(),
     body('tasks').isArray({ min: 1 }),
     body('tasks.*.instruction').isString().notEmpty()
   ],
   validateRequest,
   async (req: AuthRequest, res: Response) => {
     try {
-      const { targetUrl, rewardAmount, tasks } = req.body;
+      const { targetUrl, rewardAmount, testerCount, scenario, tasks } = req.body;
 
       const campaign = await prisma.testCampaign.create({
         data: {
           ownerId: req.user!.id,
           targetUrl,
           rewardAmount,
+          testerCount,
+          scenario,
           tasks: {
             create: tasks.map((task: any, index: number) => ({
               stepOrder: index + 1,
@@ -35,11 +39,9 @@ router.post(
               maxTimeLimit: task.maxTimeLimit || 300
             }))
           },
-          // Create 1 available job for this MVP by default
+          // Create N available jobs based on testerCount
           jobs: {
-            create: [
-              { status: 'AVAILABLE' }
-            ]
+            create: Array.from({ length: testerCount }).map(() => ({ status: 'AVAILABLE' }))
           }
         },
         include: { tasks: true, jobs: true }
