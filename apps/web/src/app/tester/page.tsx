@@ -20,8 +20,10 @@ interface TesterJob {
     targetUrl: string;
     rewardAmount: number;
     currency: string;
-    tasks: { maxTimeLimit: number }[];
+    isLocked: boolean;
+    tasks: { id: string; instruction: string; maxTimeLimit: number }[];
   };
+  responses?: { taskId: string; videoUrl: string | null; answerText: string | null }[];
 }
 
 interface ExternalChromeRuntime {
@@ -51,6 +53,8 @@ function badgeTone(status: JobStatus): 'success' | 'warning' | 'danger' | 'neutr
   return 'neutral';
 }
 
+import { ReviewJobView } from './ReviewJobView';
+
 function TesterDashboardContent() {
   const searchParams = useSearchParams();
   const currentTab = searchParams.get('tab') || 'available';
@@ -59,6 +63,7 @@ function TesterDashboardContent() {
   const [myJobs, setMyJobs] = useState<TesterJob[]>([]);
   const [error, setError] = useState('');
   const [userEmail, setUserEmail] = useState('');
+  const [reviewingJobId, setReviewingJobId] = useState<string | null>(null);
 
   async function fetchJobs() {
     try {
@@ -176,6 +181,22 @@ function TesterDashboardContent() {
   };
 
   if (currentTab === 'my-jobs') {
+    if (reviewingJobId) {
+      const job = myJobs.find(j => j.id === reviewingJobId);
+      if (job) {
+        return (
+          <ReviewJobView 
+            job={job} 
+            onBack={() => setReviewingJobId(null)} 
+            onSubmitted={() => {
+              setReviewingJobId(null);
+              fetchJobs();
+            }} 
+          />
+        );
+      }
+    }
+
     return (
       <>
         <PageHeader title="My Jobs" description="Manage your claimed tests and past submissions." />
@@ -192,17 +213,30 @@ function TesterDashboardContent() {
                     <span className="text-sm font-semibold text-foreground">{formatReward(job.campaign.rewardAmount, job.campaign.currency)}</span>
                   </div>
                   <div className="mt-4 flex items-center gap-3">
-                    <TargetIcon url={job.campaign.targetUrl} />
-                    <h3 className="truncate text-base font-semibold text-foreground">{job.campaign.targetUrl}</h3>
+                    <TargetIcon url={job.campaign.isLocked ? 'https://locked.test' : job.campaign.targetUrl} />
+                    <h3 className="truncate text-base font-semibold text-foreground">
+                      {job.campaign.isLocked ? '[Locked by Owner]' : job.campaign.targetUrl}
+                    </h3>
                   </div>
                   <div className="mt-3 flex flex-col gap-1 text-sm text-muted">
                     <p>Open this URL in a new tab with the extension connected to start testing.</p>
                     <p className="font-medium">Estimated time: ~{calculateEstimatedTime(job.campaign.tasks)}</p>
                   </div>
-                  <a href={job.campaign.targetUrl} target="_blank" rel="noreferrer" className="mt-5 inline-flex h-10 w-full items-center justify-center rounded-md bg-primary px-4 text-sm font-medium text-white shadow-sm transition hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary">
-                    Open Target URL
-                    <ExternalLink className="ml-2 h-4 w-4" />
-                  </a>
+                  <div className="mt-5 flex gap-3">
+                    {!job.campaign.isLocked ? (
+                      <a href={job.campaign.targetUrl} target="_blank" rel="noreferrer" className="inline-flex h-10 flex-1 items-center justify-center rounded-md bg-blue-100 px-4 text-sm font-medium text-blue-700 transition hover:bg-blue-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500">
+                        Open URL
+                        <ExternalLink className="ml-2 h-4 w-4" />
+                      </a>
+                    ) : (
+                      <div className="inline-flex h-10 flex-1 items-center justify-center rounded-md bg-gray-100 px-4 text-sm font-medium text-gray-500 cursor-not-allowed">
+                        Locked by Owner
+                      </div>
+                    )}
+                    <Button className="flex-1" onClick={() => setReviewingJobId(job.id)}>
+                      Write Review
+                    </Button>
+                  </div>
                 </article>
               ))}
             </div>
@@ -216,9 +250,11 @@ function TesterDashboardContent() {
               {pastJobs.map((job, index) => (
                 <div key={job.id} className={['flex flex-col gap-3 px-5 py-4 sm:flex-row sm:items-center sm:justify-between', index > 0 ? 'border-t border-border' : ''].join(' ')}>
                   <div className="flex min-w-0 items-center gap-3">
-                    <TargetIcon url={job.campaign.targetUrl} />
+                    <TargetIcon url={job.campaign.isLocked ? 'https://locked.test' : job.campaign.targetUrl} />
                     <div className="min-w-0">
-                      <p className="truncate text-sm font-medium text-foreground">{job.campaign.targetUrl}</p>
+                      <p className="truncate text-sm font-medium text-foreground">
+                        {job.campaign.isLocked ? '[Locked by Owner]' : job.campaign.targetUrl}
+                      </p>
                       <p className="text-xs text-muted">{formatReward(job.campaign.rewardAmount, job.campaign.currency)}</p>
                     </div>
                   </div>

@@ -1,3 +1,5 @@
+import { marked } from 'marked';
+
 interface ActiveTask {
   id: string;
   stepOrder: number;
@@ -9,6 +11,7 @@ interface ActiveJob {
   id: string;
   campaign: {
     targetUrl: string;
+    scenario?: string;
     tasks: ActiveTask[];
   };
 }
@@ -23,6 +26,51 @@ let submitting = false;
 let timerInterval: any = null;
 let remainingTime = 0;
 let uploadProgress = 0;
+
+function injectWelcomeModal() {
+  if (!currentJob || !currentJob.campaign.scenario || document.getElementById('ut-welcome-modal')) return;
+
+  const modal = document.createElement('div');
+  modal.id = 'ut-welcome-modal';
+  Object.assign(modal.style, {
+    position: 'fixed',
+    inset: '0',
+    backgroundColor: 'rgba(0,0,0,0.8)',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: '9999999',
+    fontFamily: 'system-ui, sans-serif'
+  });
+
+  const content = document.createElement('div');
+  Object.assign(content.style, {
+    backgroundColor: 'white',
+    padding: '32px',
+    borderRadius: '12px',
+    maxWidth: '600px',
+    width: '90%',
+    maxHeight: '80vh',
+    overflowY: 'auto'
+  });
+
+  const htmlScenario = marked.parse(currentJob.campaign.scenario) as string;
+
+  content.innerHTML = `
+    <h2 style="margin-top:0; color:#111827; font-size:24px;">Welcome to this Usability Test</h2>
+    <div style="margin:24px 0; color:#374151; font-size:16px; line-height:1.5;">
+      ${htmlScenario}
+    </div>
+    <button id="ut-understand-btn" style="width:100%; background-color:#2563eb; color:white; border:none; padding:12px; border-radius:8px; cursor:pointer; font-weight:bold; font-size:16px;">I Understand & Continue</button>
+  `;
+
+  modal.appendChild(content);
+  document.body.appendChild(modal);
+
+  document.getElementById('ut-understand-btn')!.onclick = () => {
+    modal.style.display = 'none';
+  };
+}
 
 function injectOverlay() {
   if (!currentJob || document.getElementById('usability-testing-overlay')) return;
@@ -45,12 +93,13 @@ function injectOverlay() {
   });
 
   overlay.innerHTML = `
-    <h3 style="margin: 0 0 12px 0; font-size: 16px; font-weight: bold;">Active Usability Test</h3>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+      <h3 style="margin: 0; font-size: 16px; font-weight: bold;">Active Usability Test</h3>
+      ${currentJob.campaign.scenario ? '<button id="ut-view-brief-btn" style="background: none; border: none; color: #2563eb; font-size: 12px; cursor: pointer; text-decoration: underline;">📖 View Brief</button>' : ''}
+    </div>
     <div id="ut-progress-text" style="font-size: 12px; margin-bottom: 8px; color: #6b7280;"></div>
     <p id="ut-instruction" style="margin: 0 0 12px 0; font-size: 14px; font-weight: bold;"></p>
     <div id="ut-timer" style="margin-bottom: 12px; font-size: 18px; font-weight: bold; color: #dc2626; display: none;"></div>
-    
-    <textarea id="ut-answer" placeholder="Your answer / notes..." style="width: 100%; height: 60px; margin-bottom: 12px; padding: 8px; box-sizing: border-box; border: 1px solid #d1d5db; border-radius: 4px;"></textarea>
     
     <div id="ut-upload-container" style="display: none; margin-bottom: 12px;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
@@ -69,7 +118,7 @@ function injectOverlay() {
     </div>
     
     <div id="ut-final-submit" style="display: none; margin-top: 12px;">
-      <button id="ut-finish-job-btn" style="width: 100%; background-color: #16a34a; color: white; border: none; padding: 12px; border-radius: 4px; cursor: pointer; font-weight: bold;">Finish & Submit Test</button>
+      <button id="ut-finish-job-btn" style="width: 100%; background-color: #16a34a; color: white; border: none; padding: 12px; border-radius: 4px; cursor: pointer; font-weight: bold;">Finish Recording</button>
     </div>
   `;
 
@@ -80,6 +129,14 @@ function injectOverlay() {
   document.getElementById('ut-submit-btn')!.onclick = submitTask;
   document.getElementById('ut-cancel-btn')!.onclick = cancelUpload;
   document.getElementById('ut-finish-job-btn')!.onclick = submitJob;
+
+  const briefBtn = document.getElementById('ut-view-brief-btn');
+  if (briefBtn) {
+    briefBtn.onclick = () => {
+      const modal = document.getElementById('ut-welcome-modal');
+      if (modal) modal.style.display = 'flex';
+    };
+  }
 
   renderTask();
 }
@@ -108,10 +165,6 @@ function renderTask() {
   document.getElementById('ut-instruction')!.innerText = 'Task ' + (currentTaskIndex + 1) + ': ' + activeTask.instruction;
   document.getElementById('ut-progress-text')!.innerText = 'Task ' + (currentTaskIndex + 1) + ' of ' + tasks.length;
   
-  const textarea = document.getElementById('ut-answer') as HTMLTextAreaElement;
-  textarea.value = responses[currentTaskIndex]?.answerText || '';
-  textarea.disabled = taskState !== 'RECORDING';
-
   document.getElementById('ut-start-btn')!.style.display = taskState === 'READY' ? 'block' : 'none';
   document.getElementById('ut-retake-btn')!.style.display = taskState === 'RECORDING' ? 'block' : 'none';
   document.getElementById('ut-submit-btn')!.style.display = taskState === 'RECORDING' ? 'block' : 'none';
@@ -172,12 +225,6 @@ function retakeTask() {
 function submitTask() {
   if (taskState !== 'RECORDING') return;
   if (timerInterval) clearInterval(timerInterval);
-  
-  const textarea = document.getElementById('ut-answer') as HTMLTextAreaElement;
-  responses[currentTaskIndex] = {
-    taskId: currentJob!.campaign.tasks[currentTaskIndex].id,
-    answerText: textarea.value
-  };
 
   taskState = 'UPLOADING';
   uploadProgress = 0;
@@ -231,33 +278,14 @@ chrome.runtime.onMessage.addListener((request) => {
 });
 
 function submitJob() {
-  if (!currentJob || submitting) return;
+  if (!currentJob) return;
 
-  submitting = true;
   const btn = document.getElementById('ut-finish-job-btn') as HTMLButtonElement;
   btn.disabled = true;
-  btn.innerText = 'Submitting...';
 
-  chrome.runtime.sendMessage(
-    {
-      type: 'SUBMIT_JOB',
-      jobId: currentJob.id,
-      responses
-    },
-    (response) => {
-      if (chrome.runtime.lastError || response?.error) {
-        submitting = false;
-        alert('Failed to submit job: ' + (chrome.runtime.lastError?.message || response?.error));
-        btn.disabled = false;
-        btn.innerText = 'Finish & Submit Test';
-        return;
-      }
-
-      document.getElementById('usability-testing-overlay')!.innerHTML =
-        '<h3 style="margin:0;color:#16a34a;">Test Submitted Successfully!</h3>' +
-        '<p style="margin-top:8px;font-size:14px;">You can now close this page.</p>';
-    }
-  );
+  document.getElementById('usability-testing-overlay')!.innerHTML =
+    '<h3 style="margin:0;color:#16a34a;">Recording Complete!</h3>' +
+    '<p style="margin-top:8px;font-size:14px;">Please return to the Usability Hub dashboard (My Jobs) to write your final markdown review and submit the test.</p>';
 }
 
 chrome.runtime.sendMessage(
@@ -267,6 +295,7 @@ chrome.runtime.sendMessage(
     if (response?.job) {
       currentJob = response.job as ActiveJob;
       currentJob.campaign.tasks.sort((a, b) => a.stepOrder - b.stepOrder);
+      injectWelcomeModal();
       injectOverlay();
     }
   }

@@ -69,4 +69,29 @@ router.get('/', requireAuth, requireRole(Role.OWNER), async (req: AuthRequest, r
   }
 });
 
+// Lock campaign (OWNER only)
+router.post('/:id/lock', requireAuth, requireRole(Role.OWNER), async (req: AuthRequest, res: Response) => {
+  try {
+    const campaign = await prisma.testCampaign.findUnique({
+      where: { id: req.params.id }
+    });
+
+    if (!campaign) {
+      return res.status(404).json({ error: 'Campaign not found' });
+    }
+    if (campaign.ownerId !== req.user!.id) {
+      return res.status(403).json({ error: 'Unauthorized' });
+    }
+
+    const updated = await prisma.testCampaign.update({
+      where: { id: req.params.id },
+      data: { isLocked: true }
+    });
+
+    res.json(updated);
+  } catch (error) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 export const campaignRoutes = router;

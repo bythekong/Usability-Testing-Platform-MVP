@@ -34,7 +34,7 @@ const upload = multer({
 router.get('/available', requireAuth, requireRole(Role.TESTER), async (_req: AuthRequest, res: Response) => {
   try {
     const jobs = await prisma.jobAssignment.findMany({
-      where: { status: JobStatus.AVAILABLE, testerId: null },
+      where: { status: JobStatus.AVAILABLE, testerId: null, campaign: { isLocked: false } },
       include: {
         campaign: {
           include: { tasks: true }
@@ -57,11 +57,30 @@ router.get('/my', requireAuth, requireRole(Role.TESTER), async (req: AuthRequest
           include: {
             tasks: { orderBy: { stepOrder: 'asc' } }
           }
-        }
+        },
+        responses: true
       },
       orderBy: { createdAt: 'desc' }
     });
-    res.json(jobs);
+
+    const sanitizedJobs = jobs.map(job => {
+      if (job.campaign.isLocked) {
+        return {
+          ...job,
+          campaign: {
+            ...job.campaign,
+            targetUrl: 'https://[LOCKED]'
+          },
+          responses: job.responses.map(r => ({
+            ...r,
+            videoUrl: null
+          }))
+        };
+      }
+      return job;
+    });
+
+    res.json(sanitizedJobs);
   } catch {
     res.status(500).json({ error: 'Server error' });
   }

@@ -3,6 +3,7 @@
 import { useEffect, useState, Suspense } from 'react';
 import { Check, ChevronDown, ChevronUp, Plus, X, Lightbulb } from 'lucide-react';
 import { JobStatus, TestCampaignDTO } from '@usability-testing/shared';
+import ReactMarkdown from 'react-markdown';
 import { apiFetch } from '../../lib/api';
 import { Button } from '@/components/ui/Button';
 import { EmptyState } from '@/components/ui/EmptyState';
@@ -206,11 +207,36 @@ function OwnerDashboardContent() {
                   </div>
 
                   <div className="px-5 py-5">
-                    <div className="mb-3 flex items-center gap-2">
-                      <h4 className="text-sm font-semibold text-foreground">Job Submissions</h4>
-                      <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs text-muted">
-                        {campaign.jobs.length}
-                      </span>
+                    <div className="mb-3 flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <h4 className="text-sm font-semibold text-foreground">Job Submissions</h4>
+                        <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs text-muted">
+                          {campaign.jobs.length}
+                        </span>
+                      </div>
+                      {!campaign.isLocked ? (
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          className="h-8 text-xs font-semibold text-orange-600 hover:text-orange-700 hover:bg-orange-50"
+                          onClick={async () => {
+                            if (!confirm('Are you sure you want to lock this campaign? Testers will no longer be able to see the Target URL or videos.')) return;
+                            try {
+                              await apiFetch('/campaigns/' + campaign.id + '/lock', { method: 'POST' });
+                              toast.success('Campaign locked successfully');
+                              await fetchCampaigns();
+                            } catch (e: unknown) {
+                              toast.error((e as Error).message || 'Failed to lock campaign');
+                            }
+                          }}
+                        >
+                          Lock Campaign (NDA)
+                        </Button>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 text-xs font-semibold text-red-600 bg-red-50 px-2 py-1 rounded-md">
+                          🔒 Locked
+                        </span>
+                      )}
                     </div>
 
                     <div className="space-y-2">
@@ -261,9 +287,13 @@ function OwnerDashboardContent() {
                                           <p className="text-xs font-semibold uppercase tracking-wide text-muted">Task</p>
                                           <p className="mt-1 text-sm font-medium text-foreground">{response.task.instruction}</p>
                                           <p className="mt-3 text-xs font-semibold uppercase tracking-wide text-muted">Tester response</p>
-                                          <p className="mt-1 whitespace-pre-wrap text-sm leading-6 text-foreground">
-                                            {response.answerText || '(No text answer)'}
-                                          </p>
+                                          <div className="mt-1 text-sm leading-6 text-foreground prose prose-sm max-w-none">
+                                            {response.answerText ? (
+                                              <ReactMarkdown>{response.answerText}</ReactMarkdown>
+                                            ) : (
+                                              '(No text answer)'
+                                            )}
+                                          </div>
                                           {response.videoUrl && (
                                             <div className="mt-4">
                                               <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted">Task Recording</p>
@@ -389,14 +419,22 @@ function OwnerDashboardContent() {
             </div>
 
             <FormField label="Scenario / Context (Markdown Supported)" htmlFor="scenario">
-              <textarea
-                id="scenario"
-                className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-50"
-                rows={4}
-                value={scenario}
-                onChange={(e) => setScenario(e.target.value)}
-                placeholder="Brief the tester on the context. E.g. 'Imagine you are a busy mom looking for a quick dinner recipe...'"
-              />
+              <div className="space-y-3">
+                <textarea
+                  id="scenario"
+                  className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-50"
+                  rows={4}
+                  value={scenario}
+                  onChange={(e) => setScenario(e.target.value)}
+                  placeholder="Brief the tester on the context. E.g. 'Imagine you are a busy mom looking for a quick dinner recipe...'"
+                />
+                {scenario && (
+                  <div className="rounded-md border border-gray-200 bg-gray-50 p-4 text-sm prose prose-sm max-w-none">
+                    <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">Preview</p>
+                    <ReactMarkdown>{scenario}</ReactMarkdown>
+                  </div>
+                )}
+              </div>
             </FormField>
 
             <div>
