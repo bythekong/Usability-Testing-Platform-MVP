@@ -50,9 +50,9 @@ export function Sidebar({
         { name: "Campaigns", href: "/owner#campaigns", icon: FolderKanban },
       ]
     : [
-        { name: "Dashboard", href: "/tester", icon: LayoutDashboard },
         { name: "Available Jobs", href: "/tester#available-jobs", icon: Search },
         { name: "My Jobs", href: "/tester#my-jobs", icon: Briefcase },
+        { name: "Extension Sync", href: "/tester#extension-sync", icon: LayoutDashboard },
       ];
 
   const sidebarContent = (
@@ -83,7 +83,9 @@ export function Sidebar({
       <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-4">
         {navItems.map((item) => {
           const routeHref = item.href.split("#")[0];
-          const isActive = item.name === "Dashboard" && pathname === routeHref;
+          const isActive =
+            (user?.role === "OWNER" && item.name === "Dashboard" && pathname === routeHref) ||
+            (user?.role === "TESTER" && item.name === "Available Jobs" && pathname === routeHref);
           const Icon = item.icon;
 
           return (
