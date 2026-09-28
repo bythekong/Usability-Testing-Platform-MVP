@@ -54,7 +54,22 @@
       "taskPlaceholderRating": "e.g. How easy was it to find the checkout button?",
       "choicePlaceholder": "Choice ",
       "ratingMinPlaceholder": "e.g. Very Difficult",
-      "ratingMaxPlaceholder": "e.g. Very Easy"
+      "ratingMaxPlaceholder": "e.g. Very Easy",
+      "totalCampaignCost": "Total Campaign Cost",
+      "taskTypeLabel": "Task Type",
+      "answerChoices": "Answer Choices",
+      "scaleConfig": "Scale Configuration",
+      "minValue": "Min value",
+      "maxValue": "Max value",
+      "minLabel": "Min label (optional)",
+      "maxLabel": "Max label (optional)",
+      "preview": "Preview",
+      "tips1": "Be specific:",
+      "tips1desc": "Instead of \"Explore the site\", use \"Find the return policy page.\"",
+      "tips2": "Avoid leading questions:",
+      "tips2desc": "Let the user find the answer naturally.",
+      "tips3": "Think out loud:",
+      "tips3desc": "Ask testers to speak their thoughts as they complete the task."
     },
     "manageCampaigns": {
       "title": "Manage Campaigns",
@@ -63,7 +78,28 @@
     "settings": {
       "title": "Account Settings",
       "ownerDesc": "Manage your owner account and payment methods."
-    }
+    },
+    "activeCampaigns": "Active Campaigns",
+    "campaignId": "Campaign ID: ",
+    "reward": "Reward",
+    "jobSubmissions": "Job Submissions",
+    "task": "Task",
+    "testerResponse": "Tester response",
+    "taskRecording": "Task Recording",
+    "profileInfo": "Profile Information",
+    "emailManaged": "Your email is managed by your authentication provider.",
+    "paymentMethod": "Payment Method",
+    "noPayment": "No payment method configured.",
+    "addCreditCard": "Add Credit Card",
+    "paymentComingSoon": "Payment system integration coming soon.",
+    "any": "Any",
+    "male": "Male",
+    "female": "Female",
+    "other": "Other",
+    "beginner": "Beginner",
+    "intermediate": "Intermediate",
+    "expert": "Expert",
+    "loading": "Loading dashboard..."
   },
   "tester": {
     "availableJobs": {
@@ -81,6 +117,36 @@
     "settings": {
       "title": "Account Settings",
       "testerDesc": "Manage your account, demographics, and payout methods."
-    }
+    },
+    "activeJobs": "Active Jobs",
+    "inProgress": "In Progress",
+    "openUrl": "Open this URL in a new tab with the extension connected to start testing.",
+    "estimatedTime": "Estimated time:",
+    "pastSubmissions": "Past Submissions",
+    "connectExt": "Connect Your Extension",
+    "connectExtDesc": "You need to sync your account with the browser extension to record your screen and audio during usability tests.",
+    "installExt": "Install Extension",
+    "installExtDesc": "Ensure you have the Usability Testing MVP Chrome Extension installed and enabled in your browser.",
+    "syncAccount": "Sync Account",
+    "syncAccountDesc": "Click the button below to securely pass your login token to the extension.",
+    "startTesting": "Start Testing",
+    "startTestingDesc": "Go to \"Available Jobs\" or \"My Jobs\" and open the target URL to begin your session.",
+    "profileInfo": "Profile Information",
+    "emailManaged": "Your email is managed by your authentication provider.",
+    "select": "Select...",
+    "saveProfile": "Save Profile",
+    "payoutMethod": "Payout Method",
+    "noPayout": "No payout method configured.",
+    "connectBank": "Connect Bank Account",
+    "paymentComingSoon": "Payment system integration coming soon.",
+    "usabilityJob": "Usability testing job",
+    "lockedAnswer": "Your answer (locked)",
+    "lockedRating": "Your rating (locked)",
+    "selected": "Selected:",
+    "writeFinalReview": "Write Final Review",
+    "sessionVideo": "Session Video",
+    "noVideo": "No video recorded yet.",
+    "lockedCampaign": "This campaign has been locked by the owner.",
+    "preview": "Preview"
   }
 }

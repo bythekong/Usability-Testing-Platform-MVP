@@ -54,7 +54,7 @@ interface ExternalChromeRuntime {
 
 function formatReward(amount: number, currency: string) {
   if (currency === 'THB') return '฿' + (amount / 100).toLocaleString('th-TH');
-  if (currency === 'USD') return '$' + (amount / 100).toFixed(2);
+  if (currency === 'THB') return (amount / 100).toLocaleString('th-TH') + ' THB';
   return (amount / 100).toFixed(2) + ' ' + currency;
 }
 
@@ -251,7 +251,7 @@ function TesterDashboardContent() {
       <>
         <PageHeader title={t("myJobs.title")} description={t("myJobs.desc")} />
         <section id="my-jobs">
-          <h2 className="mb-4 text-xl font-semibold text-foreground">Active Jobs</h2>
+          <h2 className="mb-4 text-xl font-semibold text-foreground">{t("tester.activeJobs")}</h2>
           {activeJobs.length === 0 ? (
             <EmptyState title="No active jobs" description="Claim an available usability test to start working." className="mb-10" />
           ) : (
@@ -259,7 +259,7 @@ function TesterDashboardContent() {
               {activeJobs.map((job) => (
                 <article key={job.id} className="rounded-xl border border-blue-200 dark:border-blue-800 bg-blue-50/50 dark:bg-blue-900/20 p-5 shadow-sm">
                   <div className="flex items-start justify-between gap-4">
-                    <StatusBadge status="warning">In Progress</StatusBadge>
+                    <StatusBadge status="warning">{t("tester.inProgress")}</StatusBadge>
                     <span className="text-sm font-semibold text-foreground">{formatReward(job.campaign.rewardAmount, job.campaign.currency)}</span>
                   </div>
                   <div className="mt-4 flex items-center gap-3">
@@ -269,8 +269,8 @@ function TesterDashboardContent() {
                     </h3>
                   </div>
                   <div className="mt-3 flex flex-col gap-1 text-sm text-muted">
-                    <p>Open this URL in a new tab with the extension connected to start testing.</p>
-                    <p className="font-medium">Estimated time: ~{calculateEstimatedTime(job.campaign.tasks)}</p>
+                    <p>{t("tester.openUrl")}</p>
+                    <p className="font-medium">{t("tester.estimatedTime")} ~{calculateEstimatedTime(job.campaign.tasks)}</p>
                   </div>
                   <div className="mt-5 flex gap-3">
                     {!job.campaign.isLocked ? (
@@ -301,7 +301,7 @@ function TesterDashboardContent() {
 
         {pastJobs.length > 0 && (
           <section className="mt-10">
-            <h2 className="mb-4 text-xl font-semibold text-foreground">Past Submissions</h2>
+            <h2 className="mb-4 text-xl font-semibold text-foreground">{t("tester.pastSubmissions")}</h2>
             <div className="overflow-hidden rounded-xl border border-border bg-surface shadow-sm">
               {pastJobs.map((job, index) => (
                 <div key={job.id} className={['flex flex-col gap-3 px-5 py-4 sm:flex-row sm:items-center sm:justify-between', index > 0 ? 'border-t border-border' : ''].join(' ')}>
@@ -333,23 +333,23 @@ function TesterDashboardContent() {
             <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-blue-50 dark:bg-blue-900/20">
               <Plug className="h-8 w-8 text-blue-600 dark:text-blue-400" />
             </div>
-            <h2 className="mt-4 text-xl font-semibold text-foreground">Connect Your Extension</h2>
-            <p className="mt-2 text-sm text-muted">You need to sync your account with the browser extension to record your screen and audio during usability tests.</p>
+            <h2 className="mt-4 text-xl font-semibold text-foreground">{t("tester.connectExt")}</h2>
+            <p className="mt-2 text-sm text-muted">{t("tester.connectExtDesc")}</p>
           </div>
           
           <div className="space-y-6">
             <div className="flex gap-4">
               <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-muted/30 font-semibold text-muted">1</div>
               <div>
-                <h3 className="font-semibold text-foreground">Install Extension</h3>
-                <p className="mt-1 text-sm text-muted">Ensure you have the Usability Testing MVP Chrome Extension installed and enabled in your browser.</p>
+                <h3 className="font-semibold text-foreground">{t("tester.installExt")}</h3>
+                <p className="mt-1 text-sm text-muted">{t("tester.installExtDesc")}</p>
               </div>
             </div>
             <div className="flex gap-4">
               <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-muted/30 font-semibold text-muted">2</div>
               <div>
-                <h3 className="font-semibold text-foreground">Sync Account</h3>
-                <p className="mt-1 text-sm text-muted mb-3">Click the button below to securely pass your login token to the extension.</p>
+                <h3 className="font-semibold text-foreground">{t("tester.syncAccount")}</h3>
+                <p className="mt-1 text-sm text-muted mb-3">{t("tester.syncAccountDesc")}</p>
                 <Button onClick={handleSyncExtension}>
                   <RefreshCw className="mr-2 h-4 w-4" />
                   Sync Extension Now
@@ -359,8 +359,8 @@ function TesterDashboardContent() {
             <div className="flex gap-4">
               <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-muted/30 font-semibold text-muted">3</div>
               <div>
-                <h3 className="font-semibold text-foreground">Start Testing</h3>
-                <p className="mt-1 text-sm text-muted">Go to &quot;Available Jobs&quot; or &quot;My Jobs&quot; and open the target URL to begin your session.</p>
+                <h3 className="font-semibold text-foreground">{t("tester.startTesting")}</h3>
+                <p className="mt-1 text-sm text-muted">{t("tester.startTestingDesc")}</p>
               </div>
             </div>
           </div>
@@ -375,11 +375,11 @@ function TesterDashboardContent() {
         <PageHeader title={t("settings.title")} description={t("settings.testerDesc")} />
         <div className="max-w-2xl space-y-6">
           <section className="rounded-xl border border-border bg-surface p-6 shadow-sm">
-            <h2 className="text-lg font-semibold text-foreground mb-4">Profile Information</h2>
+            <h2 className="text-lg font-semibold text-foreground mb-4">{t("tester.profileInfo")}</h2>
             <FormField label="Email Address" htmlFor="email">
               <Input id="email" type="email" value={userEmail} readOnly disabled />
             </FormField>
-            <p className="mt-2 text-xs text-muted mb-4">Your email is managed by your authentication provider.</p>
+            <p className="mt-2 text-xs text-muted mb-4">{t("tester.emailManaged")}</p>
 
             <div className="grid gap-4 sm:grid-cols-2">
               <FormField label="Age" htmlFor="age">
@@ -391,7 +391,7 @@ function TesterDashboardContent() {
                 <select 
                   className="flex h-10 w-full rounded-md border border-input bg-surface px-3 py-2 text-sm ring-offset-background placeholder:text-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                   value={gender} onChange={e => setGender(e.target.value)}>
-                  <option value="">Select...</option>
+                  <option value="">{t("tester.select")}</option>
                   <option value="MALE">Male</option>
                   <option value="FEMALE">Female</option>
                   <option value="OTHER">Other</option>
@@ -407,22 +407,22 @@ function TesterDashboardContent() {
                 <select 
                   className="flex h-10 w-full rounded-md border border-input bg-surface px-3 py-2 text-sm ring-offset-background placeholder:text-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                   value={itExpertise} onChange={e => setItExpertise(e.target.value)}>
-                  <option value="">Select...</option>
+                  <option value="">{t("tester.select")}</option>
                   <option value="BEGINNER">Beginner</option>
                   <option value="INTERMEDIATE">Intermediate</option>
                   <option value="EXPERT">Expert</option>
                 </select>
               </div>
             </div>
-            <Button className="mt-6" onClick={saveProfile}>Save Profile</Button>
+            <Button className="mt-6" onClick={saveProfile}>{t("tester.saveProfile")}</Button>
           </section>
 
           <section className="rounded-xl border border-border bg-surface p-6 shadow-sm">
-            <h2 className="text-lg font-semibold text-foreground mb-4">Payout Method</h2>
+            <h2 className="text-lg font-semibold text-foreground mb-4">{t("tester.payoutMethod")}</h2>
             <div className="rounded-lg bg-muted/20 border border-border p-4 text-center">
-              <p className="text-sm text-muted mb-3">No payout method configured.</p>
-              <Button disabled variant="outline">Connect Bank Account</Button>
-              <p className="mt-2 text-xs text-gray-400">Payment system integration coming soon.</p>
+              <p className="text-sm text-muted mb-3">{t("tester.noPayout")}</p>
+              <Button disabled variant="outline">{t("tester.connectBank")}</Button>
+              <p className="mt-2 text-xs text-gray-400">{t("tester.paymentComingSoon")}</p>
             </div>
           </section>
         </div>
@@ -454,7 +454,7 @@ function TesterDashboardContent() {
                 </div>
                 <h3 className="mt-4 truncate text-base font-semibold text-foreground">{job.campaign.targetUrl}</h3>
                 <div className="mt-1 flex items-center justify-between text-sm text-muted">
-                  <span>Usability testing job</span>
+                  <span>{t("tester.usabilityJob")}</span>
                   <span>~{calculateEstimatedTime(job.campaign.tasks)}</span>
                 </div>
                 <Button className="mt-5 w-full" onClick={() => void claimJob(job.id)}>
@@ -476,4 +476,5 @@ export default function TesterDashboard() {
     </Suspense>
   );
 }
+
 
