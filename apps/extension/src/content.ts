@@ -18,6 +18,7 @@ interface ActiveSession {
   jobId: string;
   currentTaskIndex: number;
   taskState: 'READY' | 'RECORDING' | 'UPLOADING';
+  completedTaskIds: string[];
   campaign: {
     targetUrl: string;
     scenario?: string;
@@ -59,10 +60,11 @@ function bootstrap() {
 //  Session sync helpers
 // ──────────────────────────────────────────────
 
-function updateSession(updates: Partial<Pick<ActiveSession, 'currentTaskIndex' | 'taskState'>>) {
+function updateSession(updates: Partial<Pick<ActiveSession, 'currentTaskIndex' | 'taskState' | 'completedTaskIds'>>) {
   if (!session) return;
   if (updates.currentTaskIndex !== undefined) session.currentTaskIndex = updates.currentTaskIndex;
   if (updates.taskState !== undefined) session.taskState = updates.taskState;
+  if (updates.completedTaskIds !== undefined) session.completedTaskIds = updates.completedTaskIds;
   chrome.runtime.sendMessage({ type: 'UPDATE_SESSION', ...updates });
 }
 
@@ -528,16 +530,29 @@ function submitTask() {
       return;
     }
     
-    // Upload success — advance to next task
+    // Upload success — advance to next incomplete task
     currentStructuredAnswer = null;
-    const nextIndex = session.currentTaskIndex + 1;
-    updateSession({ currentTaskIndex: nextIndex, taskState: 'READY' });
+    
+    // Add current task to completed list
+    const updatedCompletedIds = [...(session!.completedTaskIds || []), task.id];
+    
+    // Find next incomplete task
+    let nextIndex = session!.campaign.tasks.findIndex((t, idx) => 
+      idx > session!.currentTaskIndex && !updatedCompletedIds.includes(t.id)
+    );
 
-    if (nextIndex >= session.campaign.tasks.length) {
+    // If not found after current, loop from beginning (for retakes)
+    if (nextIndex === -1) {
+      nextIndex = session!.campaign.tasks.findIndex(t => !updatedCompletedIds.includes(t.id));
+    }
+
+    if (nextIndex === -1) {
       // All tasks done
+      updateSession({ currentTaskIndex: session.campaign.tasks.length, taskState: 'READY', completedTaskIds: updatedCompletedIds });
       showFinishScreen();
     } else {
       // Show transition screen
+      updateSession({ currentTaskIndex: nextIndex, taskState: 'READY', completedTaskIds: updatedCompletedIds });
       const nextTask = session.campaign.tasks[nextIndex];
       showTransitionScreen(nextTask, nextIndex);
     }

@@ -17,6 +17,7 @@ interface Task {
   ratingMax: number | null;
   ratingMinLabel: string | null;
   ratingMaxLabel: string | null;
+  taskUrl?: string | null;
 }
 
 interface StructuredAnswer {
@@ -152,14 +153,42 @@ export function ReviewJobView({ job, onBack, onSubmitted }: Props) {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-4 mb-6">
-        <Button variant="outline" onClick={onBack}>&larr; Back</Button>
-        <div>
-          <h2 className="text-xl font-bold text-foreground">{t("writeFinalReview")}</h2>
-          <p className="text-sm text-muted">
-            Watch your recorded videos and complete the review for each task.
-          </p>
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-4">
+          <Button variant="outline" onClick={onBack}>&larr; Back</Button>
+          <div>
+            <h2 className="text-xl font-bold text-foreground">{t("writeFinalReview")}</h2>
+            <p className="text-sm text-muted">
+              Watch your recorded videos and complete the review for each task.
+            </p>
+          </div>
         </div>
+        <Button 
+          variant="outline" 
+          className="text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700"
+          onClick={async () => {
+            if (!window.confirm('Are you sure you want to start over? This will permanently delete all your recorded videos and answers for this job.')) return;
+            try {
+              setSubmitting(true);
+              await apiFetch(`/jobs/${job.id}/reset`, { method: 'DELETE' });
+              
+              const extensionId = process.env.NEXT_PUBLIC_EXTENSION_ID;
+              const chromeRuntime = (window as Window & { chrome?: { runtime?: { sendMessage: (id: string, msg: unknown, cb?: () => void) => void } } }).chrome?.runtime;
+              if (chromeRuntime && extensionId) {
+                chromeRuntime.sendMessage(extensionId, { type: 'END_SESSION' }, () => {});
+              }
+
+              toast.success('Test reset successfully. You can start over now.');
+              onSubmitted(); 
+            } catch (err) {
+              toast.error((err as Error).message || 'Failed to reset job');
+              setSubmitting(false);
+            }
+          }}
+          disabled={submitting}
+        >
+          🔄 Start Over
+        </Button>
       </div>
 
       {job.campaign.tasks.map((task, index) => {
@@ -174,16 +203,54 @@ export function ReviewJobView({ job, onBack, onSubmitted }: Props) {
         return (
           <div key={task.id} className="rounded-xl border border-border bg-surface p-6 shadow-sm">
             {/* Task header */}
-            <div className="flex items-center gap-3 mb-3">
-              <span className={[
-                'inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold',
-                isFreeResponse ? 'bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300' :
-                isMultipleChoice ? 'bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300' :
-                'bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300'
-              ].join(' ')}>
-                {isFreeResponse ? '🎙️ Free Response' : isMultipleChoice ? '☑️ Multiple Choice' : '⭐ Rating Scale'}
-              </span>
-              <h3 className="font-semibold text-lg">Task {index + 1}</h3>
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-3">
+                <span className={[
+                  'inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold',
+                  isFreeResponse ? 'bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300' :
+                  isMultipleChoice ? 'bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300' :
+                  'bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300'
+                ].join(' ')}>
+                  {isFreeResponse ? '🎙️ Free Response' : isMultipleChoice ? '☑️ Multiple Choice' : '⭐ Rating Scale'}
+                </span>
+                <h3 className="font-semibold text-lg">Task {index + 1}</h3>
+              </div>
+              
+              {response && !job.campaign.isLocked && (
+                <Button 
+                  variant="outline"
+                  className="h-8 px-3 text-xs text-amber-700 border-amber-200 hover:bg-amber-50"
+                  onClick={async () => {
+                    if (!window.confirm(`Are you sure you want to retake Task ${index + 1}? This will delete your current recording for this task.`)) return;
+                    try {
+                      setSubmitting(true);
+                      await apiFetch(`/jobs/${job.id}/tasks/${task.id}/response`, { method: 'DELETE' });
+                      
+                      const extensionId = process.env.NEXT_PUBLIC_EXTENSION_ID;
+                      const chromeRuntime = (window as Window & { chrome?: { runtime?: { sendMessage: (id: string, msg: unknown, cb?: () => void) => void } } }).chrome?.runtime;
+                      if (chromeRuntime && extensionId) {
+                        const completedTaskIds = job.responses?.filter(r => r.taskId !== task.id).map(r => r.taskId) || [];
+                        chromeRuntime.sendMessage(
+                          extensionId,
+                          { type: 'START_SESSION', job: { id: job.id, campaign: job.campaign }, completedTaskIds },
+                          () => {
+                            window.open(task.taskUrl || job.campaign.targetUrl, '_blank');
+                          }
+                        );
+                      }
+                      
+                      toast.success('Task response deleted. Opening extension to record again...');
+                      onSubmitted(); 
+                    } catch (err) {
+                      toast.error((err as Error).message || 'Failed to clear task response');
+                      setSubmitting(false);
+                    }
+                  }}
+                  disabled={submitting}
+                >
+                  Retake Task
+                </Button>
+              )}
             </div>
             <p className="text-foreground mb-4 bg-muted/20 p-3 rounded-md border border-border">{task.instruction}</p>
 

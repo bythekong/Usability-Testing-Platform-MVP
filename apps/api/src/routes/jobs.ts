@@ -186,6 +186,94 @@ router.post('/:id/claim', requireAuth, requireRole(Role.TESTER), async (req: Aut
   }
 });
 
+router.delete('/:id/reset', requireAuth, requireRole(Role.TESTER), async (req: AuthRequest, res: Response) => {
+  try {
+    const job = await prisma.jobAssignment.findUnique({
+      where: { id: req.params.id },
+      include: { responses: true }
+    });
+
+    if (!job || job.testerId !== req.user!.id) {
+      return res.status(404).json({ error: 'Job not found or unauthorized' });
+    }
+
+    if (job.status !== JobStatus.CLAIMED) {
+      return res.status(400).json({ error: 'Cannot reset a job that has already been submitted' });
+    }
+
+    // Delete video files from fs
+    for (const response of job.responses) {
+      if (response.videoUrl) {
+        try {
+          const filename = response.videoUrl.replace('/uploads/videos/', '');
+          const filePath = path.join(process.cwd(), 'uploads', 'videos', filename);
+          if (fs.existsSync(filePath)) {
+            fs.unlinkSync(filePath);
+          }
+        } catch (e) {
+          console.error('Failed to delete video file', e);
+        }
+      }
+    }
+
+    // Delete responses in DB
+    await prisma.taskResponse.deleteMany({
+      where: { jobId: job.id }
+    });
+
+    res.json({ success: true });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+router.delete('/:id/tasks/:taskId/response', requireAuth, requireRole(Role.TESTER), async (req: AuthRequest, res: Response) => {
+  try {
+    const { id, taskId } = req.params;
+    
+    const job = await prisma.jobAssignment.findUnique({
+      where: { id },
+      include: { responses: { where: { taskId } } }
+    });
+
+    if (!job || job.testerId !== req.user!.id) {
+      return res.status(404).json({ error: 'Job not found or unauthorized' });
+    }
+
+    if (job.status !== JobStatus.CLAIMED) {
+      return res.status(400).json({ error: 'Cannot reset task for a submitted job' });
+    }
+
+    const response = job.responses[0];
+    if (response) {
+      // Delete video file
+      if (response.videoUrl) {
+        try {
+          const filename = response.videoUrl.replace('/uploads/videos/', '');
+          const filePath = path.join(process.cwd(), 'uploads', 'videos', filename);
+          if (fs.existsSync(filePath)) {
+            fs.unlinkSync(filePath);
+          }
+        } catch (e) {
+          console.error('Failed to delete video file', e);
+        }
+      }
+
+      // Delete DB record
+      await prisma.taskResponse.delete({
+        where: { id: response.id }
+      });
+    }
+
+    res.json({ success: true });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+
 router.post(
   '/:id/submit',
   requireAuth,

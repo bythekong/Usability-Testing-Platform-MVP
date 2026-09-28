@@ -49,6 +49,7 @@ interface ActiveSession {
   jobId: string;
   currentTaskIndex: number;
   taskState: 'READY' | 'RECORDING' | 'UPLOADING';
+  completedTaskIds: string[];
   campaign: {
     targetUrl: string;
     scenario?: string;
@@ -141,15 +142,22 @@ chrome.runtime.onMessageExternal.addListener(
 
       void (async () => {
         try {
+          const completedTaskIds = Array.isArray(request.completedTaskIds) ? request.completedTaskIds : [];
+          
           // Sort tasks by stepOrder
           const tasks = [...job.campaign.tasks].sort(
             (a: { stepOrder: number }, b: { stepOrder: number }) => a.stepOrder - b.stepOrder
           );
 
+          // Find first incomplete task
+          let startIndex = tasks.findIndex((t: any) => !completedTaskIds.includes(t.id));
+          if (startIndex === -1) startIndex = 0; // If all completed, just show first (or let finish screen show)
+
           const session: ActiveSession = {
             jobId: job.id,
-            currentTaskIndex: 0,
+            currentTaskIndex: startIndex,
             taskState: 'READY',
+            completedTaskIds,
             campaign: {
               targetUrl: job.campaign.targetUrl,
               scenario: job.campaign.scenario,
@@ -210,6 +218,7 @@ chrome.runtime.onMessage.addListener((request, _sender, sendResponse) => {
       // Merge updates
       if (request.currentTaskIndex !== undefined) session.currentTaskIndex = request.currentTaskIndex;
       if (request.taskState !== undefined) session.taskState = request.taskState;
+      if (request.completedTaskIds !== undefined) session.completedTaskIds = request.completedTaskIds;
       await setSession(session);
       sendResponse({ success: true });
     })();
@@ -253,6 +262,7 @@ chrome.runtime.onMessage.addListener((request, _sender, sendResponse) => {
             jobId: activeJob.id,
             currentTaskIndex: 0,
             taskState: 'READY',
+            completedTaskIds: [],
             campaign: {
               targetUrl: activeJob.campaign.targetUrl,
               scenario: activeJob.campaign.scenario,
