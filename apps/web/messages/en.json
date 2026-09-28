@@ -69,7 +69,8 @@
       "tips2": "Avoid leading questions:",
       "tips2desc": "Let the user find the answer naturally.",
       "tips3": "Think out loud:",
-      "tips3desc": "Ask testers to speak their thoughts as they complete the task."
+      "tips3desc": "Ask testers to speak their thoughts as they complete the task.",
+      "timeLimitDesc": "Most tasks should take 1-2 minutes. Only use 5 minutes for complex workflows."
     },
     "manageCampaigns": {
       "title": "Manage Campaigns",

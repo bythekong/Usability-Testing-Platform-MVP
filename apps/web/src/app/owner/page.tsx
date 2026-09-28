@@ -797,7 +797,7 @@ function OwnerDashboardContent() {
           <ul className="text-sm text-blue-800 dark:text-blue-300 space-y-3 list-disc pl-4">
             <li><strong>{t("createCampaign.tips1")}</strong> {t("createCampaign.tips1desc")}</li>
             <li><strong>{t("createCampaign.tips2")}</strong> {t("createCampaign.tips2desc")}</li>
-            <li><strong>{t("createCampaign.timeLimit")}s:</strong> Most tasks should take 1-2 minutes. Only use 5 minutes for complex workflows.</li>
+            <li><strong>{t("createCampaign.timeLimit")}s:</strong> {t("createCampaign.timeLimitDesc")}</li>
             <li><strong>{t("createCampaign.tips3")}</strong> {t("createCampaign.tips3desc")}</li>
           </ul>
         </aside>
@@ -814,6 +814,7 @@ export default function OwnerDashboard() {
     </Suspense>
   );
 }
+
 
 
 
