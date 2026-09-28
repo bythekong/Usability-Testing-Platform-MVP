@@ -162,9 +162,8 @@ function renderAnswerUI(task: ActiveTask): string {
     const choicesHtml = task.choices.map((choice, i) => `
       <label style="display:flex; align-items:center; gap:8px; padding:8px 10px; border-radius:6px; border:2px solid #e5e7eb; cursor:pointer; font-size:13px; background:white; margin-bottom:6px; transition:border-color 0.15s;"
         id="ut-choice-label-${i}">
-        <input type="radio" name="ut-mc-choice" value="${escapeHtml(choice)}" 
+        <input type="radio" name="ut-mc-choice" value="${escapeHtml(choice)}" data-idx="${i}"
           style="accent-color:#2563eb; cursor:pointer;"
-          onchange="window.__utSelectChoice(${i}, '${escapeJs(choice)}')"
         />
         <span style="color:#1f2937; font-weight:500;">${escapeHtml(choice)}</span>
       </label>
@@ -183,8 +182,7 @@ function renderAnswerUI(task: ActiveTask): string {
     const min = task.ratingMin ?? 1;
     const max = task.ratingMax ?? 5;
     const buttons = Array.from({ length: max - min + 1 }, (_, i) => min + i).map(n => `
-      <button type="button" id="ut-rating-${n}"
-        onclick="window.__utSelectRating(${n})"
+      <button type="button" id="ut-rating-${n}" data-rating-btn="true" data-val="${n}"
         style="width:34px; height:34px; border-radius:50%; border:2px solid #d1d5db; background:white; cursor:pointer; font-size:13px; font-weight:bold; color:#374151; transition:all 0.15s; flex-shrink:0;"
       >${n}</button>
     `).join('');
@@ -354,35 +352,49 @@ function injectOverlay() {
   overlayContainer.appendChild(overlay);
   document.body.appendChild(overlayContainer);
 
-  // Global handlers for dynamic answer elements
-  (window as any).__utSelectChoice = (idx: number, value: string) => {
-    currentStructuredAnswer = { type: 'MULTIPLE_CHOICE', value };
-    document.querySelectorAll('[id^="ut-choice-label-"]').forEach((el, i) => {
-      const label = el as HTMLElement;
-      label.style.borderColor = i === idx ? '#2563eb' : '#e5e7eb';
-      label.style.backgroundColor = i === idx ? '#eff6ff' : 'white';
-    });
-    const statusEl = document.getElementById('ut-answer-status');
-    if (statusEl) statusEl.textContent = '';
-  };
+  // Handlers for dynamic answer elements (must attach listeners after rendering)
+  // We'll use event delegation attached to the container
 
-  (window as any).__utSelectRating = (value: number) => {
-    currentStructuredAnswer = { type: 'RATING_SCALE', value };
-    const task = getCurrentTask();
-    if (!task) return;
-    const min = task.ratingMin ?? 1;
-    const max = task.ratingMax ?? 5;
-    Array.from({ length: max - min + 1 }, (_, i) => min + i).forEach(n => {
-      const btn = document.getElementById(`ut-rating-${n}`) as HTMLButtonElement | null;
-      if (btn) {
-        btn.style.borderColor = n === value ? '#2563eb' : '#d1d5db';
-        btn.style.backgroundColor = n === value ? '#2563eb' : 'white';
-        btn.style.color = n === value ? 'white' : '#374151';
-      }
-    });
-    const statusEl = document.getElementById('ut-answer-status');
-    if (statusEl) statusEl.textContent = '';
-  };
+  document.getElementById('ut-answer-ui-container')!.addEventListener('change', (e) => {
+    const target = e.target as HTMLInputElement;
+    if (target && target.name === 'ut-mc-choice') {
+      const idx = parseInt(target.getAttribute('data-idx') || '0', 10);
+      const value = target.value;
+      
+      currentStructuredAnswer = { type: 'MULTIPLE_CHOICE', value };
+      document.querySelectorAll('[id^="ut-choice-label-"]').forEach((el, i) => {
+        const label = el as HTMLElement;
+        label.style.borderColor = i === idx ? '#2563eb' : '#e5e7eb';
+        label.style.backgroundColor = i === idx ? '#eff6ff' : 'white';
+      });
+      const statusEl = document.getElementById('ut-answer-status');
+      if (statusEl) statusEl.textContent = '';
+    }
+  });
+
+  document.getElementById('ut-answer-ui-container')!.addEventListener('click', (e) => {
+    const target = e.target as HTMLElement;
+    const ratingBtn = target.closest('[data-rating-btn]') as HTMLButtonElement;
+    if (ratingBtn) {
+      const value = parseInt(ratingBtn.getAttribute('data-val') || '0', 10);
+      
+      currentStructuredAnswer = { type: 'RATING_SCALE', value };
+      const task = getCurrentTask();
+      if (!task) return;
+      const min = task.ratingMin ?? 1;
+      const max = task.ratingMax ?? 5;
+      Array.from({ length: max - min + 1 }, (_, i) => min + i).forEach(n => {
+        const btn = document.getElementById(`ut-rating-${n}`) as HTMLButtonElement | null;
+        if (btn) {
+          btn.style.borderColor = n === value ? '#2563eb' : '#d1d5db';
+          btn.style.backgroundColor = n === value ? '#2563eb' : 'white';
+          btn.style.color = n === value ? 'white' : '#374151';
+        }
+      });
+      const statusEl = document.getElementById('ut-answer-status');
+      if (statusEl) statusEl.textContent = '';
+    }
+  });
 
   // Panel controls
   document.getElementById('ut-minimize-btn')!.onclick = () => {
