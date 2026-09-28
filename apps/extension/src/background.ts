@@ -207,6 +207,14 @@ chrome.runtime.onMessage.addListener((request, _sender, sendResponse) => {
     return true;
   }
 
+  // End Session from content script (Cancel button)
+  if (request.type === 'END_SESSION') {
+    void setSession(null).then(() => {
+      sendResponse({ success: true });
+    });
+    return true;
+  }
+
   // New: UPDATE_SESSION — content script updates session state
   if (request.type === 'UPDATE_SESSION') {
     void (async () => {

@@ -1,9 +1,5 @@
-feat(tester): add reset job, specific task retake, and dynamic route for job review
+feat(extension): fix overlay persistent bug and add cancel session button
 
-- Move tester review page to dynamic route `/tester/jobs/[id]` to support natural navigation (fix URL issue)
-- Add `DELETE /jobs/:id/reset` endpoint to clear all task responses and videos
-- Add "Start Over" button in UI to reset the entire test session
-- Add `DELETE /jobs/:id/tasks/:taskId/response` endpoint for single task retake
-- Add "Retake Task" button on each completed task
-- Update extension state (`ActiveSession`) to track `completedTaskIds`
-- Implement smart auto-skip in extension to skip already completed tasks on submit and resume
+- Add `isUrlMatching` logic to `content.ts` so the extension overlay only injects on the first matching page of a task (or if actively recording). This prevents it from showing up on unrelated websites.
+- Add an `END_SESSION` message listener to `background.ts` for internal extension calls.
+- Add a "✕ Quit Session" button in the overlay header allowing users to cancel their current testing session if they don't want to finish it, instantly hiding the overlay from the browser.
