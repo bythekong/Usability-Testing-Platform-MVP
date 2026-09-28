@@ -276,7 +276,12 @@ function TesterDashboardContent() {
 
                             chromeRuntime.sendMessage(
                               extensionId,
-                              { type: 'START_SESSION', job: { id: job.id, campaign: job.campaign }, completedTaskIds },
+                              { 
+                                type: 'START_SESSION', 
+                                job: { id: job.id, campaign: job.campaign }, 
+                                completedTaskIds,
+                                token: localStorage.getItem('token')
+                              },
                               (response) => {
                                 if (response?.success) {
                                   console.log('Session synced to extension');

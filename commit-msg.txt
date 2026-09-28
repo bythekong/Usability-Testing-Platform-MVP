@@ -1,4 +1,4 @@
-fix(extension): fix multiple choice and rating scale submission issue
+fix(extension): resolve unauthorized upload and sticky overlay bugs
 
-- Replaced inline `onclick` and `onchange` string handlers (which ran in the page's isolated window context and failed to update the content script's state) with direct event delegation within the content script.
-- Added `data-idx` and `data-val` attributes to the rendered answer UI elements to securely pass the selected index/value to the click/change listener.
+- Ensure `token` is correctly passed from the frontend to the extension's `START_SESSION` handler and saved in local storage. This fixes the "Unauthorized" error when uploading videos to the backend.
+- Reset the extension task state to `READY` instead of keeping it in `RECORDING` when a task upload fails. This prevents the overlay from incorrectly remaining visible across all websites after a failed upload.
