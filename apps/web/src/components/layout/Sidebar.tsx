@@ -18,6 +18,9 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { logout } from "@/lib/auth";
+import { ThemeToggle } from "@/components/theme-toggle";
+import { LanguageSwitcher } from "@/components/language-switcher";
+import { useTranslations } from "next-intl";
 
 interface SidebarProps {
   user: {
@@ -40,6 +43,7 @@ export function Sidebar({
 }: SidebarProps) {
   const searchParams = useSearchParams();
   const router = useRouter();
+  const t = useTranslations('nav');
   
   const currentTab = searchParams.get("tab");
 
@@ -50,15 +54,15 @@ export function Sidebar({
 
   const navItems = user?.role === "OWNER"
     ? [
-        { name: "Create Campaign", href: "/owner", id: null, icon: LayoutDashboard },
-        { name: "Manage Campaigns", href: "/owner?tab=campaigns", id: "campaigns", icon: FolderKanban },
-        { name: "Settings", href: "/owner?tab=settings", id: "settings", icon: Settings },
+        { name: t('createCampaign'), href: "/owner", id: null, icon: LayoutDashboard },
+        { name: t('manageCampaigns'), href: "/owner?tab=campaigns", id: "campaigns", icon: FolderKanban },
+        { name: t('settings'), href: "/owner?tab=settings", id: "settings", icon: Settings },
       ]
     : [
-        { name: "Available Jobs", href: "/tester", id: null, icon: Search },
-        { name: "My Jobs", href: "/tester?tab=my-jobs", id: "my-jobs", icon: Briefcase },
-        { name: "Extension Setup", href: "/tester?tab=extension-sync", id: "extension-sync", icon: Plug },
-        { name: "Settings", href: "/tester?tab=settings", id: "settings", icon: Settings },
+        { name: t('availableJobs'), href: "/tester", id: null, icon: Search },
+        { name: t('myJobs'), href: "/tester?tab=my-jobs", id: "my-jobs", icon: Briefcase },
+        { name: t('extensionSetup'), href: "/tester?tab=extension-sync", id: "extension-sync", icon: Plug },
+        { name: t('settings'), href: "/tester?tab=settings", id: "settings", icon: Settings },
       ];
 
   const sidebarContent = (
@@ -69,7 +73,7 @@ export function Sidebar({
           <button
             type="button"
             onClick={() => setIsCollapsed(!isCollapsed)}
-            className="hidden rounded-md p-1.5 text-muted transition hover:bg-gray-100 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary md:flex"
+            className="hidden rounded-md p-1.5 text-muted transition hover:bg-muted/10 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary md:flex"
             title={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
             aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
           >
@@ -78,7 +82,7 @@ export function Sidebar({
           <button
             type="button"
             onClick={() => setIsMobileOpen(false)}
-            className="rounded-md p-1.5 text-muted transition hover:bg-gray-100 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary md:hidden"
+            className="rounded-md p-1.5 text-muted transition hover:bg-muted/10 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary md:hidden"
             aria-label="Close navigation"
           >
             <X className="h-5 w-5" />
@@ -100,7 +104,7 @@ export function Sidebar({
                 "group flex items-center rounded-lg px-3 py-2.5 text-sm transition-colors",
                 isActive
                   ? "bg-primary/10 font-medium text-primary"
-                  : "text-muted hover:bg-gray-50 hover:text-foreground",
+                  : "text-muted hover:bg-muted/10 hover:text-foreground",
                 isCollapsed ? "justify-center" : "justify-start"
               )}
               title={isCollapsed ? item.name : undefined}
@@ -116,7 +120,7 @@ export function Sidebar({
         {user && (
           <div className={cn("flex items-center", isCollapsed ? "flex-col gap-3" : "justify-between gap-2")}>
             <div className={cn("flex min-w-0 items-center", isCollapsed && "justify-center")}>
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gray-100">
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-muted/20">
                 <UserIcon className="h-4 w-4 text-muted" />
               </div>
               {!isCollapsed && (
@@ -126,15 +130,19 @@ export function Sidebar({
                 </div>
               )}
             </div>
-            <button
-              type="button"
-              onClick={handleLogout}
-              className="shrink-0 rounded-md p-1.5 text-muted transition hover:bg-gray-100 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-              title="Logout"
-              aria-label="Logout"
-            >
-              <LogOut className="h-4 w-4" />
-            </button>
+            <div className={cn("flex items-center", isCollapsed ? "flex-col gap-2" : "gap-2")}>
+              <LanguageSwitcher />
+              <ThemeToggle />
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="shrink-0 rounded-md p-1.5 text-muted transition hover:bg-muted/10 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                title="Logout"
+                aria-label="Logout"
+              >
+                <LogOut className="h-4 w-4" />
+              </button>
+            </div>
           </div>
         )}
       </div>

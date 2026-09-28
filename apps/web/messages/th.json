@@ -1,0 +1,86 @@
+{
+  "auth": {
+    "title": "Usability Hub",
+    "subtitle": "เข้าสู่ระบบ",
+    "emailLabel": "Email address",
+    "emailPlaceholder": "name@example.com",
+    "passwordLabel": "Password",
+    "roleLabel": "บทบาท (Role)",
+    "roleOwner": "Owner",
+    "roleTester": "Tester",
+    "signIn": "Sign In",
+    "signingIn": "กำลังเข้าสู่ระบบ...",
+    "orContinue": "หรือล็อกอินด้วย",
+    "register": "สมัครบัญชีใหม่"
+  },
+  "nav": {
+    "createCampaign": "สร้างแคมเปญ",
+    "manageCampaigns": "จัดการแคมเปญ",
+    "settings": "ตั้งค่าบัญชี",
+    "availableJobs": "งานที่เปิดรับ",
+    "myJobs": "งานของฉัน",
+    "extensionSetup": "ตั้งค่าส่วนขยาย",
+    "logout": "ออกจากระบบ"
+  },
+  "owner": {
+    "createCampaign": {
+      "title": "สร้างแคมเปญ",
+      "desc": "สร้างแบบทดสอบการใช้งานเพื่อส่งให้ผู้ทำเทสต์",
+      "formTitle": "แคมเปญใหม่",
+      "targetUrl": "URL เป้าหมาย",
+      "reward": "ค่าตอบแทน (THB)",
+      "numTesters": "จำนวนผู้ทดสอบ",
+      "targeting": "กลุ่มเป้าหมาย (เลือกได้)",
+      "targetingDesc": "หากเว้นว่างไว้ ผู้ทดสอบทุกคนสามารถรับงานนี้ได้ กรอกข้อมูลเพื่อคัดกรองผู้ทดสอบเฉพาะกลุ่ม",
+      "minAge": "อายุขั้นต่ำ",
+      "maxAge": "อายุสูงสุด",
+      "gender": "เพศ",
+      "itExpertise": "ความเชี่ยวชาญด้าน IT",
+      "scenario": "สถานการณ์ / บริบท (รองรับ Markdown)",
+      "taskInstructions": "คำสั่งการทดสอบ (Tasks)",
+      "taskType": "ประเภท",
+      "timeLimit": "เวลาสูงสุด",
+      "addTask": "เพิ่มคำสั่งใหม่",
+      "costPerTester": "ค่าตอบแทนต่อคน",
+      "totalTesters": "จำนวนคนรวม",
+      "totalCost": "ค่าใช้จ่ายทั้งหมด",
+      "launch": "สร้างแคมเปญ",
+      "tipsTitle": "คำแนะนำสำหรับการตั้งโจทย์",
+      "agePlaceholder": "เช่น 18",
+      "ageMaxPlaceholder": "เช่น 35",
+      "scenarioPlaceholder": "อธิบายสั้นๆ เกี่ยวกับสถานการณ์จำลอง เช่น 'สมมติว่าคุณเป็นคุณแม่ที่กำลังหาสูตรทำอาหารเย็นง่ายๆ...'",
+      "taskPlaceholderMCQ": "เช่น คุณจะเลือกแพ็กเกจไหนให้เหมาะกับความต้องการของคุณ?",
+      "taskPlaceholderFree": "เช่น หาหน้าแสดงราคา แล้วอธิบายสิ่งที่คุณเห็น",
+      "taskPlaceholderRating": "เช่น การหาปุ่มสั่งซื้อสินค้า ยากหรือง่ายเพียงใด?",
+      "choicePlaceholder": "ตัวเลือก ",
+      "ratingMinPlaceholder": "เช่น ยากมาก",
+      "ratingMaxPlaceholder": "เช่น ง่ายมาก"
+    },
+    "manageCampaigns": {
+      "title": "จัดการแคมเปญ",
+      "desc": "ดูผลลัพธ์ของแคมเปญที่กำลังรันอยู่และตรวจสอบงานที่ส่งมา"
+    },
+    "settings": {
+      "title": "ตั้งค่าบัญชี",
+      "ownerDesc": "จัดการบัญชี Owner และวิธีการชำระเงินของคุณ"
+    }
+  },
+  "tester": {
+    "availableJobs": {
+      "title": "งานที่เปิดรับ",
+      "desc": "ค้นหางานทดสอบ, กดรับงาน, และเริ่มทำเงิน"
+    },
+    "myJobs": {
+      "title": "งานของฉัน",
+      "desc": "ดูงานที่คุณกดรับไว้ และประวัติงานที่ส่งแล้ว"
+    },
+    "extension": {
+      "title": "ตั้งค่าส่วนขยาย (Extension)",
+      "desc": "ติดตั้งและเชื่อมต่อ Chrome Extension เพื่อเริ่มทำเทสต์"
+    },
+    "settings": {
+      "title": "ตั้งค่าบัญชี",
+      "testerDesc": "จัดการบัญชี, ข้อมูลส่วนตัว, และวิธีการรับเงินของคุณ"
+    }
+  }
+}
