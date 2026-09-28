@@ -570,8 +570,8 @@ function submitTask() {
     if (!session || session.taskState !== 'UPLOADING') return;
     
     if (response?.error) {
-      alert('Upload failed: ' + response.error);
-      updateSession({ taskState: 'RECORDING' });
+      alert('Upload failed: ' + response.error + '\n\nPlease start the task again.');
+      updateSession({ taskState: 'READY' });
       renderTask();
       return;
     }

@@ -232,7 +232,12 @@ export function ReviewJobView({ job, onBack, onSubmitted }: Props) {
                         const completedTaskIds = job.responses?.filter(r => r.taskId !== task.id).map(r => r.taskId) || [];
                         chromeRuntime.sendMessage(
                           extensionId,
-                          { type: 'START_SESSION', job: { id: job.id, campaign: job.campaign }, completedTaskIds },
+                          { 
+                            type: 'START_SESSION', 
+                            job: { id: job.id, campaign: job.campaign }, 
+                            completedTaskIds,
+                            token: localStorage.getItem('token')
+                          },
                           () => {
                             window.open(task.taskUrl || job.campaign.targetUrl, '_blank');
                           }

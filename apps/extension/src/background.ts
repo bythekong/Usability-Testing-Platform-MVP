@@ -142,6 +142,10 @@ chrome.runtime.onMessageExternal.addListener(
 
       void (async () => {
         try {
+          if (request.token) {
+            await chrome.storage.local.set({ authToken: request.token });
+          }
+
           const completedTaskIds = Array.isArray(request.completedTaskIds) ? request.completedTaskIds : [];
           
           // Sort tasks by stepOrder
