@@ -71,12 +71,13 @@ function OwnerDashboardContent() {
     instruction: string;
     maxTimeLimit: number;
     taskType: TaskType;
+    taskUrl: string;
     choices: string[];
     ratingMin: number;
     ratingMax: number;
     ratingMinLabel: string;
     ratingMaxLabel: string;
-  }>>([{ instruction: '', maxTimeLimit: 300, taskType: TaskType.FREE_RESPONSE, choices: ['', ''], ratingMin: 1, ratingMax: 5, ratingMinLabel: '', ratingMaxLabel: '' }]);
+  }>>([{ instruction: '', maxTimeLimit: 300, taskType: TaskType.FREE_RESPONSE, taskUrl: '', choices: ['', ''], ratingMin: 1, ratingMax: 5, ratingMinLabel: '', ratingMaxLabel: '' }]);
   const [reviews, setReviews] = useState<Record<string, ReviewDetails>>({});
   const [expandedJobId, setExpandedJobId] = useState<string | null>(null);
   const [error, setError] = useState('');
@@ -154,6 +155,7 @@ function OwnerDashboardContent() {
         instruction: task.instruction,
         maxTimeLimit: task.maxTimeLimit,
         taskType: task.taskType,
+        taskUrl: task.taskUrl || undefined,
         ...(task.taskType === TaskType.MULTIPLE_CHOICE ? {
           choices: task.choices.filter(c => c.trim()),
         } : {}),
@@ -182,7 +184,7 @@ function OwnerDashboardContent() {
       setTargetMaxAge('');
       setTargetGender('');
       setTargetItExpertise('');
-      setTasks([{ instruction: '', maxTimeLimit: 300, taskType: TaskType.FREE_RESPONSE, choices: ['', ''], ratingMin: 1, ratingMax: 5, ratingMinLabel: '', ratingMaxLabel: '' }]);
+      setTasks([{ instruction: '', maxTimeLimit: 300, taskType: TaskType.FREE_RESPONSE, taskUrl: '', choices: ['', ''], ratingMin: 1, ratingMax: 5, ratingMinLabel: '', ratingMaxLabel: '' }]);
       await fetchCampaigns();
     });
 
@@ -733,10 +735,27 @@ function OwnerDashboardContent() {
                         </div>
                       </div>
                     )}
+                    {/* Task-specific URL (optional override) */}
+                    <div className="space-y-1">
+                      <label className="text-xs text-muted">Task URL (optional — overrides campaign URL for this task)</label>
+                      <Input
+                        value={task.taskUrl}
+                        onChange={(e) => {
+                          const nextTasks = [...tasks];
+                          nextTasks[index] = { ...nextTasks[index], taskUrl: e.target.value };
+                          setTasks(nextTasks);
+                        }}
+                        placeholder="e.g. https://figma.com/proto/xxxxx or https://staging.myapp.com"
+                        className="h-8 text-sm"
+                      />
+                      {task.taskUrl && (
+                        <p className="text-xs text-blue-600">🔗 Tester will be navigated to this URL for this task.</p>
+                      )}
+                    </div>
 
-                    {/* {t("createCampaign.timeLimit")} (all types) */}
+                    {/* Time Limit (all types) */}
                     <div className="flex items-center gap-2">
-                      <label className="text-xs text-muted">{t("createCampaign.timeLimit")} (mins):</label>
+                      <label className="text-xs text-muted">Time Limit (mins):</label>
                       <Input
                         required
                         type="number"
@@ -758,7 +777,7 @@ function OwnerDashboardContent() {
 
               <button
                 type="button"
-                onClick={() => setTasks([...tasks, { instruction: '', maxTimeLimit: 300, taskType: TaskType.FREE_RESPONSE, choices: ['', ''], ratingMin: 1, ratingMax: 5, ratingMinLabel: '', ratingMaxLabel: '' }])}
+                onClick={() => setTasks([...tasks, { instruction: '', maxTimeLimit: 300, taskType: TaskType.FREE_RESPONSE, taskUrl: '', choices: ['', ''], ratingMin: 1, ratingMax: 5, ratingMinLabel: '', ratingMaxLabel: '' }])}
                 className="mt-3 inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
               >
                 <Plus className="h-4 w-4" />

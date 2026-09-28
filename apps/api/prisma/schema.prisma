@@ -69,6 +69,7 @@ model Task {
   instruction  String
   maxTimeLimit Int      @default(300)
   taskType     String   @default("FREE_RESPONSE")
+  taskUrl      String?
 
   // MULTIPLE_CHOICE fields
   choices      String[]

@@ -56,6 +56,7 @@ export interface TaskDTO {
   instruction: string;
   maxTimeLimit: number;
   taskType: TaskType;
+  taskUrl: string | null;
   // MULTIPLE_CHOICE fields
   choices: string[];
   // RATING_SCALE fields
@@ -69,6 +70,7 @@ export interface CreateTaskDTO {
   instruction: string;
   maxTimeLimit?: number;
   taskType?: TaskType;
+  taskUrl?: string;
   // MULTIPLE_CHOICE
   choices?: string[];
   // RATING_SCALE

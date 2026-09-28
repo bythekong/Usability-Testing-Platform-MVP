@@ -22,11 +22,14 @@ interface TesterJob {
     rewardAmount: number;
     currency: string;
     isLocked: boolean;
+    scenario?: string;
     tasks: {
       id: string;
+      stepOrder: number;
       instruction: string;
       maxTimeLimit: number;
       taskType: string;
+      taskUrl: string | null;
       choices: string[];
       ratingMin: number | null;
       ratingMax: number | null;
@@ -47,8 +50,8 @@ interface ExternalChromeRuntime {
   lastError?: { message?: string };
   sendMessage(
     extensionId: string,
-    message: { type: string; token: string },
-    callback: (response?: { success?: boolean; error?: string }) => void
+    message: Record<string, unknown>,
+    callback: (response: { success?: boolean; error?: string }) => void
   ): void;
 }
 
@@ -274,10 +277,40 @@ function TesterDashboardContent() {
                   </div>
                   <div className="mt-5 flex gap-3">
                     {!job.campaign.isLocked ? (
-                      <a href={job.campaign.targetUrl} target="_blank" rel="noreferrer" className="inline-flex h-10 flex-1 items-center justify-center rounded-md bg-blue-100 dark:bg-blue-900/40 px-4 text-sm font-medium text-blue-700 dark:text-blue-300 transition hover:bg-blue-200 dark:hover:bg-blue-900/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500">
+                      <button
+                        onClick={() => {
+                          // Sync session to extension before opening URL
+                          const extensionId = process.env.NEXT_PUBLIC_EXTENSION_ID;
+                          const chromeRuntime = (window as Window & {
+                            chrome?: { runtime?: ExternalChromeRuntime };
+                          }).chrome?.runtime;
+
+                          if (chromeRuntime && extensionId) {
+                            chromeRuntime.sendMessage(
+                              extensionId,
+                              { type: 'START_SESSION', job: { id: job.id, campaign: job.campaign } },
+                              (response) => {
+                                if (response?.success) {
+                                  console.log('Session synced to extension');
+                                } else {
+                                  console.warn('Session sync failed:', response?.error);
+                                }
+                                // Open URL regardless
+                                const firstTaskUrl = job.campaign.tasks[0]?.taskUrl;
+                                window.open(firstTaskUrl || job.campaign.targetUrl, '_blank');
+                              }
+                            );
+                          } else {
+                            // Extension not available, just open
+                            const firstTaskUrl = job.campaign.tasks[0]?.taskUrl;
+                            window.open(firstTaskUrl || job.campaign.targetUrl, '_blank');
+                          }
+                        }}
+                        className="inline-flex h-10 flex-1 items-center justify-center rounded-md bg-blue-100 dark:bg-blue-900/40 px-4 text-sm font-medium text-blue-700 dark:text-blue-300 transition hover:bg-blue-200 dark:hover:bg-blue-900/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+                      >
                         Open URL
                         <ExternalLink className="ml-2 h-4 w-4" />
-                      </a>
+                      </button>
                     ) : (
                       <div className="inline-flex h-10 flex-1 items-center justify-center rounded-md bg-muted/30 px-4 text-sm font-medium text-muted cursor-not-allowed">
                         Locked by Owner
