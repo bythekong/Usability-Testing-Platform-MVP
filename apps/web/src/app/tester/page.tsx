@@ -21,9 +21,25 @@ interface TesterJob {
     rewardAmount: number;
     currency: string;
     isLocked: boolean;
-    tasks: { id: string; instruction: string; maxTimeLimit: number }[];
+    tasks: {
+      id: string;
+      instruction: string;
+      maxTimeLimit: number;
+      taskType: string;
+      choices: string[];
+      ratingMin: number | null;
+      ratingMax: number | null;
+      ratingMinLabel: string | null;
+      ratingMaxLabel: string | null;
+    }[];
   };
-  responses?: { taskId: string; videoUrl: string | null; answerText: string | null }[];
+  responses?: {
+    taskId: string;
+    videoUrl: string | null;
+    answerText: string | null;
+    structuredAnswer: { type: string; value: string | number } | null;
+    structuredAnswerLockedAt: string | null;
+  }[];
 }
 
 interface ExternalChromeRuntime {
@@ -160,7 +176,7 @@ function TesterDashboardContent() {
   };
 
   const handleSyncExtension = () => {
-    // @ts-ignore
+    // @ts-expect-error — window.TEST_EXTENSION_ID is injected by Cypress/test environments
     const extensionId = window.TEST_EXTENSION_ID || process.env.NEXT_PUBLIC_EXTENSION_ID;
     const token = localStorage.getItem('token');
 
@@ -199,8 +215,8 @@ function TesterDashboardContent() {
             }
           }
         );
-      } catch (e: any) {
-        reject(new Error('Extension sync failed synchronously: ' + e.message));
+      } catch (e: unknown) {
+        reject(new Error('Extension sync failed synchronously: ' + (e instanceof Error ? e.message : String(e))));
       }
     });
 

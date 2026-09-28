@@ -19,6 +19,13 @@ router.post(
     body('scenario').optional().isString(),
     body('tasks').isArray({ min: 1 }),
     body('tasks.*.instruction').isString().notEmpty(),
+    body('tasks.*.taskType').optional().isIn(['FREE_RESPONSE', 'MULTIPLE_CHOICE', 'RATING_SCALE']),
+    body('tasks.*.choices').optional().isArray(),
+    body('tasks.*.choices.*').optional().isString().notEmpty(),
+    body('tasks.*.ratingMin').optional().isInt({ min: 1 }),
+    body('tasks.*.ratingMax').optional().isInt({ min: 2, max: 100 }),
+    body('tasks.*.ratingMinLabel').optional().isString(),
+    body('tasks.*.ratingMaxLabel').optional().isString(),
     body('targetMinAge').optional().isInt(),
     body('targetMaxAge').optional().isInt(),
     body('targetGenders').optional().isArray(),
@@ -44,7 +51,13 @@ router.post(
             create: tasks.map((task: any, index: number) => ({
               stepOrder: index + 1,
               instruction: task.instruction,
-              maxTimeLimit: task.maxTimeLimit || 300
+              maxTimeLimit: task.maxTimeLimit || 300,
+              taskType: task.taskType || 'FREE_RESPONSE',
+              choices: task.taskType === 'MULTIPLE_CHOICE' ? (task.choices || []) : [],
+              ratingMin: task.taskType === 'RATING_SCALE' ? (task.ratingMin ?? 1) : null,
+              ratingMax: task.taskType === 'RATING_SCALE' ? (task.ratingMax ?? 5) : null,
+              ratingMinLabel: task.taskType === 'RATING_SCALE' ? (task.ratingMinLabel ?? null) : null,
+              ratingMaxLabel: task.taskType === 'RATING_SCALE' ? (task.ratingMaxLabel ?? null) : null,
             }))
           },
           // Create N available jobs based on testerCount

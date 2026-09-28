@@ -16,7 +16,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   }
 
   if (message.type === 'STOP_RECORDING') {
-    stopRecording(message.jobId, message.taskId, message.token)
+    stopRecording(message.jobId, message.taskId, message.token, message.structuredAnswer ?? null)
       .then(() => sendResponse({ success: true }))
       .catch((e) => sendResponse({ error: e.message }));
     return true; // async response
@@ -65,7 +65,12 @@ async function retakeRecording() {
   recordedChunks = [];
 }
 
-async function stopRecording(jobId: string, taskId: string, token: string) {
+async function stopRecording(
+  jobId: string,
+  taskId: string,
+  token: string,
+  structuredAnswer: { type: string; value: string | number } | null
+) {
   if (!mediaRecorder) {
     throw new Error('No active recording');
   }
@@ -79,7 +84,7 @@ async function stopRecording(jobId: string, taskId: string, token: string) {
       recordedChunks = [];
 
       try {
-        await uploadVideo(blob, jobId, taskId, token);
+        await uploadVideo(blob, jobId, taskId, token, structuredAnswer);
         resolve();
       } catch (e) {
         reject(e);
@@ -89,7 +94,13 @@ async function stopRecording(jobId: string, taskId: string, token: string) {
   });
 }
 
-function uploadVideo(blob: Blob, jobId: string, taskId: string, token: string) {
+function uploadVideo(
+  blob: Blob,
+  jobId: string,
+  taskId: string,
+  token: string,
+  structuredAnswer: { type: string; value: string | number } | null
+) {
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
     
@@ -122,12 +133,19 @@ function uploadVideo(blob: Blob, jobId: string, taskId: string, token: string) {
     };
     chrome.runtime.onMessage.addListener(abortListener);
     
-    xhr.send(formData(blob));
+    xhr.send(buildFormData(blob, structuredAnswer));
   });
 }
 
-function formData(blob: Blob) {
+function buildFormData(
+  blob: Blob,
+  structuredAnswer: { type: string; value: string | number } | null
+) {
   const fd = new FormData();
   fd.append('video', blob, 'video.webm');
+  // Include structured answer as a JSON string field if provided
+  if (structuredAnswer) {
+    fd.append('structuredAnswer', JSON.stringify(structuredAnswer));
+  }
   return fd;
 }

@@ -68,6 +68,17 @@ model Task {
   stepOrder    Int
   instruction  String
   maxTimeLimit Int      @default(300)
+  taskType     String   @default("FREE_RESPONSE")
+
+  // MULTIPLE_CHOICE fields
+  choices      String[]
+
+  // RATING_SCALE fields
+  ratingMin      Int?
+  ratingMax      Int?
+  ratingMinLabel String?
+  ratingMaxLabel String?
+
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
@@ -104,16 +115,21 @@ model JobAssignment {
 }
 
 model TaskResponse {
-  id         String   @id @default(uuid())
-  jobId      String
-  taskId     String
-  answerText String?
-  videoUrl   String?
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id               String    @id @default(uuid())
+  jobId            String
+  taskId           String
+  answerText       String?   @db.Text
+  videoUrl         String?
+  // Stores locked in-session answer for MULTIPLE_CHOICE and RATING_SCALE tasks.
+  // Set once via the extension during recording; never overwritten afterwards.
+  structuredAnswer Json?
+  structuredAnswerLockedAt DateTime?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
 
   job  JobAssignment @relation(fields: [jobId], references: [id])
   task Task          @relation(fields: [taskId], references: [id])
 
   @@unique([jobId, taskId])
 }
+
