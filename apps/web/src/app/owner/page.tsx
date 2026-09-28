@@ -246,7 +246,7 @@ function OwnerDashboardContent() {
           </div>
 
           {campaigns.length === 0 ? (
-            <EmptyState title="No campaigns yet" description="Create your first campaign to make a usability test available to testers." />
+            <EmptyState title={t("noCampaignsYet")} description={t("noCampaignsDesc")} />
           ) : (
             <div className="space-y-4">
               {campaigns.map((campaign) => (
@@ -797,7 +797,7 @@ function OwnerDashboardContent() {
           <ul className="text-sm text-blue-800 dark:text-blue-300 space-y-3 list-disc pl-4">
             <li><strong>{t("createCampaign.tips1")}</strong> {t("createCampaign.tips1desc")}</li>
             <li><strong>{t("createCampaign.tips2")}</strong> {t("createCampaign.tips2desc")}</li>
-            <li><strong>{t("createCampaign.timeLimit")}s:</strong> Most tasks should take 1-2 minutes. Only use 5 minutes for complex workflows.</li>
+            <li><strong>{t("createCampaign.timeLimit")}s:</strong> {t("createCampaign.timeLimitDesc")}</li>
             <li><strong>{t("createCampaign.tips3")}</strong> {t("createCampaign.tips3desc")}</li>
           </ul>
         </aside>
@@ -814,6 +814,8 @@ export default function OwnerDashboard() {
     </Suspense>
   );
 }
+
+
 
 
 
