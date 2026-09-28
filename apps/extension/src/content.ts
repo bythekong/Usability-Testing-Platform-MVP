@@ -38,6 +38,17 @@ let remainingTime = 0;
 //  Bootstrap: Read session from storage
 // ──────────────────────────────────────────────
 
+function normalizeUrl(url: string) {
+  return url.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '').split('?')[0];
+}
+
+function isUrlMatching(current: string, target: string) {
+  if (!target) return true; // If no specific target, assume it's fine
+  const normCurrent = normalizeUrl(current);
+  const normTarget = normalizeUrl(target);
+  return normCurrent.startsWith(normTarget) || normTarget.startsWith(normCurrent);
+}
+
 function bootstrap() {
   chrome.runtime.sendMessage({ type: 'GET_SESSION' }, (response) => {
     if (chrome.runtime.lastError) {
@@ -47,9 +58,19 @@ function bootstrap() {
 
     if (response?.session) {
       session = response.session;
-      console.log('CONTENT: Active session found', session!.jobId);
-      injectWelcomeModal();
-      injectOverlay();
+      
+      const currentTask = session!.campaign.tasks[session!.currentTaskIndex];
+      const expectedUrl = currentTask?.taskUrl || session!.campaign.targetUrl;
+      const isRecordingOrUploading = session!.taskState !== 'READY';
+      const currentUrl = window.location.href;
+
+      if (isRecordingOrUploading || isUrlMatching(currentUrl, expectedUrl)) {
+        console.log('CONTENT: Active session matched for this URL', session!.jobId);
+        injectWelcomeModal();
+        injectOverlay();
+      } else {
+        console.log('CONTENT: Session active but URL mismatch. Expected:', expectedUrl);
+      }
     } else {
       console.log('CONTENT: No active session');
     }
@@ -301,6 +322,7 @@ function injectOverlay() {
       <div style="display: flex; gap: 8px;">
         <button id="ut-view-brief-btn" style="background: none !important; border: none !important; color: #2563eb !important; font-size: 12px !important; cursor: pointer !important; text-decoration: underline !important; opacity: 1 !important; padding: 0 !important; font-weight: normal !important;">📖 Brief</button>
         <button id="ut-minimize-btn" style="background: none !important; border: none !important; color: #6b7280 !important; font-size: 14px !important; cursor: pointer !important; padding: 0 4px !important; opacity: 1 !important; font-weight: normal !important;" title="Minimize">_</button>
+        <button id="ut-quit-session-btn" style="background: none !important; border: none !important; color: #dc2626 !important; font-size: 14px !important; cursor: pointer !important; padding: 0 4px !important; opacity: 1 !important; font-weight: bold !important;" title="Quit Session">✕</button>
       </div>
     </div>
     <div id="ut-progress-text" style="font-size: 12px; margin-bottom: 4px; color: #6b7280 !important;"></div>
@@ -371,6 +393,18 @@ function injectOverlay() {
     minBtn.style.display = 'none';
     overlay.style.display = 'block';
   };
+
+  const quitBtn = document.getElementById('ut-quit-session-btn');
+  if (quitBtn) {
+    quitBtn.onclick = () => {
+      if (confirm('Are you sure you want to quit this testing session? Your progress on this task will be lost.')) {
+        chrome.runtime.sendMessage({ type: 'END_SESSION' });
+        overlayContainer.remove();
+        const welcomeModal = document.getElementById('ut-welcome-modal');
+        if (welcomeModal) welcomeModal.remove();
+      }
+    };
+  }
 
   document.getElementById('ut-start-btn')!.onclick = startTask;
   document.getElementById('ut-retake-btn')!.onclick = retakeTask;
