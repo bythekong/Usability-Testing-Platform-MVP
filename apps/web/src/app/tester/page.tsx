@@ -21,9 +21,25 @@ interface TesterJob {
     rewardAmount: number;
     currency: string;
     isLocked: boolean;
-    tasks: { id: string; instruction: string; maxTimeLimit: number }[];
+    tasks: {
+      id: string;
+      instruction: string;
+      maxTimeLimit: number;
+      taskType: string;
+      choices: string[];
+      ratingMin: number | null;
+      ratingMax: number | null;
+      ratingMinLabel: string | null;
+      ratingMaxLabel: string | null;
+    }[];
   };
-  responses?: { taskId: string; videoUrl: string | null; answerText: string | null }[];
+  responses?: {
+    taskId: string;
+    videoUrl: string | null;
+    answerText: string | null;
+    structuredAnswer: { type: string; value: string | number } | null;
+    structuredAnswerLockedAt: string | null;
+  }[];
 }
 
 interface ExternalChromeRuntime {

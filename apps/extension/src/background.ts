@@ -165,7 +165,8 @@ chrome.runtime.onMessage.addListener((request, _sender, sendResponse) => {
           type: 'STOP_RECORDING', 
           jobId: request.jobId, 
           taskId: request.taskId, 
-          token: authToken 
+          token: authToken,
+          structuredAnswer: request.structuredAnswer ?? null, // forward from content script
         });
         sendResponse(response);
       } catch (e) {

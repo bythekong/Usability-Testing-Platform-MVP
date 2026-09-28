@@ -355,21 +355,65 @@ router.post(
         return res.status(400).json({ error: 'No video file provided' });
       }
 
-      // We use upsert since task responses might be submitted later or we can create a partial response
-      await prisma.taskResponse.upsert({
-        where: {
-          jobId_taskId: {
-            jobId: id,
-            taskId: taskId
+      // Parse and validate structuredAnswer from multipart form field
+      let structuredAnswer: object | null = null;
+      if (req.body.structuredAnswer) {
+        try {
+          structuredAnswer = JSON.parse(req.body.structuredAnswer);
+        } catch {
+          return res.status(400).json({ error: 'Invalid structuredAnswer JSON' });
+        }
+
+        // Validate structuredAnswer matches the task type
+        const taskType = (task as any).taskType || 'FREE_RESPONSE';
+        if (taskType === 'MULTIPLE_CHOICE') {
+          const sa = structuredAnswer as any;
+          if (sa.type !== 'MULTIPLE_CHOICE' || typeof sa.value !== 'string') {
+            return res.status(400).json({ error: 'structuredAnswer must be {type:"MULTIPLE_CHOICE", value: string}' });
           }
-        },
-        update: {
-          videoUrl: `/uploads/videos/${req.file.filename}`
-        },
+          const choices: string[] = (task as any).choices || [];
+          if (!choices.includes(sa.value)) {
+            return res.status(400).json({ error: 'Selected choice is not valid for this task' });
+          }
+        } else if (taskType === 'RATING_SCALE') {
+          const sa = structuredAnswer as any;
+          if (sa.type !== 'RATING_SCALE' || typeof sa.value !== 'number') {
+            return res.status(400).json({ error: 'structuredAnswer must be {type:"RATING_SCALE", value: number}' });
+          }
+          const ratingMin = (task as any).ratingMin ?? 1;
+          const ratingMax = (task as any).ratingMax ?? 5;
+          if (sa.value < ratingMin || sa.value > ratingMax) {
+            return res.status(400).json({ error: `Rating value must be between ${ratingMin} and ${ratingMax}` });
+          }
+        }
+      }
+
+      // Check for existing response to enforce structuredAnswer immutability
+      const existingResponse = await prisma.taskResponse.findUnique({
+        where: { jobId_taskId: { jobId: id, taskId } }
+      });
+
+      // Structured answer is locked once set — never allow overwrite
+      const shouldLockAnswer = structuredAnswer !== null && !existingResponse?.structuredAnswerLockedAt;
+      const updateData: any = {
+        videoUrl: `/uploads/videos/${req.file.filename}`,
+      };
+      if (shouldLockAnswer) {
+        updateData.structuredAnswer = structuredAnswer;
+        updateData.structuredAnswerLockedAt = new Date();
+      }
+
+      await prisma.taskResponse.upsert({
+        where: { jobId_taskId: { jobId: id, taskId } },
+        update: updateData,
         create: {
           jobId: id,
-          taskId: taskId,
-          videoUrl: `/uploads/videos/${req.file.filename}`
+          taskId,
+          videoUrl: `/uploads/videos/${req.file.filename}`,
+          ...(structuredAnswer ? {
+            structuredAnswer,
+            structuredAnswerLockedAt: new Date(),
+          } : {}),
         }
       });
 

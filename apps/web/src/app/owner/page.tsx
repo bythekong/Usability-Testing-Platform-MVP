@@ -1,8 +1,8 @@
 'use client';
 
 import { useEffect, useState, Suspense } from 'react';
-import { Check, ChevronDown, ChevronUp, Plus, X, Lightbulb } from 'lucide-react';
-import { JobStatus, TestCampaignDTO } from '@usability-testing/shared';
+import { Check, ChevronDown, ChevronUp, Plus, X, Lightbulb, Trash2 } from 'lucide-react';
+import { JobStatus, TaskType, TestCampaignDTO } from '@usability-testing/shared';
 import ReactMarkdown from 'react-markdown';
 import { apiFetch } from '../../lib/api';
 import { Button } from '@/components/ui/Button';
@@ -64,7 +64,16 @@ function OwnerDashboardContent() {
   const [targetGender, setTargetGender] = useState<string>('');
   const [targetItExpertise, setTargetItExpertise] = useState<string>('');
 
-  const [tasks, setTasks] = useState([{ instruction: '', maxTimeLimit: 300 }]);
+  const [tasks, setTasks] = useState<Array<{
+    instruction: string;
+    maxTimeLimit: number;
+    taskType: TaskType;
+    choices: string[];
+    ratingMin: number;
+    ratingMax: number;
+    ratingMinLabel: string;
+    ratingMaxLabel: string;
+  }>>([{ instruction: '', maxTimeLimit: 300, taskType: TaskType.FREE_RESPONSE, choices: ['', ''], ratingMin: 1, ratingMax: 5, ratingMinLabel: '', ratingMaxLabel: '' }]);
   const [reviews, setReviews] = useState<Record<string, ReviewDetails>>({});
   const [expandedJobId, setExpandedJobId] = useState<string | null>(null);
   const [error, setError] = useState('');
@@ -113,6 +122,23 @@ function OwnerDashboardContent() {
     const cleanTasks = tasks.filter((task) => task.instruction.trim());
     if (!cleanTasks.length) return;
 
+    // Validate task-type-specific fields
+    for (const task of cleanTasks) {
+      if (task.taskType === TaskType.MULTIPLE_CHOICE) {
+        const validChoices = task.choices.filter(c => c.trim());
+        if (validChoices.length < 2) {
+          toast.error('Multiple choice tasks need at least 2 non-empty choices.');
+          return;
+        }
+      }
+      if (task.taskType === TaskType.RATING_SCALE) {
+        if (task.ratingMax <= task.ratingMin) {
+          toast.error('Rating max must be greater than rating min.');
+          return;
+        }
+      }
+    }
+
     setCreating(true);
     
     const payload: Record<string, unknown> = {
@@ -120,7 +146,20 @@ function OwnerDashboardContent() {
       rewardAmount: Math.round(rewardAmount * 100), // Convert to cents
       testerCount,
       scenario: scenario.trim() || undefined,
-      tasks: cleanTasks
+      tasks: cleanTasks.map(task => ({
+        instruction: task.instruction,
+        maxTimeLimit: task.maxTimeLimit,
+        taskType: task.taskType,
+        ...(task.taskType === TaskType.MULTIPLE_CHOICE ? {
+          choices: task.choices.filter(c => c.trim()),
+        } : {}),
+        ...(task.taskType === TaskType.RATING_SCALE ? {
+          ratingMin: task.ratingMin,
+          ratingMax: task.ratingMax,
+          ratingMinLabel: task.ratingMinLabel || undefined,
+          ratingMaxLabel: task.ratingMaxLabel || undefined,
+        } : {}),
+      })),
     };
     if (targetMinAge) payload.targetMinAge = parseInt(targetMinAge);
     if (targetMaxAge) payload.targetMaxAge = parseInt(targetMaxAge);
@@ -139,7 +178,7 @@ function OwnerDashboardContent() {
       setTargetMaxAge('');
       setTargetGender('');
       setTargetItExpertise('');
-      setTasks([{ instruction: '', maxTimeLimit: 300 }]);
+      setTasks([{ instruction: '', maxTimeLimit: 300, taskType: TaskType.FREE_RESPONSE, choices: ['', ''], ratingMin: 1, ratingMax: 5, ratingMinLabel: '', ratingMaxLabel: '' }]);
       await fetchCampaigns();
     });
 
@@ -500,7 +539,8 @@ function OwnerDashboardContent() {
               <p className="mb-2 text-sm font-medium text-foreground">Task Instructions</p>
               <div className="space-y-4">
                 {tasks.map((task, index) => (
-                  <div key={index} className="flex flex-col gap-2 rounded-lg border border-border p-4 bg-gray-50/50">
+                  <div key={index} className="flex flex-col gap-3 rounded-lg border border-border p-4 bg-gray-50/50">
+                    {/* Task header */}
                     <div className="flex items-center justify-between">
                       <span className="text-sm font-semibold text-gray-700">Task {index + 1}</span>
                       {tasks.length > 1 && (
@@ -514,7 +554,39 @@ function OwnerDashboardContent() {
                         </button>
                       )}
                     </div>
-                    
+
+                    {/* Task Type Selector */}
+                    <div className="space-y-1">
+                      <label className="text-xs font-semibold text-muted uppercase tracking-wide">Task Type</label>
+                      <div className="flex gap-2 flex-wrap">
+                        {[
+                          { value: TaskType.FREE_RESPONSE, label: '🎙️ Free Response', desc: 'Tester records & writes markdown review' },
+                          { value: TaskType.MULTIPLE_CHOICE, label: '☑️ Multiple Choice', desc: 'Tester picks one option while recording' },
+                          { value: TaskType.RATING_SCALE, label: '⭐ Rating Scale', desc: 'Tester rates on a scale while recording' },
+                        ].map(({ value, label, desc }) => (
+                          <button
+                            key={value}
+                            type="button"
+                            onClick={() => {
+                              const nextTasks = [...tasks];
+                              nextTasks[index] = { ...nextTasks[index], taskType: value };
+                              setTasks(nextTasks);
+                            }}
+                            title={desc}
+                            className={[
+                              'flex-1 min-w-[130px] rounded-md border px-3 py-2 text-xs font-semibold transition text-left',
+                              task.taskType === value
+                                ? 'border-blue-500 bg-blue-50 text-blue-700'
+                                : 'border-border bg-white text-gray-600 hover:border-gray-400'
+                            ].join(' ')}
+                          >
+                            {label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Instruction (all types) */}
                     <Input
                       required
                       value={task.instruction}
@@ -523,10 +595,142 @@ function OwnerDashboardContent() {
                         nextTasks[index] = { ...nextTasks[index], instruction: event.target.value };
                         setTasks(nextTasks);
                       }}
-                      placeholder="e.g. Find pricing and read it out loud"
-                      aria-label={'Task ' + (index + 1)}
+                      placeholder={
+                        task.taskType === TaskType.MULTIPLE_CHOICE
+                          ? 'e.g. Which plan would you choose for your needs?'
+                          : task.taskType === TaskType.RATING_SCALE
+                          ? 'e.g. How easy was it to find the checkout button?'
+                          : 'e.g. Find the pricing page and describe what you see'
+                      }
+                      aria-label={'Task ' + (index + 1) + ' instruction'}
                     />
-                    
+
+                    {/* MULTIPLE_CHOICE: Choices editor */}
+                    {task.taskType === TaskType.MULTIPLE_CHOICE && (
+                      <div className="space-y-2">
+                        <label className="text-xs font-semibold text-muted uppercase tracking-wide">Answer Choices</label>
+                        {task.choices.map((choice, choiceIdx) => (
+                          <div key={choiceIdx} className="flex items-center gap-2">
+                            <span className="text-xs text-muted w-5 shrink-0">{String.fromCharCode(65 + choiceIdx)}.</span>
+                            <Input
+                              value={choice}
+                              onChange={(e) => {
+                                const nextTasks = [...tasks];
+                                const nextChoices = [...nextTasks[index].choices];
+                                nextChoices[choiceIdx] = e.target.value;
+                                nextTasks[index] = { ...nextTasks[index], choices: nextChoices };
+                                setTasks(nextTasks);
+                              }}
+                              placeholder={`Choice ${String.fromCharCode(65 + choiceIdx)}`}
+                              className="flex-1 h-8 text-sm"
+                            />
+                            {task.choices.length > 2 && (
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  const nextTasks = [...tasks];
+                                  nextTasks[index] = {
+                                    ...nextTasks[index],
+                                    choices: nextTasks[index].choices.filter((_, ci) => ci !== choiceIdx)
+                                  };
+                                  setTasks(nextTasks);
+                                }}
+                                className="p-1 text-muted hover:text-red-500"
+                              >
+                                <Trash2 className="h-3 w-3" />
+                              </button>
+                            )}
+                          </div>
+                        ))}
+                        {task.choices.length < 8 && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const nextTasks = [...tasks];
+                              nextTasks[index] = { ...nextTasks[index], choices: [...nextTasks[index].choices, ''] };
+                              setTasks(nextTasks);
+                            }}
+                            className="text-xs text-primary hover:text-primary/80 flex items-center gap-1"
+                          >
+                            <Plus className="h-3 w-3" /> Add choice
+                          </button>
+                        )}
+                      </div>
+                    )}
+
+                    {/* RATING_SCALE: Min/Max config */}
+                    {task.taskType === TaskType.RATING_SCALE && (
+                      <div className="space-y-2">
+                        <label className="text-xs font-semibold text-muted uppercase tracking-wide">Scale Configuration</label>
+                        <div className="grid grid-cols-2 gap-3">
+                          <div className="space-y-1">
+                            <label className="text-xs text-muted">Min value</label>
+                            <Input
+                              type="number" min="1" max="9"
+                              value={task.ratingMin}
+                              onChange={(e) => {
+                                const nextTasks = [...tasks];
+                                nextTasks[index] = { ...nextTasks[index], ratingMin: parseInt(e.target.value) || 1 };
+                                setTasks(nextTasks);
+                              }}
+                              className="h-8 text-sm"
+                            />
+                          </div>
+                          <div className="space-y-1">
+                            <label className="text-xs text-muted">Max value</label>
+                            <Input
+                              type="number" min="2" max="10"
+                              value={task.ratingMax}
+                              onChange={(e) => {
+                                const nextTasks = [...tasks];
+                                nextTasks[index] = { ...nextTasks[index], ratingMax: parseInt(e.target.value) || 5 };
+                                setTasks(nextTasks);
+                              }}
+                              className="h-8 text-sm"
+                            />
+                          </div>
+                          <div className="space-y-1">
+                            <label className="text-xs text-muted">Min label (optional)</label>
+                            <Input
+                              value={task.ratingMinLabel}
+                              onChange={(e) => {
+                                const nextTasks = [...tasks];
+                                nextTasks[index] = { ...nextTasks[index], ratingMinLabel: e.target.value };
+                                setTasks(nextTasks);
+                              }}
+                              placeholder="e.g. Very Difficult"
+                              className="h-8 text-sm"
+                            />
+                          </div>
+                          <div className="space-y-1">
+                            <label className="text-xs text-muted">Max label (optional)</label>
+                            <Input
+                              value={task.ratingMaxLabel}
+                              onChange={(e) => {
+                                const nextTasks = [...tasks];
+                                nextTasks[index] = { ...nextTasks[index], ratingMaxLabel: e.target.value };
+                                setTasks(nextTasks);
+                              }}
+                              placeholder="e.g. Very Easy"
+                              className="h-8 text-sm"
+                            />
+                          </div>
+                        </div>
+                        {/* Scale preview */}
+                        <div className="rounded-md bg-white border border-gray-200 p-3">
+                          <p className="text-xs text-muted mb-2">Preview:</p>
+                          <div className="flex items-center gap-2 flex-wrap">
+                            {task.ratingMinLabel && <span className="text-xs text-gray-500">{task.ratingMinLabel}</span>}
+                            {Array.from({ length: task.ratingMax - task.ratingMin + 1 }, (_, i) => task.ratingMin + i).map(n => (
+                              <span key={n} className="h-8 w-8 flex items-center justify-center rounded-full border border-gray-300 text-sm font-medium text-gray-700 bg-gray-50">{n}</span>
+                            ))}
+                            {task.ratingMaxLabel && <span className="text-xs text-gray-500">{task.ratingMaxLabel}</span>}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Time Limit (all types) */}
                     <div className="flex items-center gap-2">
                       <label className="text-xs text-muted">Time Limit (mins):</label>
                       <Input
@@ -550,13 +754,14 @@ function OwnerDashboardContent() {
 
               <button
                 type="button"
-                onClick={() => setTasks([...tasks, { instruction: '', maxTimeLimit: 300 }])}
+                onClick={() => setTasks([...tasks, { instruction: '', maxTimeLimit: 300, taskType: TaskType.FREE_RESPONSE, choices: ['', ''], ratingMin: 1, ratingMax: 5, ratingMinLabel: '', ratingMaxLabel: '' }])}
                 className="mt-3 inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
               >
                 <Plus className="h-4 w-4" />
                 Add another task
               </button>
             </div>
+
 
             <div className="rounded-lg bg-gray-50 p-4 border border-border">
               <div className="flex justify-between items-center text-sm">
