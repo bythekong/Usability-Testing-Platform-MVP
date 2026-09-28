@@ -60,7 +60,7 @@ export function AppShell({ children }: AppShellProps) {
           <button
             type="button"
             onClick={() => setIsMobileOpen(true)}
-            className="-ml-2 rounded-md p-2 text-muted transition hover:bg-gray-100 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            className="-ml-2 rounded-md p-2 text-muted transition hover:bg-muted/10 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
             aria-label="Open navigation"
           >
             <Menu className="h-5 w-5" />

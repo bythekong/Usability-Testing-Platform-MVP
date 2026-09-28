@@ -6,8 +6,12 @@ import { Role } from '@usability-testing/shared';
 import { apiFetch } from '../lib/api';
 import { Button } from '@/components/ui/Button';
 import { FormField, Input } from '@/components/ui/FormField';
+import { ThemeToggle } from '@/components/theme-toggle';
+import { LanguageSwitcher } from '@/components/language-switcher';
+import { useTranslations } from 'next-intl';
 
 export default function Home() {
+  const t = useTranslations('auth');
   const [email, setEmail] = useState('owner@example.com');
   const [password, setPassword] = useState('password123');
   const [role, setRole] = useState<Role>(Role.OWNER);
@@ -56,11 +60,15 @@ export default function Home() {
   };
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-6 bg-background text-foreground">
+    <main className="flex min-h-screen flex-col items-center justify-center p-6 bg-background text-foreground relative">
+      <div className="absolute top-4 right-4 flex items-center gap-2">
+        <LanguageSwitcher />
+        <ThemeToggle />
+      </div>
       <div className="w-full max-w-md bg-surface p-8 rounded-xl shadow-[0_2px_10px_rgba(0,0,0,0.06)] border border-border">
         <div className="text-center mb-8">
-          <h1 className="text-2xl font-semibold tracking-tight">Usability Testing</h1>
-          <p className="text-sm text-muted mt-2">Sign in to your account</p>
+          <h1 className="text-2xl font-semibold tracking-tight">{t('title')}</h1>
+          <p className="text-sm text-muted mt-2">{t('subtitle')}</p>
         </div>
 
         {error && (
@@ -70,19 +78,19 @@ export default function Home() {
         )}
 
         <form className="space-y-5">
-          <FormField label="Email address" htmlFor="email">
+          <FormField label={t('emailLabel')} htmlFor="email">
             <Input
               id="email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="name@example.com"
+              placeholder={t('emailPlaceholder')}
               disabled={loading}
               required
             />
           </FormField>
 
-          <FormField label="Password" htmlFor="password">
+          <FormField label={t('passwordLabel')} htmlFor="password">
             <Input
               id="password"
               type="password"
@@ -93,7 +101,7 @@ export default function Home() {
             />
           </FormField>
 
-          <FormField label="Role (for registration)" htmlFor="role">
+          <FormField label={t('roleLabel')} htmlFor="role">
             <select
               id="role"
               value={role}
@@ -101,8 +109,8 @@ export default function Home() {
               className="flex h-10 w-full rounded-md border border-border bg-surface px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:border-primary disabled:cursor-not-allowed disabled:opacity-50"
               disabled={loading}
             >
-              <option value={Role.OWNER}>Owner (Create Tests)</option>
-              <option value={Role.TESTER}>Tester (Take Tests)</option>
+              <option value={Role.OWNER}>{t('roleOwner')}</option>
+              <option value={Role.TESTER}>{t('roleTester')}</option>
             </select>
           </FormField>
 
@@ -113,14 +121,14 @@ export default function Home() {
               className="w-full"
               disabled={loading}
             >
-              {loading ? "Signing in..." : "Sign In"}
+              {loading ? t('signingIn') : t('signIn')}
             </Button>
             <div className="relative my-2">
               <div className="absolute inset-0 flex items-center">
                 <span className="w-full border-t border-border" />
               </div>
               <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-surface px-2 text-muted">Or continue with</span>
+                <span className="bg-surface px-2 text-muted">{t('orContinue')}</span>
               </div>
             </div>
             <Button
@@ -130,7 +138,7 @@ export default function Home() {
               className="w-full"
               disabled={loading}
             >
-              Register New Account
+              {t('register')}
             </Button>
           </div>
         </form>

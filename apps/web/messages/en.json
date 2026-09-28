@@ -1,0 +1,86 @@
+{
+  "auth": {
+    "title": "Usability Hub",
+    "subtitle": "Sign in to your account",
+    "emailLabel": "Email address",
+    "emailPlaceholder": "name@example.com",
+    "passwordLabel": "Password",
+    "roleLabel": "Role (for registration)",
+    "roleOwner": "Owner",
+    "roleTester": "Tester",
+    "signIn": "Sign In",
+    "signingIn": "Signing in...",
+    "orContinue": "Or continue with",
+    "register": "Register New Account"
+  },
+  "nav": {
+    "createCampaign": "Create Campaign",
+    "manageCampaigns": "Manage Campaigns",
+    "settings": "Settings",
+    "availableJobs": "Available Jobs",
+    "myJobs": "My Jobs",
+    "extensionSetup": "Extension Setup",
+    "logout": "Logout"
+  },
+  "owner": {
+    "createCampaign": {
+      "title": "Create Campaign",
+      "desc": "Launch a new usability test for testers.",
+      "formTitle": "New Campaign",
+      "targetUrl": "Target URL",
+      "reward": "Reward per Tester (THB)",
+      "numTesters": "Number of Testers",
+      "targeting": "Tester Targeting (Optional)",
+      "targetingDesc": "Leave blank to accept any tester. Fill these out to filter who can see and claim this job.",
+      "minAge": "Minimum Age",
+      "maxAge": "Maximum Age",
+      "gender": "Gender",
+      "itExpertise": "IT Expertise",
+      "scenario": "Scenario / Context (Markdown Supported)",
+      "taskInstructions": "Task Instructions",
+      "taskType": "Task TYPE",
+      "timeLimit": "Time Limit",
+      "addTask": "Add another task",
+      "costPerTester": "Cost per tester",
+      "totalTesters": "Total testers",
+      "totalCost": "Total cost",
+      "launch": "Launch Campaign",
+      "tipsTitle": "Tips for Good Tasks",
+      "agePlaceholder": "e.g. 18",
+      "ageMaxPlaceholder": "e.g. 35",
+      "scenarioPlaceholder": "Brief the tester on the context. E.g. 'Imagine you are a busy mom looking for a quick dinner recipe...'",
+      "taskPlaceholderMCQ": "e.g. Which plan would you choose for your needs?",
+      "taskPlaceholderFree": "e.g. Find the pricing page and describe what you see",
+      "taskPlaceholderRating": "e.g. How easy was it to find the checkout button?",
+      "choicePlaceholder": "Choice ",
+      "ratingMinPlaceholder": "e.g. Very Difficult",
+      "ratingMaxPlaceholder": "e.g. Very Easy"
+    },
+    "manageCampaigns": {
+      "title": "Manage Campaigns",
+      "desc": "Review active campaigns and approve tester submissions."
+    },
+    "settings": {
+      "title": "Account Settings",
+      "ownerDesc": "Manage your owner account and payment methods."
+    }
+  },
+  "tester": {
+    "availableJobs": {
+      "title": "Available Jobs",
+      "desc": "Find usability tests, claim jobs, and earn rewards."
+    },
+    "myJobs": {
+      "title": "My Jobs",
+      "desc": "Manage your claimed tests and past submissions."
+    },
+    "extension": {
+      "title": "Extension Setup",
+      "desc": "Install and connect the Chrome Extension to start testing."
+    },
+    "settings": {
+      "title": "Account Settings",
+      "testerDesc": "Manage your account, demographics, and payout methods."
+    }
+  }
+}

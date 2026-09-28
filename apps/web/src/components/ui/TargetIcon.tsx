@@ -19,7 +19,7 @@ export function TargetIcon({ url, className, ...props }: TargetIconProps) {
   return (
     <div
       className={cn(
-        "flex items-center justify-center w-8 h-8 rounded-md border border-border bg-gray-50 text-muted",
+        "flex items-center justify-center w-8 h-8 rounded-md border border-border bg-muted/10 text-muted",
         className
       )}
       title={hostname || url}

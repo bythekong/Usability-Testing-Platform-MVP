@@ -73,7 +73,7 @@ function LockedRatingScaleAnswer({ value, task }: { value: number; task: Task })
       <div className="flex-1">
         <p className="text-xs font-semibold text-green-700 uppercase tracking-wide mb-2">Your rating (locked)</p>
         <div className="flex items-center gap-2 flex-wrap">
-          {task.ratingMinLabel && <span className="text-xs text-gray-500">{task.ratingMinLabel}</span>}
+          {task.ratingMinLabel && <span className="text-xs text-muted">{task.ratingMinLabel}</span>}
           {Array.from({ length: max - min + 1 }, (_, i) => min + i).map(n => (
             <span
               key={n}
@@ -81,13 +81,13 @@ function LockedRatingScaleAnswer({ value, task }: { value: number; task: Task })
                 'h-9 w-9 flex items-center justify-center rounded-full text-sm font-bold border-2 transition-all',
                 n === value
                   ? 'border-green-500 bg-green-500 text-white scale-110'
-                  : 'border-gray-200 bg-white text-gray-400'
+                  : 'border-border bg-surface text-muted'
               ].join(' ')}
             >
               {n}
             </span>
           ))}
-          {task.ratingMaxLabel && <span className="text-xs text-gray-500">{task.ratingMaxLabel}</span>}
+          {task.ratingMaxLabel && <span className="text-xs text-muted">{task.ratingMaxLabel}</span>}
         </div>
         <p className="mt-2 text-xs text-green-700">Selected: <strong>{value}</strong> / {max}</p>
       </div>
@@ -173,15 +173,15 @@ export function ReviewJobView({ job, onBack, onSubmitted }: Props) {
             <div className="flex items-center gap-3 mb-3">
               <span className={[
                 'inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold',
-                isFreeResponse ? 'bg-blue-100 text-blue-700' :
-                isMultipleChoice ? 'bg-purple-100 text-purple-700' :
-                'bg-amber-100 text-amber-700'
+                isFreeResponse ? 'bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300' :
+                isMultipleChoice ? 'bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300' :
+                'bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300'
               ].join(' ')}>
                 {isFreeResponse ? '🎙️ Free Response' : isMultipleChoice ? '☑️ Multiple Choice' : '⭐ Rating Scale'}
               </span>
               <h3 className="font-semibold text-lg">Task {index + 1}</h3>
             </div>
-            <p className="text-foreground mb-4 bg-gray-50 p-3 rounded-md border border-gray-100">{task.instruction}</p>
+            <p className="text-foreground mb-4 bg-muted/20 p-3 rounded-md border border-border">{task.instruction}</p>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Video player (left) */}
@@ -191,10 +191,10 @@ export function ReviewJobView({ job, onBack, onSubmitted }: Props) {
                   <video
                     src={process.env.NEXT_PUBLIC_API_URL + videoUrl}
                     controls
-                    className="w-full rounded-md border border-gray-200 bg-black aspect-video object-contain"
+                    className="w-full rounded-md border border-border bg-black aspect-video object-contain"
                   />
                 ) : (
-                  <div className="flex aspect-video w-full flex-col p-4 text-center items-center justify-center rounded-md border border-gray-200 bg-gray-50 text-sm text-gray-500">
+                  <div className="flex aspect-video w-full flex-col p-4 text-center items-center justify-center rounded-md border border-border bg-muted/20 text-sm text-muted">
                     <p>No video recorded yet.</p>
                     {job.campaign.isLocked && <p className="text-xs text-red-500 mt-1">This campaign has been locked by the owner.</p>}
                   </div>
@@ -232,8 +232,8 @@ export function ReviewJobView({ job, onBack, onSubmitted }: Props) {
                       onChange={(e) => handleAnswerChange(task.id, e.target.value)}
                     />
                     {answers[task.id] && (
-                      <div className="mt-3 rounded-md border border-gray-200 bg-gray-50 p-4 text-sm prose prose-sm max-w-none">
-                        <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">Preview</p>
+                      <div className="mt-3 rounded-md border border-border bg-muted/20 p-4 text-sm prose dark:prose-invert prose-sm max-w-none">
+                        <p className="text-xs font-semibold text-muted uppercase tracking-wide mb-2">Preview</p>
                         <ReactMarkdown>{answers[task.id]}</ReactMarkdown>
                       </div>
                     )}

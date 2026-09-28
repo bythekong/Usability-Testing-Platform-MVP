@@ -15,7 +15,7 @@ export function StatusBadge({ status, children, className, ...props }: StatusBad
           "bg-success-bg text-success-text": status === "success",
           "bg-warning-bg text-warning-text": status === "warning",
           "bg-danger-bg text-danger-text": status === "danger",
-          "bg-gray-100 text-gray-700": status === "neutral",
+          "bg-muted/20 text-muted": status === "neutral",
         },
         className
       )}

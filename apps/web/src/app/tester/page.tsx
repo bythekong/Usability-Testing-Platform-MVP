@@ -11,6 +11,7 @@ import { StatusBadge } from '@/components/ui/StatusBadge';
 import { TargetIcon } from '@/components/ui/TargetIcon';
 import { useSearchParams } from 'next/navigation';
 import toast from 'react-hot-toast';
+import { useTranslations } from 'next-intl';
 import { Input, FormField } from '@/components/ui/FormField';
 
 interface TesterJob {
@@ -52,6 +53,7 @@ interface ExternalChromeRuntime {
 }
 
 function formatReward(amount: number, currency: string) {
+  if (currency === 'THB') return '฿' + (amount / 100).toLocaleString('th-TH');
   if (currency === 'USD') return '$' + (amount / 100).toFixed(2);
   return (amount / 100).toFixed(2) + ' ' + currency;
 }
@@ -72,6 +74,7 @@ function badgeTone(status: JobStatus): 'success' | 'warning' | 'danger' | 'neutr
 import { ReviewJobView } from './ReviewJobView';
 
 function TesterDashboardContent() {
+  const t = useTranslations('tester');
   const searchParams = useSearchParams();
   const currentTab = searchParams.get('tab') || 'available';
 
@@ -246,7 +249,7 @@ function TesterDashboardContent() {
 
     return (
       <>
-        <PageHeader title="My Jobs" description="Manage your claimed tests and past submissions." />
+        <PageHeader title={t("myJobs.title")} description={t("myJobs.desc")} />
         <section id="my-jobs">
           <h2 className="mb-4 text-xl font-semibold text-foreground">Active Jobs</h2>
           {activeJobs.length === 0 ? (
@@ -254,7 +257,7 @@ function TesterDashboardContent() {
           ) : (
             <div className="mb-10 grid gap-4 lg:grid-cols-2">
               {activeJobs.map((job) => (
-                <article key={job.id} className="rounded-xl border border-blue-200 bg-blue-50/50 p-5 shadow-sm">
+                <article key={job.id} className="rounded-xl border border-blue-200 dark:border-blue-800 bg-blue-50/50 dark:bg-blue-900/20 p-5 shadow-sm">
                   <div className="flex items-start justify-between gap-4">
                     <StatusBadge status="warning">In Progress</StatusBadge>
                     <span className="text-sm font-semibold text-foreground">{formatReward(job.campaign.rewardAmount, job.campaign.currency)}</span>
@@ -271,12 +274,12 @@ function TesterDashboardContent() {
                   </div>
                   <div className="mt-5 flex gap-3">
                     {!job.campaign.isLocked ? (
-                      <a href={job.campaign.targetUrl} target="_blank" rel="noreferrer" className="inline-flex h-10 flex-1 items-center justify-center rounded-md bg-blue-100 px-4 text-sm font-medium text-blue-700 transition hover:bg-blue-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500">
+                      <a href={job.campaign.targetUrl} target="_blank" rel="noreferrer" className="inline-flex h-10 flex-1 items-center justify-center rounded-md bg-blue-100 dark:bg-blue-900/40 px-4 text-sm font-medium text-blue-700 dark:text-blue-300 transition hover:bg-blue-200 dark:hover:bg-blue-900/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500">
                         Open URL
                         <ExternalLink className="ml-2 h-4 w-4" />
                       </a>
                     ) : (
-                      <div className="inline-flex h-10 flex-1 items-center justify-center rounded-md bg-gray-100 px-4 text-sm font-medium text-gray-500 cursor-not-allowed">
+                      <div className="inline-flex h-10 flex-1 items-center justify-center rounded-md bg-muted/30 px-4 text-sm font-medium text-muted cursor-not-allowed">
                         Locked by Owner
                       </div>
                     )}
@@ -324,11 +327,11 @@ function TesterDashboardContent() {
   if (currentTab === 'extension-sync') {
     return (
       <>
-        <PageHeader title="Extension Setup" description="Install and connect the Chrome Extension to start testing." />
+        <PageHeader title={t("extension.title")} description={t("extension.desc")} />
         <div className="max-w-2xl rounded-xl border border-border bg-surface p-6 shadow-sm">
           <div className="mb-8 text-center">
-            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-blue-50">
-              <Plug className="h-8 w-8 text-blue-600" />
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-blue-50 dark:bg-blue-900/20">
+              <Plug className="h-8 w-8 text-blue-600 dark:text-blue-400" />
             </div>
             <h2 className="mt-4 text-xl font-semibold text-foreground">Connect Your Extension</h2>
             <p className="mt-2 text-sm text-muted">You need to sync your account with the browser extension to record your screen and audio during usability tests.</p>
@@ -336,14 +339,14 @@ function TesterDashboardContent() {
           
           <div className="space-y-6">
             <div className="flex gap-4">
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gray-100 font-semibold text-gray-600">1</div>
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-muted/30 font-semibold text-muted">1</div>
               <div>
                 <h3 className="font-semibold text-foreground">Install Extension</h3>
                 <p className="mt-1 text-sm text-muted">Ensure you have the Usability Testing MVP Chrome Extension installed and enabled in your browser.</p>
               </div>
             </div>
             <div className="flex gap-4">
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gray-100 font-semibold text-gray-600">2</div>
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-muted/30 font-semibold text-muted">2</div>
               <div>
                 <h3 className="font-semibold text-foreground">Sync Account</h3>
                 <p className="mt-1 text-sm text-muted mb-3">Click the button below to securely pass your login token to the extension.</p>
@@ -354,7 +357,7 @@ function TesterDashboardContent() {
               </div>
             </div>
             <div className="flex gap-4">
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gray-100 font-semibold text-gray-600">3</div>
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-muted/30 font-semibold text-muted">3</div>
               <div>
                 <h3 className="font-semibold text-foreground">Start Testing</h3>
                 <p className="mt-1 text-sm text-muted">Go to &quot;Available Jobs&quot; or &quot;My Jobs&quot; and open the target URL to begin your session.</p>
@@ -369,7 +372,7 @@ function TesterDashboardContent() {
   if (currentTab === 'settings') {
     return (
       <>
-        <PageHeader title="Account Settings" description="Manage your account, demographics, and payout methods." />
+        <PageHeader title={t("settings.title")} description={t("settings.testerDesc")} />
         <div className="max-w-2xl space-y-6">
           <section className="rounded-xl border border-border bg-surface p-6 shadow-sm">
             <h2 className="text-lg font-semibold text-foreground mb-4">Profile Information</h2>
@@ -416,8 +419,8 @@ function TesterDashboardContent() {
 
           <section className="rounded-xl border border-border bg-surface p-6 shadow-sm">
             <h2 className="text-lg font-semibold text-foreground mb-4">Payout Method</h2>
-            <div className="rounded-lg bg-gray-50 border border-gray-200 p-4 text-center">
-              <p className="text-sm text-gray-600 mb-3">No payout method configured.</p>
+            <div className="rounded-lg bg-muted/20 border border-border p-4 text-center">
+              <p className="text-sm text-muted mb-3">No payout method configured.</p>
               <Button disabled variant="outline">Connect Bank Account</Button>
               <p className="mt-2 text-xs text-gray-400">Payment system integration coming soon.</p>
             </div>
@@ -430,7 +433,7 @@ function TesterDashboardContent() {
   // Default: available
   return (
     <>
-      <PageHeader title="Available Jobs" description="Find usability tests, claim jobs, and earn rewards." />
+      <PageHeader title={t("availableJobs.title")} description={t("availableJobs.desc")} />
 
       {error && (
         <div className="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
@@ -473,3 +476,4 @@ export default function TesterDashboard() {
     </Suspense>
   );
 }
+

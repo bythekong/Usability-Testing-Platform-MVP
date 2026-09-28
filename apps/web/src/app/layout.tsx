@@ -12,14 +12,29 @@ export const metadata: Metadata = {
   description: "Usability testing campaigns and tester workflows",
 };
 
+import { NextIntlClientProvider } from 'next-intl';
+import { getLocale, getMessages } from 'next-intl/server';
 import { Toaster } from 'react-hot-toast';
+import { ThemeProvider } from '@/components/theme-provider';
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  const locale = await getLocale();
+  const messages = await getMessages();
+
   return (
-    <html lang="en" className={`${inter.variable} h-full antialiased`}>
+    <html lang={locale} className={`${inter.variable} h-full antialiased`} suppressHydrationWarning>
       <body className="min-h-full">
-        {children}
-        <Toaster position="bottom-right" />
+        <NextIntlClientProvider messages={messages}>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            {children}
+            <Toaster position="bottom-right" />
+          </ThemeProvider>
+        </NextIntlClientProvider>
       </body>
     </html>
   );

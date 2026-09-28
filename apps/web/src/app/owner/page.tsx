@@ -13,6 +13,7 @@ import { StatusBadge } from '@/components/ui/StatusBadge';
 import { TargetIcon } from '@/components/ui/TargetIcon';
 import { useSearchParams } from 'next/navigation';
 import toast from 'react-hot-toast';
+import { useTranslations } from 'next-intl';
 
 interface ReviewResponse {
   id: string;
@@ -40,6 +41,7 @@ function badgeTone(status: JobStatus): 'success' | 'warning' | 'danger' | 'neutr
 }
 
 function formatReward(amount: number, currency: string) {
+  if (currency === 'THB') return '฿' + (amount / 100).toLocaleString('th-TH');
   if (currency === 'USD') return '$' + (amount / 100).toFixed(2);
   return (amount / 100).toFixed(2) + ' ' + currency;
 }
@@ -49,6 +51,7 @@ function shortId(id: string) {
 }
 
 function OwnerDashboardContent() {
+  const t = useTranslations('owner');
   const searchParams = useSearchParams();
   const currentTab = searchParams.get('tab') || 'create';
 
@@ -143,7 +146,8 @@ function OwnerDashboardContent() {
     
     const payload: Record<string, unknown> = {
       targetUrl: url,
-      rewardAmount: Math.round(rewardAmount * 100), // Convert to cents
+      rewardAmount: Math.round(rewardAmount * 100),
+      currency: 'THB',
       testerCount,
       scenario: scenario.trim() || undefined,
       tasks: cleanTasks.map(task => ({
@@ -234,7 +238,7 @@ function OwnerDashboardContent() {
   if (currentTab === 'campaigns') {
     return (
       <>
-        <PageHeader title="Manage Campaigns" description="Review active campaigns and approve tester submissions." />
+        <PageHeader title={t("manageCampaigns.title")} description={t("manageCampaigns.desc")} />
         <section id="campaigns" className="min-w-0 mt-6">
           <div className="mb-5 flex items-center justify-between">
             <h2 className="text-xl font-semibold text-foreground">Active Campaigns</h2>
@@ -267,7 +271,7 @@ function OwnerDashboardContent() {
                     <div className="mb-3 flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <h4 className="text-sm font-semibold text-foreground">Job Submissions</h4>
-                        <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs text-muted">
+                        <span className="rounded-full bg-muted/30 px-2 py-0.5 text-xs text-muted">
                           {campaign.jobs.length}
                         </span>
                       </div>
@@ -309,7 +313,7 @@ function OwnerDashboardContent() {
                               onClick={() => void toggleReview(job.id, job.status)}
                               className={[
                                 'flex w-full items-center justify-between gap-3 px-3 py-3 text-left',
-                                canInspect ? 'cursor-pointer hover:bg-gray-50' : 'cursor-default'
+                                canInspect ? 'cursor-pointer hover:bg-muted/20' : 'cursor-default'
                               ].join(' ')}
                               aria-expanded={canInspect ? expanded : undefined}
                             >
@@ -344,7 +348,7 @@ function OwnerDashboardContent() {
                                           <p className="text-xs font-semibold uppercase tracking-wide text-muted">Task</p>
                                           <p className="mt-1 text-sm font-medium text-foreground">{response.task.instruction}</p>
                                           <p className="mt-3 text-xs font-semibold uppercase tracking-wide text-muted">Tester response</p>
-                                          <div className="mt-1 text-sm leading-6 text-foreground prose prose-sm max-w-none">
+                                          <div className="mt-1 text-sm leading-6 text-foreground prose dark:prose-invert prose-sm max-w-none">
                                             {response.answerText ? (
                                               <ReactMarkdown>{response.answerText}</ReactMarkdown>
                                             ) : (
@@ -398,7 +402,7 @@ function OwnerDashboardContent() {
   if (currentTab === 'settings') {
     return (
       <>
-        <PageHeader title="Account Settings" description="Manage your owner account and payment methods." />
+        <PageHeader title={t("settings.title")} description={t("settings.ownerDesc")} />
         <div className="max-w-2xl space-y-6 mt-6">
           <section className="rounded-xl border border-border bg-surface p-6 shadow-sm">
             <h2 className="text-lg font-semibold text-foreground mb-4">Profile Information</h2>
@@ -410,8 +414,8 @@ function OwnerDashboardContent() {
 
           <section className="rounded-xl border border-border bg-surface p-6 shadow-sm">
             <h2 className="text-lg font-semibold text-foreground mb-4">Payment Method</h2>
-            <div className="rounded-lg bg-gray-50 border border-gray-200 p-4 text-center">
-              <p className="text-sm text-gray-600 mb-3">No payment method configured.</p>
+            <div className="rounded-lg bg-muted/20 border border-border p-4 text-center">
+              <p className="text-sm text-muted mb-3">No payment method configured.</p>
               <Button disabled variant="outline">Add Credit Card</Button>
               <p className="mt-2 text-xs text-gray-400">Payment system integration coming soon.</p>
             </div>
@@ -424,7 +428,7 @@ function OwnerDashboardContent() {
   // Default: create
   return (
     <>
-      <PageHeader title="Create Campaign" description="Launch a new usability test for testers." />
+      <PageHeader title={t("createCampaign.title")} description={t("createCampaign.desc")} />
       
       {error && (
         <div className="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
@@ -437,7 +441,7 @@ function OwnerDashboardContent() {
           <h2 className="text-xl font-semibold text-foreground">New Campaign</h2>
 
           <form onSubmit={handleCreate} className="mt-6 space-y-5">
-            <FormField label="Target URL" htmlFor="target-url">
+            <FormField label={t("createCampaign.targetUrl")} htmlFor="target-url">
               <Input
                 id="target-url"
                 required
@@ -449,7 +453,7 @@ function OwnerDashboardContent() {
             </FormField>
 
             <div className="grid grid-cols-2 gap-4">
-              <FormField label="Reward per Tester (USD)" htmlFor="reward">
+              <FormField label={t("createCampaign.reward")} htmlFor="reward">
                 <Input
                   id="reward"
                   required
@@ -461,7 +465,7 @@ function OwnerDashboardContent() {
                   placeholder="10.00"
                 />
               </FormField>
-              <FormField label="Number of Testers" htmlFor="testers">
+              <FormField label={t("createCampaign.numTesters")} htmlFor="testers">
                 <Input
                   id="testers"
                   required
@@ -475,18 +479,18 @@ function OwnerDashboardContent() {
               </FormField>
             </div>
 
-            <div className="p-4 rounded-lg border border-blue-200 bg-blue-50/50 space-y-4">
-              <h3 className="text-sm font-semibold text-blue-900 flex items-center gap-2">
-                <TargetIcon url="https://a" /> Tester Targeting (Optional)
+            <div className="p-4 rounded-lg border border-blue-200 dark:border-blue-800 bg-blue-50/50 dark:bg-blue-900/20 space-y-4">
+              <h3 className="text-sm font-semibold text-blue-900 dark:text-blue-200 flex items-center gap-2">
+                <TargetIcon url="https://a" /> {t("createCampaign.targeting")}
               </h3>
-              <p className="text-xs text-blue-700 mb-2">Leave blank to accept any tester. Fill these out to filter who can see and claim this job.</p>
+              <p className="text-xs text-blue-700 dark:text-blue-400 mb-2">{t("createCampaign.targetingDesc")}</p>
               
               <div className="grid grid-cols-2 gap-4">
-                <FormField label="Minimum Age" htmlFor="targetMinAge">
-                  <Input id="targetMinAge" type="number" min="13" max="120" value={targetMinAge} onChange={e => setTargetMinAge(e.target.value)} placeholder="e.g. 18" />
+                <FormField label={t("createCampaign.minAge")} htmlFor="targetMinAge">
+                  <Input id="targetMinAge" type="number" min="13" max="120" value={targetMinAge} onChange={e => setTargetMinAge(e.target.value)} placeholder={t("createCampaign.agePlaceholder")} />
                 </FormField>
-                <FormField label="Maximum Age" htmlFor="targetMaxAge">
-                  <Input id="targetMaxAge" type="number" min="13" max="120" value={targetMaxAge} onChange={e => setTargetMaxAge(e.target.value)} placeholder="e.g. 35" />
+                <FormField label={t("createCampaign.maxAge")} htmlFor="targetMaxAge">
+                  <Input id="targetMaxAge" type="number" min="13" max="120" value={targetMaxAge} onChange={e => setTargetMaxAge(e.target.value)} placeholder={t("createCampaign.ageMaxPlaceholder")} />
                 </FormField>
               </div>
               
@@ -516,7 +520,7 @@ function OwnerDashboardContent() {
               </div>
             </div>
 
-            <FormField label="Scenario / Context (Markdown Supported)" htmlFor="scenario">
+            <FormField label={t("createCampaign.scenario")} htmlFor="scenario">
               <div className="space-y-3">
                 <textarea
                   id="scenario"
@@ -524,10 +528,10 @@ function OwnerDashboardContent() {
                   rows={4}
                   value={scenario}
                   onChange={(e) => setScenario(e.target.value)}
-                  placeholder="Brief the tester on the context. E.g. 'Imagine you are a busy mom looking for a quick dinner recipe...'"
+                  placeholder={t("createCampaign.scenarioPlaceholder")}
                 />
                 {scenario && (
-                  <div className="rounded-md border border-gray-200 bg-gray-50 p-4 text-sm prose prose-sm max-w-none">
+                  <div className="rounded-md border border-border bg-muted/20 p-4 text-sm prose dark:prose-invert prose-sm max-w-none">
                     <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">Preview</p>
                     <ReactMarkdown>{scenario}</ReactMarkdown>
                   </div>
@@ -536,13 +540,13 @@ function OwnerDashboardContent() {
             </FormField>
 
             <div>
-              <p className="mb-2 text-sm font-medium text-foreground">Task Instructions</p>
+              <p className="mb-2 text-sm font-medium text-foreground">{t("createCampaign.taskInstructions")}</p>
               <div className="space-y-4">
                 {tasks.map((task, index) => (
-                  <div key={index} className="flex flex-col gap-3 rounded-lg border border-border p-4 bg-gray-50/50">
+                  <div key={index} className="flex flex-col gap-3 rounded-lg border border-border p-4 bg-muted/10">
                     {/* Task header */}
                     <div className="flex items-center justify-between">
-                      <span className="text-sm font-semibold text-gray-700">Task {index + 1}</span>
+                      <span className="text-sm font-semibold text-foreground">Task {index + 1}</span>
                       {tasks.length > 1 && (
                         <button
                           type="button"
@@ -576,8 +580,8 @@ function OwnerDashboardContent() {
                             className={[
                               'flex-1 min-w-[130px] rounded-md border px-3 py-2 text-xs font-semibold transition text-left',
                               task.taskType === value
-                                ? 'border-blue-500 bg-blue-50 text-blue-700'
-                                : 'border-border bg-white text-gray-600 hover:border-gray-400'
+                                ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400'
+                                : 'border-border bg-surface text-muted hover:border-muted'
                             ].join(' ')}
                           >
                             {label}
@@ -597,10 +601,10 @@ function OwnerDashboardContent() {
                       }}
                       placeholder={
                         task.taskType === TaskType.MULTIPLE_CHOICE
-                          ? 'e.g. Which plan would you choose for your needs?'
+                          ? t('createCampaign.taskPlaceholderMCQ')
                           : task.taskType === TaskType.RATING_SCALE
-                          ? 'e.g. How easy was it to find the checkout button?'
-                          : 'e.g. Find the pricing page and describe what you see'
+                          ? t('createCampaign.taskPlaceholderRating')
+                          : t('createCampaign.taskPlaceholderFree')
                       }
                       aria-label={'Task ' + (index + 1) + ' instruction'}
                     />
@@ -621,7 +625,7 @@ function OwnerDashboardContent() {
                                 nextTasks[index] = { ...nextTasks[index], choices: nextChoices };
                                 setTasks(nextTasks);
                               }}
-                              placeholder={`Choice ${String.fromCharCode(65 + choiceIdx)}`}
+                              placeholder={`${t("createCampaign.choicePlaceholder")} ${String.fromCharCode(65 + choiceIdx)}`}
                               className="flex-1 h-8 text-sm"
                             />
                             {task.choices.length > 2 && (
@@ -698,7 +702,7 @@ function OwnerDashboardContent() {
                                 nextTasks[index] = { ...nextTasks[index], ratingMinLabel: e.target.value };
                                 setTasks(nextTasks);
                               }}
-                              placeholder="e.g. Very Difficult"
+                              placeholder={t("createCampaign.ratingMinPlaceholder")}
                               className="h-8 text-sm"
                             />
                           </div>
@@ -711,18 +715,18 @@ function OwnerDashboardContent() {
                                 nextTasks[index] = { ...nextTasks[index], ratingMaxLabel: e.target.value };
                                 setTasks(nextTasks);
                               }}
-                              placeholder="e.g. Very Easy"
+                              placeholder={t("createCampaign.ratingMaxPlaceholder")}
                               className="h-8 text-sm"
                             />
                           </div>
                         </div>
                         {/* Scale preview */}
-                        <div className="rounded-md bg-white border border-gray-200 p-3">
+                        <div className="rounded-md bg-surface border border-border p-3">
                           <p className="text-xs text-muted mb-2">Preview:</p>
                           <div className="flex items-center gap-2 flex-wrap">
                             {task.ratingMinLabel && <span className="text-xs text-gray-500">{task.ratingMinLabel}</span>}
                             {Array.from({ length: task.ratingMax - task.ratingMin + 1 }, (_, i) => task.ratingMin + i).map(n => (
-                              <span key={n} className="h-8 w-8 flex items-center justify-center rounded-full border border-gray-300 text-sm font-medium text-gray-700 bg-gray-50">{n}</span>
+                              <span key={n} className="h-8 w-8 flex items-center justify-center rounded-full border border-border text-sm font-medium text-foreground bg-muted/20">{n}</span>
                             ))}
                             {task.ratingMaxLabel && <span className="text-xs text-gray-500">{task.ratingMaxLabel}</span>}
                           </div>
@@ -730,9 +734,9 @@ function OwnerDashboardContent() {
                       </div>
                     )}
 
-                    {/* Time Limit (all types) */}
+                    {/* {t("createCampaign.timeLimit")} (all types) */}
                     <div className="flex items-center gap-2">
-                      <label className="text-xs text-muted">Time Limit (mins):</label>
+                      <label className="text-xs text-muted">{t("createCampaign.timeLimit")} (mins):</label>
                       <Input
                         required
                         type="number"
@@ -758,18 +762,18 @@ function OwnerDashboardContent() {
                 className="mt-3 inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
               >
                 <Plus className="h-4 w-4" />
-                Add another task
+                {t("createCampaign.addTask")}
               </button>
             </div>
 
 
-            <div className="rounded-lg bg-gray-50 p-4 border border-border">
+            <div className="rounded-lg bg-muted/20 p-4 border border-border">
               <div className="flex justify-between items-center text-sm">
-                <span className="text-gray-600">Cost per tester</span>
+                <span className="text-muted">{t("createCampaign.costPerTester")}</span>
                 <span className="font-medium">${rewardAmount.toFixed(2)}</span>
               </div>
               <div className="flex justify-between items-center text-sm mt-2">
-                <span className="text-gray-600">Total testers</span>
+                <span className="text-muted">{t("createCampaign.totalTesters")}</span>
                 <span className="font-medium">x {testerCount}</span>
               </div>
               <div className="mt-3 pt-3 border-t border-border flex justify-between items-center">
@@ -785,15 +789,15 @@ function OwnerDashboardContent() {
         </section>
         
         {/* Onboarding Guide Side Panel */}
-        <aside className="rounded-xl border border-blue-200 bg-blue-50/50 p-5 shadow-sm order-1 xl:order-2">
+        <aside className="rounded-xl border border-blue-200 dark:border-blue-800 bg-blue-50/50 dark:bg-blue-900/20 p-5 shadow-sm order-1 xl:order-2">
           <div className="flex items-center gap-2 mb-3">
-            <Lightbulb className="h-5 w-5 text-blue-600" />
-            <h3 className="font-semibold text-blue-900">Tips for Good Tasks</h3>
+            <Lightbulb className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+            <h3 className="font-semibold text-blue-900 dark:text-blue-200">{t("createCampaign.tipsTitle")}</h3>
           </div>
-          <ul className="text-sm text-blue-800 space-y-3 list-disc pl-4">
+          <ul className="text-sm text-blue-800 dark:text-blue-300 space-y-3 list-disc pl-4">
             <li><strong>Be specific:</strong> Instead of &quot;Explore the site&quot;, use &quot;Find the return policy page.&quot;</li>
             <li><strong>Avoid leading questions:</strong> Let the user find the answer naturally.</li>
-            <li><strong>Time limits:</strong> Most tasks should take 1-2 minutes. Only use 5 minutes for complex workflows.</li>
+            <li><strong>{t("createCampaign.timeLimit")}s:</strong> Most tasks should take 1-2 minutes. Only use 5 minutes for complex workflows.</li>
             <li><strong>Think out loud:</strong> Ask testers to speak their thoughts as they complete the task.</li>
           </ul>
         </aside>
@@ -809,3 +813,8 @@ export default function OwnerDashboard() {
     </Suspense>
   );
 }
+
+
+
+
+
