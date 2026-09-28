@@ -241,7 +241,7 @@ function OwnerDashboardContent() {
         <PageHeader title={t("manageCampaigns.title")} description={t("manageCampaigns.desc")} />
         <section id="campaigns" className="min-w-0 mt-6">
           <div className="mb-5 flex items-center justify-between">
-            <h2 className="text-xl font-semibold text-foreground">{t("owner.activeCampaigns")}</h2>
+            <h2 className="text-xl font-semibold text-foreground">{t("activeCampaigns")}</h2>
             <span className="text-sm text-muted">{campaigns.length} total</span>
           </div>
 
@@ -256,21 +256,21 @@ function OwnerDashboardContent() {
                       <TargetIcon url={campaign.targetUrl} />
                       <div className="min-w-0">
                         <h3 className="truncate text-base font-semibold text-foreground">{campaign.targetUrl}</h3>
-                        <p className="mt-0.5 truncate text-xs text-muted">{t("owner.campaignId")}{campaign.id}</p>
+                        <p className="mt-0.5 truncate text-xs text-muted">{t("campaignId")}{campaign.id}</p>
                       </div>
                     </div>
                     <div className="shrink-0 sm:text-right">
                       <p className="text-base font-semibold text-foreground">
                         {formatReward(campaign.rewardAmount, campaign.currency)}
                       </p>
-                      <p className="text-xs text-muted">{t("owner.reward")}</p>
+                      <p className="text-xs text-muted">{t("reward")}</p>
                     </div>
                   </div>
 
                   <div className="px-5 py-5">
                     <div className="mb-3 flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <h4 className="text-sm font-semibold text-foreground">{t("owner.jobSubmissions")}</h4>
+                        <h4 className="text-sm font-semibold text-foreground">{t("jobSubmissions")}</h4>
                         <span className="rounded-full bg-muted/30 px-2 py-0.5 text-xs text-muted">
                           {campaign.jobs.length}
                         </span>
@@ -345,9 +345,9 @@ function OwnerDashboardContent() {
                                           {response.task.stepOrder}
                                         </span>
                                         <div className="min-w-0 w-full">
-                                          <p className="text-xs font-semibold uppercase tracking-wide text-muted">{t("owner.task")}</p>
+                                          <p className="text-xs font-semibold uppercase tracking-wide text-muted">{t("task")}</p>
                                           <p className="mt-1 text-sm font-medium text-foreground">{response.task.instruction}</p>
-                                          <p className="mt-3 text-xs font-semibold uppercase tracking-wide text-muted">{t("owner.testerResponse")}</p>
+                                          <p className="mt-3 text-xs font-semibold uppercase tracking-wide text-muted">{t("testerResponse")}</p>
                                           <div className="mt-1 text-sm leading-6 text-foreground prose dark:prose-invert prose-sm max-w-none">
                                             {response.answerText ? (
                                               <ReactMarkdown>{response.answerText}</ReactMarkdown>
@@ -357,7 +357,7 @@ function OwnerDashboardContent() {
                                           </div>
                                           {response.videoUrl && (
                                             <div className="mt-4">
-                                              <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted">{t("owner.taskRecording")}</p>
+                                              <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted">{t("taskRecording")}</p>
                                               <video 
                                                 src={`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}${response.videoUrl}`} 
                                                 controls 
@@ -405,19 +405,19 @@ function OwnerDashboardContent() {
         <PageHeader title={t("settings.title")} description={t("settings.ownerDesc")} />
         <div className="max-w-2xl space-y-6 mt-6">
           <section className="rounded-xl border border-border bg-surface p-6 shadow-sm">
-            <h2 className="text-lg font-semibold text-foreground mb-4">{t("owner.profileInfo")}</h2>
+            <h2 className="text-lg font-semibold text-foreground mb-4">{t("profileInfo")}</h2>
             <FormField label="Email Address" htmlFor="email">
               <Input id="email" type="email" value={userEmail} readOnly disabled />
             </FormField>
-            <p className="mt-2 text-xs text-muted">{t("owner.emailManaged")}</p>
+            <p className="mt-2 text-xs text-muted">{t("emailManaged")}</p>
           </section>
 
           <section className="rounded-xl border border-border bg-surface p-6 shadow-sm">
-            <h2 className="text-lg font-semibold text-foreground mb-4">{t("owner.paymentMethod")}</h2>
+            <h2 className="text-lg font-semibold text-foreground mb-4">{t("paymentMethod")}</h2>
             <div className="rounded-lg bg-muted/20 border border-border p-4 text-center">
-              <p className="text-sm text-muted mb-3">{t("owner.noPayment")}</p>
-              <Button disabled variant="outline">{t("owner.addCreditCard")}</Button>
-              <p className="mt-2 text-xs text-gray-400">{t("owner.paymentComingSoon")}</p>
+              <p className="text-sm text-muted mb-3">{t("noPayment")}</p>
+              <Button disabled variant="outline">{t("addCreditCard")}</Button>
+              <p className="mt-2 text-xs text-gray-400">{t("paymentComingSoon")}</p>
             </div>
           </section>
         </div>
@@ -500,10 +500,10 @@ function OwnerDashboardContent() {
                   <select 
                     className="flex h-10 w-full rounded-md border border-input bg-surface px-3 py-2 text-sm ring-offset-background placeholder:text-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                     value={targetGender} onChange={e => setTargetGender(e.target.value)}>
-                    <option value="">{t("owner.any")}</option>
-                    <option value="MALE">{t("owner.male")}</option>
-                    <option value="FEMALE">{t("owner.female")}</option>
-                    <option value="OTHER">{t("owner.other")}</option>
+                    <option value="">{t("any")}</option>
+                    <option value="MALE">{t("male")}</option>
+                    <option value="FEMALE">{t("female")}</option>
+                    <option value="OTHER">{t("other")}</option>
                   </select>
                 </div>
                 <div className="space-y-1">
@@ -511,10 +511,10 @@ function OwnerDashboardContent() {
                   <select 
                     className="flex h-10 w-full rounded-md border border-input bg-surface px-3 py-2 text-sm ring-offset-background placeholder:text-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                     value={targetItExpertise} onChange={e => setTargetItExpertise(e.target.value)}>
-                    <option value="">{t("owner.any")}</option>
-                    <option value="BEGINNER">{t("owner.beginner")}</option>
-                    <option value="INTERMEDIATE">{t("owner.intermediate")}</option>
-                    <option value="EXPERT">{t("owner.expert")}</option>
+                    <option value="">{t("any")}</option>
+                    <option value="BEGINNER">{t("beginner")}</option>
+                    <option value="INTERMEDIATE">{t("intermediate")}</option>
+                    <option value="EXPERT">{t("expert")}</option>
                   </select>
                 </div>
               </div>
@@ -532,7 +532,7 @@ function OwnerDashboardContent() {
                 />
                 {scenario && (
                   <div className="rounded-md border border-border bg-muted/20 p-4 text-sm prose dark:prose-invert prose-sm max-w-none">
-                    <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">{t("owner.createCampaign.preview")}</p>
+                    <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">{t("createCampaign.preview")}</p>
                     <ReactMarkdown>{scenario}</ReactMarkdown>
                   </div>
                 )}
@@ -561,7 +561,7 @@ function OwnerDashboardContent() {
 
                     {/* Task Type Selector */}
                     <div className="space-y-1">
-                      <label className="text-xs font-semibold text-muted uppercase tracking-wide">{t("owner.createCampaign.taskTypeLabel")}</label>
+                      <label className="text-xs font-semibold text-muted uppercase tracking-wide">{t("createCampaign.taskTypeLabel")}</label>
                       <div className="flex gap-2 flex-wrap">
                         {[
                           { value: TaskType.FREE_RESPONSE, label: '🎙️ Free Response', desc: 'Tester records & writes markdown review' },
@@ -612,7 +612,7 @@ function OwnerDashboardContent() {
                     {/* MULTIPLE_CHOICE: Choices editor */}
                     {task.taskType === TaskType.MULTIPLE_CHOICE && (
                       <div className="space-y-2">
-                        <label className="text-xs font-semibold text-muted uppercase tracking-wide">{t("owner.createCampaign.answerChoices")}</label>
+                        <label className="text-xs font-semibold text-muted uppercase tracking-wide">{t("createCampaign.answerChoices")}</label>
                         {task.choices.map((choice, choiceIdx) => (
                           <div key={choiceIdx} className="flex items-center gap-2">
                             <span className="text-xs text-muted w-5 shrink-0">{String.fromCharCode(65 + choiceIdx)}.</span>
@@ -665,10 +665,10 @@ function OwnerDashboardContent() {
                     {/* RATING_SCALE: Min/Max config */}
                     {task.taskType === TaskType.RATING_SCALE && (
                       <div className="space-y-2">
-                        <label className="text-xs font-semibold text-muted uppercase tracking-wide">{t("owner.createCampaign.scaleConfig")}</label>
+                        <label className="text-xs font-semibold text-muted uppercase tracking-wide">{t("createCampaign.scaleConfig")}</label>
                         <div className="grid grid-cols-2 gap-3">
                           <div className="space-y-1">
-                            <label className="text-xs text-muted">{t("owner.createCampaign.minValue")}</label>
+                            <label className="text-xs text-muted">{t("createCampaign.minValue")}</label>
                             <Input
                               type="number" min="1" max="9"
                               value={task.ratingMin}
@@ -681,7 +681,7 @@ function OwnerDashboardContent() {
                             />
                           </div>
                           <div className="space-y-1">
-                            <label className="text-xs text-muted">{t("owner.createCampaign.maxValue")}</label>
+                            <label className="text-xs text-muted">{t("createCampaign.maxValue")}</label>
                             <Input
                               type="number" min="2" max="10"
                               value={task.ratingMax}
@@ -694,7 +694,7 @@ function OwnerDashboardContent() {
                             />
                           </div>
                           <div className="space-y-1">
-                            <label className="text-xs text-muted">{t("owner.createCampaign.minLabel")}</label>
+                            <label className="text-xs text-muted">{t("createCampaign.minLabel")}</label>
                             <Input
                               value={task.ratingMinLabel}
                               onChange={(e) => {
@@ -707,7 +707,7 @@ function OwnerDashboardContent() {
                             />
                           </div>
                           <div className="space-y-1">
-                            <label className="text-xs text-muted">{t("owner.createCampaign.maxLabel")}</label>
+                            <label className="text-xs text-muted">{t("createCampaign.maxLabel")}</label>
                             <Input
                               value={task.ratingMaxLabel}
                               onChange={(e) => {
@@ -722,7 +722,7 @@ function OwnerDashboardContent() {
                         </div>
                         {/* Scale preview */}
                         <div className="rounded-md bg-surface border border-border p-3">
-                          <p className="text-xs text-muted mb-2">{t("owner.createCampaign.preview")}:</p>
+                          <p className="text-xs text-muted mb-2">{t("createCampaign.preview")}:</p>
                           <div className="flex items-center gap-2 flex-wrap">
                             {task.ratingMinLabel && <span className="text-xs text-gray-500">{task.ratingMinLabel}</span>}
                             {Array.from({ length: task.ratingMax - task.ratingMin + 1 }, (_, i) => task.ratingMin + i).map(n => (
@@ -777,7 +777,7 @@ function OwnerDashboardContent() {
                 <span className="font-medium">x {testerCount}</span>
               </div>
               <div className="mt-3 pt-3 border-t border-border flex justify-between items-center">
-                <span className="font-semibold text-foreground">{t("owner.createCampaign.totalCampaignCost")}</span>
+                <span className="font-semibold text-foreground">{t("createCampaign.totalCampaignCost")}</span>
                 <span className="text-lg font-bold text-blue-600">{(rewardAmount * testerCount).toLocaleString("th-TH")} THB</span>
               </div>
             </div>
@@ -795,10 +795,10 @@ function OwnerDashboardContent() {
             <h3 className="font-semibold text-blue-900 dark:text-blue-200">{t("createCampaign.tipsTitle")}</h3>
           </div>
           <ul className="text-sm text-blue-800 dark:text-blue-300 space-y-3 list-disc pl-4">
-            <li><strong>{t("owner.createCampaign.tips1")}</strong> {t("owner.createCampaign.tips1desc")}</li>
-            <li><strong>{t("owner.createCampaign.tips2")}</strong> {t("owner.createCampaign.tips2desc")}</li>
+            <li><strong>{t("createCampaign.tips1")}</strong> {t("createCampaign.tips1desc")}</li>
+            <li><strong>{t("createCampaign.tips2")}</strong> {t("createCampaign.tips2desc")}</li>
             <li><strong>{t("createCampaign.timeLimit")}s:</strong> Most tasks should take 1-2 minutes. Only use 5 minutes for complex workflows.</li>
-            <li><strong>{t("owner.createCampaign.tips3")}</strong> {t("owner.createCampaign.tips3desc")}</li>
+            <li><strong>{t("createCampaign.tips3")}</strong> {t("createCampaign.tips3desc")}</li>
           </ul>
         </aside>
       </div>
@@ -807,8 +807,9 @@ function OwnerDashboardContent() {
 }
 
 export default function OwnerDashboard() {
+  const t = useTranslations('owner');
   return (
-    <Suspense fallback={<p>{t("owner.loading")}</p>}>
+    <Suspense fallback={<p>{t("loading")}</p>}>
       <OwnerDashboardContent />
     </Suspense>
   );

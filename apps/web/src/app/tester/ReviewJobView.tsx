@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/Button';
 import { JobStatus, TaskType } from '@usability-testing/shared';
 import { apiFetch } from '../../lib/api';
@@ -52,11 +53,12 @@ interface Props {
 
 // Read-only locked answer badge for Multiple Choice
 function LockedMultipleChoiceAnswer({ value }: { value: string }) {
+  const t = useTranslations('tester');
   return (
     <div className="flex items-start gap-2 rounded-lg border border-green-200 bg-green-50 p-3">
       <Lock className="h-4 w-4 text-green-600 mt-0.5 shrink-0" />
       <div>
-        <p className="text-xs font-semibold text-green-700 uppercase tracking-wide mb-1">{t("tester.lockedAnswer")}</p>
+        <p className="text-xs font-semibold text-green-700 uppercase tracking-wide mb-1">{t("lockedAnswer")}</p>
         <p className="text-sm font-medium text-green-900">{value}</p>
       </div>
     </div>
@@ -65,13 +67,14 @@ function LockedMultipleChoiceAnswer({ value }: { value: string }) {
 
 // Read-only locked answer for Rating Scale
 function LockedRatingScaleAnswer({ value, task }: { value: number; task: Task }) {
+  const t = useTranslations('tester');
   const min = task.ratingMin ?? 1;
   const max = task.ratingMax ?? 5;
   return (
     <div className="flex items-start gap-2 rounded-lg border border-green-200 bg-green-50 p-3">
       <Lock className="h-4 w-4 text-green-600 mt-0.5 shrink-0" />
       <div className="flex-1">
-        <p className="text-xs font-semibold text-green-700 uppercase tracking-wide mb-2">{t("tester.lockedRating")}</p>
+        <p className="text-xs font-semibold text-green-700 uppercase tracking-wide mb-2">{t("lockedRating")}</p>
         <div className="flex items-center gap-2 flex-wrap">
           {task.ratingMinLabel && <span className="text-xs text-muted">{task.ratingMinLabel}</span>}
           {Array.from({ length: max - min + 1 }, (_, i) => min + i).map(n => (
@@ -89,13 +92,14 @@ function LockedRatingScaleAnswer({ value, task }: { value: number; task: Task })
           ))}
           {task.ratingMaxLabel && <span className="text-xs text-muted">{task.ratingMaxLabel}</span>}
         </div>
-        <p className="mt-2 text-xs text-green-700">{t("tester.selected")} <strong>{value}</strong> / {max}</p>
+        <p className="mt-2 text-xs text-green-700">{t("selected")} <strong>{value}</strong> / {max}</p>
       </div>
     </div>
   );
 }
 
 export function ReviewJobView({ job, onBack, onSubmitted }: Props) {
+  const t = useTranslations('tester');
   // For FREE_RESPONSE: editable markdown answers
   // For MC/RATING: optional additional comments only
   const [answers, setAnswers] = useState<Record<string, string>>(() => {
@@ -151,7 +155,7 @@ export function ReviewJobView({ job, onBack, onSubmitted }: Props) {
       <div className="flex items-center gap-4 mb-6">
         <Button variant="outline" onClick={onBack}>&larr; Back</Button>
         <div>
-          <h2 className="text-xl font-bold text-foreground">{t("tester.writeFinalReview")}</h2>
+          <h2 className="text-xl font-bold text-foreground">{t("writeFinalReview")}</h2>
           <p className="text-sm text-muted">
             Watch your recorded videos and complete the review for each task.
           </p>
@@ -186,7 +190,7 @@ export function ReviewJobView({ job, onBack, onSubmitted }: Props) {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Video player (left) */}
               <div>
-                <h4 className="text-sm font-semibold mb-2">{t("tester.sessionVideo")}</h4>
+                <h4 className="text-sm font-semibold mb-2">{t("sessionVideo")}</h4>
                 {videoUrl ? (
                   <video
                     src={process.env.NEXT_PUBLIC_API_URL + videoUrl}
@@ -195,8 +199,8 @@ export function ReviewJobView({ job, onBack, onSubmitted }: Props) {
                   />
                 ) : (
                   <div className="flex aspect-video w-full flex-col p-4 text-center items-center justify-center rounded-md border border-border bg-muted/20 text-sm text-muted">
-                    <p>{t("tester.noVideo")}</p>
-                    {job.campaign.isLocked && <p className="text-xs text-red-500 mt-1">{t("tester.lockedCampaign")}</p>}
+                    <p>{t("noVideo")}</p>
+                    {job.campaign.isLocked && <p className="text-xs text-red-500 mt-1">{t("lockedCampaign")}</p>}
                   </div>
                 )}
               </div>
@@ -233,7 +237,7 @@ export function ReviewJobView({ job, onBack, onSubmitted }: Props) {
                     />
                     {answers[task.id] && (
                       <div className="mt-3 rounded-md border border-border bg-muted/20 p-4 text-sm prose dark:prose-invert prose-sm max-w-none">
-                        <p className="text-xs font-semibold text-muted uppercase tracking-wide mb-2">{t("tester.preview")}</p>
+                        <p className="text-xs font-semibold text-muted uppercase tracking-wide mb-2">{t("preview")}</p>
                         <ReactMarkdown>{answers[task.id]}</ReactMarkdown>
                       </div>
                     )}
@@ -272,4 +276,6 @@ export function ReviewJobView({ job, onBack, onSubmitted }: Props) {
     </div>
   );
 }
+
+
 
