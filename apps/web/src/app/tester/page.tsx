@@ -9,7 +9,7 @@ import { EmptyState } from '@/components/ui/EmptyState';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { StatusBadge } from '@/components/ui/StatusBadge';
 import { TargetIcon } from '@/components/ui/TargetIcon';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 import { useTranslations } from 'next-intl';
 import { Input, FormField } from '@/components/ui/FormField';
@@ -74,18 +74,18 @@ function badgeTone(status: JobStatus): 'success' | 'warning' | 'danger' | 'neutr
   return 'neutral';
 }
 
-import { ReviewJobView } from './ReviewJobView';
+
 
 function TesterDashboardContent() {
   const t = useTranslations('tester');
   const searchParams = useSearchParams();
+  const router = useRouter();
   const currentTab = searchParams.get('tab') || 'available';
 
   const [availableJobs, setAvailableJobs] = useState<TesterJob[]>([]);
   const [myJobs, setMyJobs] = useState<TesterJob[]>([]);
   const [error, setError] = useState('');
   const [userEmail, setUserEmail] = useState('');
-  const [reviewingJobId, setReviewingJobId] = useState<string | null>(null);
 
   // Profile states
   const [age, setAge] = useState<string>('');
@@ -234,22 +234,6 @@ function TesterDashboardContent() {
   };
 
   if (currentTab === 'my-jobs') {
-    if (reviewingJobId) {
-      const job = myJobs.find(j => j.id === reviewingJobId);
-      if (job) {
-        return (
-          <ReviewJobView 
-            job={job} 
-            onBack={() => setReviewingJobId(null)} 
-            onSubmitted={() => {
-              setReviewingJobId(null);
-              fetchJobs();
-            }} 
-          />
-        );
-      }
-    }
-
     return (
       <>
         <PageHeader title={t("myJobs.title")} description={t("myJobs.desc")} />
@@ -286,24 +270,28 @@ function TesterDashboardContent() {
                           }).chrome?.runtime;
 
                           if (chromeRuntime && extensionId) {
+                            const completedTaskIds = job.responses?.map(r => r.taskId) || [];
+                            const incompleteTask = job.campaign.tasks.find(t => !completedTaskIds.includes(t.id)) || job.campaign.tasks[0];
+                            const startUrl = incompleteTask?.taskUrl || job.campaign.targetUrl;
+
                             chromeRuntime.sendMessage(
                               extensionId,
-                              { type: 'START_SESSION', job: { id: job.id, campaign: job.campaign } },
+                              { type: 'START_SESSION', job: { id: job.id, campaign: job.campaign }, completedTaskIds },
                               (response) => {
                                 if (response?.success) {
                                   console.log('Session synced to extension');
                                 } else {
                                   console.warn('Session sync failed:', response?.error);
                                 }
-                                // Open URL regardless
-                                const firstTaskUrl = job.campaign.tasks[0]?.taskUrl;
-                                window.open(firstTaskUrl || job.campaign.targetUrl, '_blank');
+                                window.open(startUrl, '_blank');
                               }
                             );
                           } else {
                             // Extension not available, just open
-                            const firstTaskUrl = job.campaign.tasks[0]?.taskUrl;
-                            window.open(firstTaskUrl || job.campaign.targetUrl, '_blank');
+                            const completedTaskIds = job.responses?.map(r => r.taskId) || [];
+                            const incompleteTask = job.campaign.tasks.find(t => !completedTaskIds.includes(t.id)) || job.campaign.tasks[0];
+                            const startUrl = incompleteTask?.taskUrl || job.campaign.targetUrl;
+                            window.open(startUrl, '_blank');
                           }
                         }}
                         className="inline-flex h-10 flex-1 items-center justify-center rounded-md bg-blue-100 dark:bg-blue-900/40 px-4 text-sm font-medium text-blue-700 dark:text-blue-300 transition hover:bg-blue-200 dark:hover:bg-blue-900/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
@@ -317,7 +305,7 @@ function TesterDashboardContent() {
                       </div>
                     )}
                     {job.responses && job.responses.length >= job.campaign.tasks.length ? (
-                      <Button className="flex-1" onClick={() => setReviewingJobId(job.id)}>
+                      <Button className="flex-1" onClick={() => router.push(`/tester/jobs/${job.id}`)}>
                         Write Review
                       </Button>
                     ) : (
