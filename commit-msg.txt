@@ -1,5 +1,4 @@
-feat(extension): fix overlay persistent bug and add cancel session button
+fix(extension): fix multiple choice and rating scale submission issue
 
-- Add `isUrlMatching` logic to `content.ts` so the extension overlay only injects on the first matching page of a task (or if actively recording). This prevents it from showing up on unrelated websites.
-- Add an `END_SESSION` message listener to `background.ts` for internal extension calls.
-- Add a "✕ Quit Session" button in the overlay header allowing users to cancel their current testing session if they don't want to finish it, instantly hiding the overlay from the browser.
+- Replaced inline `onclick` and `onchange` string handlers (which ran in the page's isolated window context and failed to update the content script's state) with direct event delegation within the content script.
+- Added `data-idx` and `data-val` attributes to the rendered answer UI elements to securely pass the selected index/value to the click/change listener.
