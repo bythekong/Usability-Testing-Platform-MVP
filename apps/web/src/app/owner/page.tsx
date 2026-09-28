@@ -246,7 +246,7 @@ function OwnerDashboardContent() {
           </div>
 
           {campaigns.length === 0 ? (
-            <EmptyState title="No campaigns yet" description="Create your first campaign to make a usability test available to testers." />
+            <EmptyState title={t("noCampaignsYet")} description={t("noCampaignsDesc")} />
           ) : (
             <div className="space-y-4">
               {campaigns.map((campaign) => (
@@ -814,6 +814,7 @@ export default function OwnerDashboard() {
     </Suspense>
   );
 }
+
 
 
 

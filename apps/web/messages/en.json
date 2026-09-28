@@ -100,7 +100,9 @@
     "beginner": "Beginner",
     "intermediate": "Intermediate",
     "expert": "Expert",
-    "loading": "Loading dashboard..."
+    "loading": "Loading dashboard...",
+    "noCampaignsYet": "No campaigns yet",
+    "noCampaignsDesc": "Create your first campaign to make a usability test available to testers."
   },
   "tester": {
     "availableJobs": {
@@ -148,6 +150,10 @@
     "sessionVideo": "Session Video",
     "noVideo": "No video recorded yet.",
     "lockedCampaign": "This campaign has been locked by the owner.",
-    "preview": "Preview"
+    "preview": "Preview",
+    "noActiveJobs": "No active jobs",
+    "noActiveJobsDesc": "Claim an available usability test to start working.",
+    "noJobsAvailable": "No jobs available",
+    "noJobsAvailableDesc": "There are currently no usability tests available to claim. Check back later."
   }
 }

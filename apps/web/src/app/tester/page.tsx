@@ -251,15 +251,15 @@ function TesterDashboardContent() {
       <>
         <PageHeader title={t("myJobs.title")} description={t("myJobs.desc")} />
         <section id="my-jobs">
-          <h2 className="mb-4 text-xl font-semibold text-foreground">{t("tester.activeJobs")}</h2>
+          <h2 className="mb-4 text-xl font-semibold text-foreground">{t("activeJobs")}</h2>
           {activeJobs.length === 0 ? (
-            <EmptyState title="No active jobs" description="Claim an available usability test to start working." className="mb-10" />
+            <EmptyState title={t("noActiveJobs")} description={t("noActiveJobsDesc")} className="mb-10" />
           ) : (
             <div className="mb-10 grid gap-4 lg:grid-cols-2">
               {activeJobs.map((job) => (
                 <article key={job.id} className="rounded-xl border border-blue-200 dark:border-blue-800 bg-blue-50/50 dark:bg-blue-900/20 p-5 shadow-sm">
                   <div className="flex items-start justify-between gap-4">
-                    <StatusBadge status="warning">{t("tester.inProgress")}</StatusBadge>
+                    <StatusBadge status="warning">{t("inProgress")}</StatusBadge>
                     <span className="text-sm font-semibold text-foreground">{formatReward(job.campaign.rewardAmount, job.campaign.currency)}</span>
                   </div>
                   <div className="mt-4 flex items-center gap-3">
@@ -269,8 +269,8 @@ function TesterDashboardContent() {
                     </h3>
                   </div>
                   <div className="mt-3 flex flex-col gap-1 text-sm text-muted">
-                    <p>{t("tester.openUrl")}</p>
-                    <p className="font-medium">{t("tester.estimatedTime")} ~{calculateEstimatedTime(job.campaign.tasks)}</p>
+                    <p>{t("openUrl")}</p>
+                    <p className="font-medium">{t("estimatedTime")} ~{calculateEstimatedTime(job.campaign.tasks)}</p>
                   </div>
                   <div className="mt-5 flex gap-3">
                     {!job.campaign.isLocked ? (
@@ -301,7 +301,7 @@ function TesterDashboardContent() {
 
         {pastJobs.length > 0 && (
           <section className="mt-10">
-            <h2 className="mb-4 text-xl font-semibold text-foreground">{t("tester.pastSubmissions")}</h2>
+            <h2 className="mb-4 text-xl font-semibold text-foreground">{t("pastSubmissions")}</h2>
             <div className="overflow-hidden rounded-xl border border-border bg-surface shadow-sm">
               {pastJobs.map((job, index) => (
                 <div key={job.id} className={['flex flex-col gap-3 px-5 py-4 sm:flex-row sm:items-center sm:justify-between', index > 0 ? 'border-t border-border' : ''].join(' ')}>
@@ -333,23 +333,23 @@ function TesterDashboardContent() {
             <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-blue-50 dark:bg-blue-900/20">
               <Plug className="h-8 w-8 text-blue-600 dark:text-blue-400" />
             </div>
-            <h2 className="mt-4 text-xl font-semibold text-foreground">{t("tester.connectExt")}</h2>
-            <p className="mt-2 text-sm text-muted">{t("tester.connectExtDesc")}</p>
+            <h2 className="mt-4 text-xl font-semibold text-foreground">{t("connectExt")}</h2>
+            <p className="mt-2 text-sm text-muted">{t("connectExtDesc")}</p>
           </div>
           
           <div className="space-y-6">
             <div className="flex gap-4">
               <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-muted/30 font-semibold text-muted">1</div>
               <div>
-                <h3 className="font-semibold text-foreground">{t("tester.installExt")}</h3>
-                <p className="mt-1 text-sm text-muted">{t("tester.installExtDesc")}</p>
+                <h3 className="font-semibold text-foreground">{t("installExt")}</h3>
+                <p className="mt-1 text-sm text-muted">{t("installExtDesc")}</p>
               </div>
             </div>
             <div className="flex gap-4">
               <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-muted/30 font-semibold text-muted">2</div>
               <div>
-                <h3 className="font-semibold text-foreground">{t("tester.syncAccount")}</h3>
-                <p className="mt-1 text-sm text-muted mb-3">{t("tester.syncAccountDesc")}</p>
+                <h3 className="font-semibold text-foreground">{t("syncAccount")}</h3>
+                <p className="mt-1 text-sm text-muted mb-3">{t("syncAccountDesc")}</p>
                 <Button onClick={handleSyncExtension}>
                   <RefreshCw className="mr-2 h-4 w-4" />
                   Sync Extension Now
@@ -359,8 +359,8 @@ function TesterDashboardContent() {
             <div className="flex gap-4">
               <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-muted/30 font-semibold text-muted">3</div>
               <div>
-                <h3 className="font-semibold text-foreground">{t("tester.startTesting")}</h3>
-                <p className="mt-1 text-sm text-muted">{t("tester.startTestingDesc")}</p>
+                <h3 className="font-semibold text-foreground">{t("startTesting")}</h3>
+                <p className="mt-1 text-sm text-muted">{t("startTestingDesc")}</p>
               </div>
             </div>
           </div>
@@ -375,11 +375,11 @@ function TesterDashboardContent() {
         <PageHeader title={t("settings.title")} description={t("settings.testerDesc")} />
         <div className="max-w-2xl space-y-6">
           <section className="rounded-xl border border-border bg-surface p-6 shadow-sm">
-            <h2 className="text-lg font-semibold text-foreground mb-4">{t("tester.profileInfo")}</h2>
+            <h2 className="text-lg font-semibold text-foreground mb-4">{t("profileInfo")}</h2>
             <FormField label="Email Address" htmlFor="email">
               <Input id="email" type="email" value={userEmail} readOnly disabled />
             </FormField>
-            <p className="mt-2 text-xs text-muted mb-4">{t("tester.emailManaged")}</p>
+            <p className="mt-2 text-xs text-muted mb-4">{t("emailManaged")}</p>
 
             <div className="grid gap-4 sm:grid-cols-2">
               <FormField label="Age" htmlFor="age">
@@ -391,7 +391,7 @@ function TesterDashboardContent() {
                 <select 
                   className="flex h-10 w-full rounded-md border border-input bg-surface px-3 py-2 text-sm ring-offset-background placeholder:text-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                   value={gender} onChange={e => setGender(e.target.value)}>
-                  <option value="">{t("tester.select")}</option>
+                  <option value="">{t("select")}</option>
                   <option value="MALE">Male</option>
                   <option value="FEMALE">Female</option>
                   <option value="OTHER">Other</option>
@@ -407,22 +407,22 @@ function TesterDashboardContent() {
                 <select 
                   className="flex h-10 w-full rounded-md border border-input bg-surface px-3 py-2 text-sm ring-offset-background placeholder:text-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                   value={itExpertise} onChange={e => setItExpertise(e.target.value)}>
-                  <option value="">{t("tester.select")}</option>
+                  <option value="">{t("select")}</option>
                   <option value="BEGINNER">Beginner</option>
                   <option value="INTERMEDIATE">Intermediate</option>
                   <option value="EXPERT">Expert</option>
                 </select>
               </div>
             </div>
-            <Button className="mt-6" onClick={saveProfile}>{t("tester.saveProfile")}</Button>
+            <Button className="mt-6" onClick={saveProfile}>{t("saveProfile")}</Button>
           </section>
 
           <section className="rounded-xl border border-border bg-surface p-6 shadow-sm">
-            <h2 className="text-lg font-semibold text-foreground mb-4">{t("tester.payoutMethod")}</h2>
+            <h2 className="text-lg font-semibold text-foreground mb-4">{t("payoutMethod")}</h2>
             <div className="rounded-lg bg-muted/20 border border-border p-4 text-center">
-              <p className="text-sm text-muted mb-3">{t("tester.noPayout")}</p>
-              <Button disabled variant="outline">{t("tester.connectBank")}</Button>
-              <p className="mt-2 text-xs text-gray-400">{t("tester.paymentComingSoon")}</p>
+              <p className="text-sm text-muted mb-3">{t("noPayout")}</p>
+              <Button disabled variant="outline">{t("connectBank")}</Button>
+              <p className="mt-2 text-xs text-gray-400">{t("paymentComingSoon")}</p>
             </div>
           </section>
         </div>
@@ -443,7 +443,7 @@ function TesterDashboardContent() {
 
       <section id="available-jobs">
         {availableJobs.length === 0 ? (
-          <EmptyState title="No jobs available" description="There are currently no usability tests available to claim. Check back later." />
+          <EmptyState title={t("noJobsAvailable")} description={t("noJobsAvailableDesc")} />
         ) : (
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
             {availableJobs.map((job) => (
@@ -454,7 +454,7 @@ function TesterDashboardContent() {
                 </div>
                 <h3 className="mt-4 truncate text-base font-semibold text-foreground">{job.campaign.targetUrl}</h3>
                 <div className="mt-1 flex items-center justify-between text-sm text-muted">
-                  <span>{t("tester.usabilityJob")}</span>
+                  <span>{t("usabilityJob")}</span>
                   <span>~{calculateEstimatedTime(job.campaign.tasks)}</span>
                 </div>
                 <Button className="mt-5 w-full" onClick={() => void claimJob(job.id)}>
@@ -476,5 +476,6 @@ export default function TesterDashboard() {
     </Suspense>
   );
 }
+
 
 
