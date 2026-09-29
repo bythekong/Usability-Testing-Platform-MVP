@@ -1,49 +1,44 @@
 'use client';
 
-import { motion } from 'framer-motion';
-import { ArrowRight, Monitor, MousePointerClick } from 'lucide-react';
+import { useRef } from 'react';
+import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion';
+import { MousePointer2 } from 'lucide-react';
 import { EditorialImage } from './EditorialImage';
-import { ScrollReveal } from './ScrollReveal';
+import { ResearchLabel } from './ResearchLabel';
 
 export function TesterStory() {
-  return (
-    <section id="tester" className="relative overflow-hidden border-y border-border bg-surface py-28 md:py-36">
-      <div className="container mx-auto max-w-7xl px-6">
-        <div className="grid items-center gap-14 lg:grid-cols-[0.88fr_1.12fr] lg:gap-20">
-          <ScrollReveal direction="left">
-            <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">For testers</p>
-            <h2 className="font-display mt-4 text-4xl font-semibold tracking-[-0.035em] text-foreground sm:text-5xl">The testing interface follows the tester into the real website.</h2>
-            <p className="mt-6 text-lg leading-8 text-muted">Claim a study, open the target, and keep the instructions beside the product instead of switching between tabs and losing context.</p>
+  const sectionRef = useRef<HTMLElement>(null);
+  const reduceMotion = useReducedMotion();
+  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ['start end', 'end start'] });
+  const imageY = useTransform(scrollYProgress, [0, 0.5, 1], [26, 0, -22]);
+  const cursorX = useTransform(scrollYProgress, [0.12, 0.34, 0.5, 0.68, 0.9], ['18%', '36%', '36%', '54%', '62%']);
+  const cursorY = useTransform(scrollYProgress, [0.12, 0.34, 0.5, 0.68, 0.9], ['62%', '52%', '52%', '44%', '48%']);
 
-            <div className="mt-8 space-y-3">
-              {[
-                ['01', 'Claim a study', 'Choose an available job from the tester dashboard.'],
-                ['02', 'Open target', 'The claimed URL opens in the browser.'],
-                ['03', 'Extension activates', 'Task guidance appears only on the matching website.'],
-              ].map(([number, title, text], index) => (
-                <motion.div key={number} initial={{ opacity: 0, x: -28 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: false, amount: 0.6 }} transition={{ delay: index * 0.06 }} className="flex gap-4 rounded-2xl border border-border bg-background p-4">
-                  <span className="text-xs font-bold text-primary">{number}</span><div><p className="font-semibold text-foreground">{title}</p><p className="mt-1 text-sm leading-6 text-muted">{text}</p></div>
-                </motion.div>
-              ))}
-            </div>
-          </ScrollReveal>
+  return (
+    <section id="observation" ref={sectionRef} className="landing-scene relative overflow-hidden bg-[var(--lab-bone)] py-24 text-[var(--lab-ink)] md:py-32 lg:py-36">
+      <div className="container mx-auto max-w-7xl px-6">
+        <div className="grid items-center gap-14 lg:grid-cols-[0.78fr_1.22fr] lg:gap-20">
+          <div>
+            <ResearchLabel index="05" label="OBSERVATION" />
+            <h2 className="font-display mt-5 text-[clamp(2.65rem,5.2vw,4.2rem)] font-semibold leading-[1] tracking-[-0.045em]">The moment before<br /> the click matters.</h2>
+            <p className="mt-6 max-w-xl text-base leading-7 text-[#5f6064] md:text-lg md:leading-8">People do not experience interfaces as funnels or metrics. They search, hesitate, misunderstand, recover, and decide.</p>
+            <div className="mt-9 max-w-md border-t border-black/10 pt-5"><p className="font-research text-[9px] uppercase tracking-[0.14em] text-[#77787c]">Observed moment</p><p className="mt-2 text-sm leading-6 text-[#626367]">The pause is part of the evidence. The interface does not need to explain it away.</p></div>
+          </div>
 
           <div className="relative">
-            <ScrollReveal direction="right">
-              <EditorialImage
-                src="/home_image/tester_browser_session_001.webp"
-                alt="A usability tester interacting with a real website in an experimental testing environment."
-                sizes="(min-width: 1024px) 58vw, 100vw"
-                className="aspect-[4/3] shadow-[0_36px_90px_rgba(15,23,42,0.24)]"
-                objectPosition="50% 50%"
-              />
-            </ScrollReveal>
-
-            <motion.div initial={{ opacity: 0, x: 38, y: 18 }} whileInView={{ opacity: 1, x: 0, y: 0 }} viewport={{ once: false, amount: 0.35 }} transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }} className="relative -mt-16 ml-auto w-[90%] max-w-md rounded-2xl border border-border bg-background/95 p-5 shadow-2xl backdrop-blur md:-mt-24 md:mr-6">
-              <div className="flex items-center justify-between"><div className="flex items-center gap-2"><Monitor className="h-5 w-5 text-primary" /><span className="font-semibold text-foreground">Available Jobs</span></div><span className="rounded-full bg-primary/10 px-2 py-1 text-[10px] font-bold text-primary">TESTER</span></div>
-              <div className="mt-4 rounded-xl border border-border bg-surface p-4"><div className="flex items-start justify-between gap-4"><div><p className="text-sm font-semibold text-foreground">Checkout Flow Test</p><p className="mt-1 text-xs text-muted">example.com · 3 tasks</p></div><button className="inline-flex items-center gap-1 rounded-lg bg-accent px-3 py-2 text-xs font-semibold text-accent-foreground">Claim <ArrowRight className="h-3 w-3" /></button></div></div>
-              <div className="mt-3 flex items-center gap-2 text-xs text-muted"><MousePointerClick className="h-4 w-4 text-primary" /> The next step opens the target website.</div>
+            <motion.div style={reduceMotion ? undefined : { y: imageY }}>
+              <EditorialImage src="/home_image/tester_browser_session_001.webp" alt="A usability tester pausing while working through a task on a live digital product." sizes="(min-width: 1024px) 60vw, 100vw" className="aspect-[4/3] rounded-[2rem] shadow-[0_32px_90px_rgba(31,27,22,.2)]" objectPosition="50% 50%" />
             </motion.div>
+
+            <motion.div initial={reduceMotion ? false : { opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false, amount: 0.35 }} transition={{ duration: 0.72, ease: [0.22, 1, 0.36, 1] }} className="absolute bottom-5 left-5 max-w-[280px] rounded-[1.15rem] border border-white/16 bg-[rgba(11,13,18,.78)] p-4 text-[var(--lab-bone)] shadow-2xl backdrop-blur-xl md:bottom-8 md:left-8">
+              <div className="flex items-center justify-between gap-5"><p className="font-research text-[8px] uppercase tracking-[0.15em] text-[var(--lab-amber)]">Task 02 / 03</p><span className="font-research text-[8px] uppercase tracking-[0.13em] text-white/38">Session active</span></div>
+              <p className="mt-3 text-sm font-medium leading-6">Find the plan you would choose.</p>
+              <p className="font-research mt-3 text-[8px] uppercase tracking-[0.12em] text-white/42">Thinking aloud…</p>
+            </motion.div>
+
+            {!reduceMotion && (
+              <motion.div aria-hidden="true" style={{ x: cursorX, y: cursorY }} className="pointer-events-none absolute left-0 top-0 hidden h-9 w-9 items-center justify-center rounded-full border border-white/24 bg-[rgba(243,239,231,.82)] text-[var(--lab-graphite)] shadow-lg backdrop-blur md:flex"><MousePointer2 className="h-4 w-4" /></motion.div>
+            )}
           </div>
         </div>
       </div>

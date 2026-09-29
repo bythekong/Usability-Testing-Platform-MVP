@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Manrope, Noto_Sans_Thai } from "next/font/google";
+import { IBM_Plex_Mono, Inter, Manrope, Noto_Sans_Thai } from "next/font/google";
 import "./globals.css";
 
 const inter = Inter({
@@ -11,6 +11,13 @@ const inter = Inter({
 const manrope = Manrope({
   variable: "--font-manrope",
   subsets: ["latin"],
+  display: "swap",
+});
+
+const ibmPlexMono = IBM_Plex_Mono({
+  variable: "--font-ibm-plex-mono",
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
   display: "swap",
 });
 
@@ -35,7 +42,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
   const messages = await getMessages();
 
   return (
-    <html lang={locale} className={`${inter.variable} ${manrope.variable} ${notoSansThai.variable} h-full antialiased`} suppressHydrationWarning>
+    <html lang={locale} className={`${inter.variable} ${manrope.variable} ${ibmPlexMono.variable} ${notoSansThai.variable} h-full antialiased`} suppressHydrationWarning>
       <body className="min-h-full">
         <NextIntlClientProvider messages={messages}>
           <ThemeProvider
