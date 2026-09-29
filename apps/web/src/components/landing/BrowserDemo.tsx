@@ -33,15 +33,17 @@ export function BrowserDemo() {
             </div>
 
             <div className="relative min-h-[520px] md:min-h-[680px]">
-              <EditorialImage
-                src="/home_image/target_website_pricing_001.webp"
-                alt="A fictional near-future product pricing and configuration website shown underneath the testing extension."
-                sizes="(min-width: 1280px) 1120px, (min-width: 768px) 92vw, 100vw"
-                className="absolute inset-4 rounded-[1.4rem] md:inset-8"
-                imageClassName="object-cover"
-                objectPosition="50% 50%"
-                overlay={false}
-              />
+              <div className="absolute inset-4 md:inset-8">
+                <EditorialImage
+                  src="/home_image/target_website_pricing_001.webp"
+                  alt="A fictional near-future product pricing and configuration website shown underneath the testing extension."
+                  sizes="(min-width: 1280px) 1120px, (min-width: 768px) 92vw, 100vw"
+                  className="h-full w-full rounded-[1.4rem]"
+                  imageClassName="object-cover"
+                  objectPosition="50% 50%"
+                  overlay={false}
+                />
+              </div>
               <div aria-hidden="true" className="pointer-events-none absolute inset-4 rounded-[1.4rem] ring-1 ring-inset ring-black/10 md:inset-8" />
 
               <motion.div style={reduceMotion ? undefined : { x: cursorX, y: cursorY }} className="pointer-events-none absolute left-2 top-2 hidden h-10 w-10 items-center justify-center rounded-full border border-primary/25 bg-background/80 text-primary shadow-lg backdrop-blur md:flex"><MousePointer2 className="h-5 w-5" /></motion.div>
