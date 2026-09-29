@@ -8,40 +8,35 @@ import { motion } from 'framer-motion';
 
 export function Header() {
   return (
-    <motion.header 
+    <motion.header
       initial={{ y: -20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.5, ease: 'easeOut' }}
       className="sticky top-0 z-50 w-full border-b border-border/50 bg-background/80 backdrop-blur-md"
     >
-      <div className="container mx-auto px-6 h-16 flex items-center justify-between">
-        <div className="flex items-center gap-8">
-          <Link href="/" className="font-semibold text-xl tracking-tight text-foreground flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-white font-bold">
-              U
-            </div>
-            Usability Platform
-          </Link>
-          
-          <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-muted">
-            <a href="#how-it-works" className="hover:text-foreground transition-colors">How it works</a>
-            <a href="#owner" className="hover:text-foreground transition-colors">For Teams</a>
-            <a href="#tester" className="hover:text-foreground transition-colors">For Testers</a>
-          </nav>
-        </div>
+      <div className="container mx-auto grid h-16 grid-cols-[1fr_auto] items-center gap-4 px-6 md:grid-cols-[1fr_auto_1fr]">
+        <Link href="/" className="flex items-center gap-2 justify-self-start text-xl font-semibold tracking-tight text-foreground">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary font-bold text-white">
+            U
+          </div>
+          <span className="hidden sm:inline">Usability Platform</span>
+        </Link>
 
-        <div className="flex items-center gap-4">
-          <div className="hidden md:flex items-center gap-2 mr-2">
+        <nav className="hidden items-center gap-7 text-sm font-medium text-muted md:flex md:justify-self-center">
+          <a href="#how-it-works" className="transition-colors hover:text-foreground">How it works</a>
+          <a href="#owner" className="transition-colors hover:text-foreground">For Owners</a>
+          <a href="#tester" className="transition-colors hover:text-foreground">For Testers</a>
+        </nav>
+
+        <div className="flex items-center gap-2 justify-self-end">
+          <div className="hidden items-center gap-2 sm:flex">
             <LanguageSwitcher />
             <ThemeToggle />
           </div>
           <Link href="/login">
-            <Button variant="ghost" className="hidden sm:inline-flex">
+            <Button variant="ghost" className="px-3 sm:px-4">
               Log in
             </Button>
-          </Link>
-          <Link href="/login">
-            <Button>Get Started</Button>
           </Link>
         </div>
       </div>
