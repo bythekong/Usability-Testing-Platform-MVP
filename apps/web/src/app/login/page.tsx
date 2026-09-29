@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { Suspense, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Role } from '@usability-testing/shared';
 import { apiFetch } from '../../lib/api';
 import { Button } from '@/components/ui/Button';
@@ -10,24 +10,22 @@ import { ThemeToggle } from '@/components/theme-toggle';
 import { LanguageSwitcher } from '@/components/language-switcher';
 import { useTranslations } from 'next-intl';
 
-export default function Login() {
+function resolveRequestedRole(value: string | null): Role {
+  return value?.toUpperCase() === Role.TESTER ? Role.TESTER : Role.OWNER;
+}
+
+function LoginContent() {
   const t = useTranslations('auth');
+  const searchParams = useSearchParams();
+  const requestedRole = resolveRequestedRole(searchParams.get('role'));
   const [email, setEmail] = useState('owner@example.com');
   const [password, setPassword] = useState('password123');
-  const [role, setRole] = useState<Role>(Role.OWNER);
+  const [roleOverride, setRoleOverride] = useState<Role | null>(null);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  useEffect(() => {
-    const requestedRole = new URLSearchParams(window.location.search).get('role')?.toUpperCase();
-
-    if (requestedRole === Role.OWNER) {
-      setRole(Role.OWNER);
-    } else if (requestedRole === Role.TESTER) {
-      setRole(Role.TESTER);
-    }
-  }, []);
+  const role = roleOverride ?? requestedRole;
 
   const persistSessionAndRoute = (data: { token: string; user: { role: Role } }) => {
     localStorage.setItem('token', data.token);
@@ -115,7 +113,7 @@ export default function Login() {
             <select
               id="role"
               value={role}
-              onChange={(e) => setRole(e.target.value as Role)}
+              onChange={(e) => setRoleOverride(e.target.value as Role)}
               className="flex h-10 w-full rounded-md border border-border bg-surface px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:border-primary disabled:cursor-not-allowed disabled:opacity-50"
               disabled={loading}
             >
@@ -154,5 +152,19 @@ export default function Login() {
         </form>
       </div>
     </main>
+  );
+}
+
+export default function Login() {
+  return (
+    <Suspense
+      fallback={
+        <main className="flex min-h-screen items-center justify-center bg-background text-muted">
+          Loading...
+        </main>
+      }
+    >
+      <LoginContent />
+    </Suspense>
   );
 }
