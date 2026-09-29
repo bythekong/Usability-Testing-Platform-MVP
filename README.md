@@ -2,6 +2,14 @@
 
 แพลตฟอร์ม MVP สำหรับเชื่อม Owner ที่ต้องการทดสอบเว็บไซต์กับ Tester ที่ทำงานผ่าน Web Dashboard + Chrome Extension (Manifest V3) + Express API + PostgreSQL
 
+
+## ภาพตัวอย่าง (Screenshots)
+
+![หน้าหลัก (Home)](docs/assets/home.png)
+![เข้าสู่ระบบ (Login)](docs/assets/login.png)
+![หน้าผู้สร้างแคมเปญ (Owner Dashboard)](docs/assets/owner.png)
+![หน้าผู้ทดสอบ (Tester Dashboard)](docs/assets/tester.png)
+
 ## Architecture
 
 ```text
