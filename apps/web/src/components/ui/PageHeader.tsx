@@ -9,10 +9,10 @@ interface PageHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
 
 export function PageHeader({ title, description, actions, className, ...props }: PageHeaderProps) {
   return (
-    <div className={cn("flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8", className)} {...props}>
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight text-foreground">{title}</h1>
-        {description && <p className="text-sm text-muted mt-1">{description}</p>}
+    <div className={cn("mb-8 flex flex-col justify-between gap-4 sm:flex-row sm:items-end", className)} {...props}>
+      <div className="max-w-3xl">
+        <h1 className="text-2xl font-semibold tracking-[-0.02em] text-foreground">{title}</h1>
+        {description && <p className="mt-1.5 text-sm leading-6 text-muted">{description}</p>}
       </div>
       {actions && <div className="flex items-center gap-2">{actions}</div>}
     </div>
