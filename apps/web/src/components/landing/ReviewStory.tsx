@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion';
 import { CheckCircle2, Quote, XCircle } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
-import { ImagePlaceholder } from './ImagePlaceholder';
+import { EditorialImage } from './EditorialImage';
 import { ScrollReveal } from './ScrollReveal';
 
 export function ReviewStory() {
@@ -13,13 +13,12 @@ export function ReviewStory() {
         <div className="grid items-center gap-14 lg:grid-cols-2 lg:gap-20">
           <div className="relative order-2 lg:order-1">
             <ScrollReveal direction="left">
-              <ImagePlaceholder
-                title="Review photography — owner reading participant feedback"
-                description="Editorial photo of a product researcher or founder reviewing notes/results on a laptop. Use an over-shoulder or desk composition with negative space for the submission card overlay."
-                aspectRatio="3 / 2"
-                dimensions="1500 × 1000"
-                filePath="apps/web/public/home_image/owner_review_feedback_001.webp"
-                className="shadow-[0_36px_90px_rgba(15,23,42,0.2)]"
+              <EditorialImage
+                src="/home_image/owner_review_feedback_001.webp"
+                alt="A product researcher reviewing completed usability findings in a contemporary research studio."
+                sizes="(min-width: 1024px) 50vw, 100vw"
+                className="aspect-[3/2] shadow-[0_36px_90px_rgba(15,23,42,0.2)]"
+                objectPosition="50% 50%"
               />
             </ScrollReveal>
 

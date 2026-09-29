@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { ArrowRight, Monitor, MousePointerClick } from 'lucide-react';
-import { ImagePlaceholder } from './ImagePlaceholder';
+import { EditorialImage } from './EditorialImage';
 import { ScrollReveal } from './ScrollReveal';
 
 export function TesterStory() {
@@ -30,13 +30,12 @@ export function TesterStory() {
 
           <div className="relative">
             <ScrollReveal direction="right">
-              <ImagePlaceholder
-                title="Tester photography — real person completing a website task"
-                description="Candid close-medium shot of a tester focused on a laptop while navigating a real website. Keep the laptop screen visible enough to support a composited extension overlay later."
-                aspectRatio="4 / 3"
-                dimensions="1400 × 1050"
-                filePath="apps/web/public/home_image/tester_browser_session_001.webp"
-                className="shadow-[0_36px_90px_rgba(15,23,42,0.24)]"
+              <EditorialImage
+                src="/home_image/tester_browser_session_001.webp"
+                alt="A usability tester interacting with a real website in an experimental testing environment."
+                sizes="(min-width: 1024px) 58vw, 100vw"
+                className="aspect-[4/3] shadow-[0_36px_90px_rgba(15,23,42,0.24)]"
+                objectPosition="50% 50%"
               />
             </ScrollReveal>
 
