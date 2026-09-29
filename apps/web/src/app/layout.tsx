@@ -1,10 +1,17 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Manrope } from "next/font/google";
 import "./globals.css";
 
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
+  display: "swap",
+});
+
+const manrope = Manrope({
+  variable: "--font-manrope",
+  subsets: ["latin"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -22,7 +29,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
   const messages = await getMessages();
 
   return (
-    <html lang={locale} className={`${inter.variable} h-full antialiased`} suppressHydrationWarning>
+    <html lang={locale} className={`${inter.variable} ${manrope.variable} h-full antialiased`} suppressHydrationWarning>
       <body className="min-h-full">
         <NextIntlClientProvider messages={messages}>
           <ThemeProvider
@@ -32,7 +39,17 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
             disableTransitionOnChange
           >
             {children}
-            <Toaster position="bottom-right" />
+            <Toaster
+              position="bottom-right"
+              toastOptions={{
+                style: {
+                  background: 'var(--surface-elevated)',
+                  color: 'var(--foreground)',
+                  border: '1px solid var(--border)',
+                  boxShadow: '0 10px 32px rgba(0,0,0,0.14)',
+                },
+              }}
+            />
           </ThemeProvider>
         </NextIntlClientProvider>
       </body>
