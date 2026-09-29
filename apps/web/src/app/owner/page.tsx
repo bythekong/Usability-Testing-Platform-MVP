@@ -252,7 +252,7 @@ function OwnerDashboardContent() {
           ) : (
             <div className="space-y-4">
               {campaigns.map((campaign) => (
-                <article key={campaign.id} className="overflow-hidden rounded-xl border border-border bg-surface shadow-sm">
+                <article key={campaign.id} className="overflow-hidden rounded-xl border border-border bg-surface shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
                   <div className="flex flex-col gap-4 border-b border-border px-5 py-5 sm:flex-row sm:items-center sm:justify-between">
                     <div className="flex min-w-0 items-center gap-3">
                       <TargetIcon url={campaign.targetUrl} />
@@ -273,7 +273,7 @@ function OwnerDashboardContent() {
                     <div className="mb-3 flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <h4 className="text-sm font-semibold text-foreground">{t("jobSubmissions")}</h4>
-                        <span className="rounded-full bg-muted/30 px-2 py-0.5 text-xs text-muted">
+                        <span className="rounded-full bg-surface-subtle px-2 py-0.5 text-xs text-muted">
                           {campaign.jobs.length}
                         </span>
                       </div>
@@ -281,7 +281,7 @@ function OwnerDashboardContent() {
                         <Button 
                           variant="outline" 
                           size="sm" 
-                          className="h-8 text-xs font-semibold text-orange-600 hover:text-orange-700 hover:bg-orange-50"
+                          className="h-8 text-xs font-semibold text-warning-text hover:text-warning-text hover:bg-warning-bg"
                           onClick={async () => {
                             if (!confirm('Are you sure you want to lock this campaign? Testers will no longer be able to see the Target URL or videos.')) return;
                             try {
@@ -296,7 +296,7 @@ function OwnerDashboardContent() {
                           Lock Campaign (NDA)
                         </Button>
                       ) : (
-                        <span className="inline-flex items-center gap-1 text-xs font-semibold text-red-600 bg-red-50 px-2 py-1 rounded-md">
+                        <span className="inline-flex items-center gap-1 text-xs font-semibold text-danger bg-danger-bg px-2 py-1 rounded-md">
                           🔒 Locked
                         </span>
                       )}
@@ -315,7 +315,7 @@ function OwnerDashboardContent() {
                               onClick={() => void toggleReview(job.id, job.status)}
                               className={[
                                 'flex w-full items-center justify-between gap-3 px-3 py-3 text-left',
-                                canInspect ? 'cursor-pointer hover:bg-muted/20' : 'cursor-default'
+                                canInspect ? 'cursor-pointer hover:bg-surface-subtle' : 'cursor-default'
                               ].join(' ')}
                               aria-expanded={canInspect ? expanded : undefined}
                             >
@@ -416,10 +416,10 @@ function OwnerDashboardContent() {
 
           <section className="rounded-xl border border-border bg-surface p-6 shadow-sm">
             <h2 className="text-lg font-semibold text-foreground mb-4">{t("paymentMethod")}</h2>
-            <div className="rounded-lg bg-muted/20 border border-border p-4 text-center">
+            <div className="rounded-lg bg-surface-subtle border border-border p-4 text-center">
               <p className="text-sm text-muted mb-3">{t("noPayment")}</p>
               <Button disabled variant="outline">{t("addCreditCard")}</Button>
-              <p className="mt-2 text-xs text-gray-400">{t("paymentComingSoon")}</p>
+              <p className="mt-2 text-xs text-muted">{t("paymentComingSoon")}</p>
             </div>
           </section>
         </div>
@@ -433,7 +433,7 @@ function OwnerDashboardContent() {
       <PageHeader title={t("createCampaign.title")} description={t("createCampaign.desc")} />
       
       {error && (
-        <div className="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+        <div className="mb-6 rounded-lg border border-danger/20 bg-danger-bg px-4 py-3 text-sm text-danger-text">
           {error}
         </div>
       )}
@@ -485,7 +485,7 @@ function OwnerDashboardContent() {
               <h3 className="text-sm font-semibold text-blue-900 dark:text-blue-200 flex items-center gap-2">
                 <TargetIcon url="https://a" /> {t("createCampaign.targeting")}
               </h3>
-              <p className="text-xs text-blue-700 dark:text-blue-400 mb-2">{t("createCampaign.targetingDesc")}</p>
+              <p className="text-xs text-primary dark:text-blue-400 mb-2">{t("createCampaign.targetingDesc")}</p>
               
               <div className="grid grid-cols-2 gap-4">
                 <FormField label={t("createCampaign.minAge")} htmlFor="targetMinAge">
@@ -526,15 +526,15 @@ function OwnerDashboardContent() {
               <div className="space-y-3">
                 <textarea
                   id="scenario"
-                  className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-50"
+                  className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
                   rows={4}
                   value={scenario}
                   onChange={(e) => setScenario(e.target.value)}
                   placeholder={t("createCampaign.scenarioPlaceholder")}
                 />
                 {scenario && (
-                  <div className="rounded-md border border-border bg-muted/20 p-4 text-sm prose dark:prose-invert prose-sm max-w-none">
-                    <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">{t("createCampaign.preview")}</p>
+                  <div className="rounded-md border border-border bg-surface-subtle p-4 text-sm prose dark:prose-invert prose-sm max-w-none">
+                    <p className="text-xs font-semibold text-muted uppercase tracking-wide mb-2">{t("createCampaign.preview")}</p>
                     <ReactMarkdown>{scenario}</ReactMarkdown>
                   </div>
                 )}
@@ -553,7 +553,7 @@ function OwnerDashboardContent() {
                         <button
                           type="button"
                           onClick={() => setTasks((current) => current.filter((_, taskIndex) => taskIndex !== index))}
-                          className="rounded-md p-1 text-muted transition hover:bg-red-50 hover:text-red-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                          className="rounded-md p-1 text-muted transition hover:bg-danger-bg hover:text-danger focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                           title="Remove task"
                         >
                           <X className="h-4 w-4" />
@@ -582,7 +582,7 @@ function OwnerDashboardContent() {
                             className={[
                               'flex-1 min-w-[130px] rounded-md border px-3 py-2 text-xs font-semibold transition text-left',
                               task.taskType === value
-                                ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400'
+                                ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/30 text-primary dark:text-blue-400'
                                 : 'border-border bg-surface text-muted hover:border-muted'
                             ].join(' ')}
                           >
@@ -641,7 +641,7 @@ function OwnerDashboardContent() {
                                   };
                                   setTasks(nextTasks);
                                 }}
-                                className="p-1 text-muted hover:text-red-500"
+                                className="p-1 text-muted hover:text-danger"
                               >
                                 <Trash2 className="h-3 w-3" />
                               </button>
@@ -726,11 +726,11 @@ function OwnerDashboardContent() {
                         <div className="rounded-md bg-surface border border-border p-3">
                           <p className="text-xs text-muted mb-2">{t("createCampaign.preview")}:</p>
                           <div className="flex items-center gap-2 flex-wrap">
-                            {task.ratingMinLabel && <span className="text-xs text-gray-500">{task.ratingMinLabel}</span>}
+                            {task.ratingMinLabel && <span className="text-xs text-muted">{task.ratingMinLabel}</span>}
                             {Array.from({ length: task.ratingMax - task.ratingMin + 1 }, (_, i) => task.ratingMin + i).map(n => (
-                              <span key={n} className="h-8 w-8 flex items-center justify-center rounded-full border border-border text-sm font-medium text-foreground bg-muted/20">{n}</span>
+                              <span key={n} className="h-8 w-8 flex items-center justify-center rounded-full border border-border text-sm font-medium text-foreground bg-surface-subtle">{n}</span>
                             ))}
-                            {task.ratingMaxLabel && <span className="text-xs text-gray-500">{task.ratingMaxLabel}</span>}
+                            {task.ratingMaxLabel && <span className="text-xs text-muted">{task.ratingMaxLabel}</span>}
                           </div>
                         </div>
                       </div>
@@ -778,7 +778,7 @@ function OwnerDashboardContent() {
               <button
                 type="button"
                 onClick={() => setTasks([...tasks, { instruction: '', maxTimeLimit: 300, taskType: TaskType.FREE_RESPONSE, taskUrl: '', choices: ['', ''], ratingMin: 1, ratingMax: 5, ratingMinLabel: '', ratingMaxLabel: '' }])}
-                className="mt-3 inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                className="mt-3 inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               >
                 <Plus className="h-4 w-4" />
                 {t("createCampaign.addTask")}
@@ -786,7 +786,7 @@ function OwnerDashboardContent() {
             </div>
 
 
-            <div className="rounded-lg bg-muted/20 p-4 border border-border">
+            <div className="rounded-lg bg-surface-subtle p-4 border border-border">
               <div className="flex justify-between items-center text-sm">
                 <span className="text-muted">{t("createCampaign.costPerTester")}</span>
                 <span className="font-medium">{rewardAmount.toLocaleString("th-TH")} THB</span>
@@ -813,7 +813,7 @@ function OwnerDashboardContent() {
             <Lightbulb className="h-5 w-5 text-blue-600 dark:text-blue-400" />
             <h3 className="font-semibold text-blue-900 dark:text-blue-200">{t("createCampaign.tipsTitle")}</h3>
           </div>
-          <ul className="text-sm text-blue-800 dark:text-blue-300 space-y-3 list-disc pl-4">
+          <ul className="text-sm text-blue-800 dark:text-primary space-y-3 list-disc pl-4">
             <li><strong>{t("createCampaign.tips1")}</strong> {t("createCampaign.tips1desc")}</li>
             <li><strong>{t("createCampaign.tips2")}</strong> {t("createCampaign.tips2desc")}</li>
             <li><strong>{t("createCampaign.timeLimit")}s:</strong> {t("createCampaign.timeLimitDesc")}</li>
