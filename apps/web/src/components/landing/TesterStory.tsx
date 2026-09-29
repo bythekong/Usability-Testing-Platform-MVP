@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { ArrowRight, Chrome, MousePointerClick } from 'lucide-react';
+import { ArrowRight, Monitor, MousePointerClick } from 'lucide-react';
 import { ImagePlaceholder } from './ImagePlaceholder';
 import { ScrollReveal } from './ScrollReveal';
 
@@ -41,7 +41,7 @@ export function TesterStory() {
             </ScrollReveal>
 
             <motion.div initial={{ opacity: 0, x: 38, y: 18 }} whileInView={{ opacity: 1, x: 0, y: 0 }} viewport={{ once: false, amount: 0.35 }} transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }} className="relative -mt-16 ml-auto w-[90%] max-w-md rounded-2xl border border-border bg-background/95 p-5 shadow-2xl backdrop-blur md:-mt-24 md:mr-6">
-              <div className="flex items-center justify-between"><div className="flex items-center gap-2"><Chrome className="h-5 w-5 text-primary" /><span className="font-semibold text-foreground">Available Jobs</span></div><span className="rounded-full bg-orange-500/10 px-2 py-1 text-[10px] font-bold text-orange-500">TESTER</span></div>
+              <div className="flex items-center justify-between"><div className="flex items-center gap-2"><Monitor className="h-5 w-5 text-primary" /><span className="font-semibold text-foreground">Available Jobs</span></div><span className="rounded-full bg-orange-500/10 px-2 py-1 text-[10px] font-bold text-orange-500">TESTER</span></div>
               <div className="mt-4 rounded-xl border border-border bg-surface p-4"><div className="flex items-start justify-between gap-4"><div><p className="text-sm font-semibold text-foreground">Checkout Flow Test</p><p className="mt-1 text-xs text-muted">example.com · 3 tasks</p></div><button className="inline-flex items-center gap-1 rounded-lg bg-primary px-3 py-2 text-xs font-semibold text-white">Claim <ArrowRight className="h-3 w-3" /></button></div></div>
               <div className="mt-3 flex items-center gap-2 text-xs text-muted"><MousePointerClick className="h-4 w-4 text-primary" /> The next step opens the target website.</div>
             </motion.div>
