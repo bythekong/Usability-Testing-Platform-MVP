@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Role } from '@usability-testing/shared';
 import { apiFetch } from '../../lib/api';
@@ -18,6 +18,16 @@ export default function Login() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    const requestedRole = new URLSearchParams(window.location.search).get('role')?.toUpperCase();
+
+    if (requestedRole === Role.OWNER) {
+      setRole(Role.OWNER);
+    } else if (requestedRole === Role.TESTER) {
+      setRole(Role.TESTER);
+    }
+  }, []);
 
   const persistSessionAndRoute = (data: { token: string; user: { role: Role } }) => {
     localStorage.setItem('token', data.token);
