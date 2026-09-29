@@ -4,7 +4,7 @@ import { useRef } from 'react';
 import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion';
 import { Check, Monitor, MousePointer2 } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
-import { ImagePlaceholder } from './ImagePlaceholder';
+import { EditorialImage } from './EditorialImage';
 
 export function BrowserDemo() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -32,8 +32,17 @@ export function BrowserDemo() {
               <div className="mx-auto flex h-8 w-[68%] items-center rounded-lg border border-border bg-background px-3 text-[11px] text-muted">https://acme-corp.com/pricing</div>
             </div>
 
-            <div className="relative min-h-[520px] p-4 md:min-h-[680px] md:p-8">
-              <ImagePlaceholder title="Browser content image — target website being tested" description="A realistic SaaS pricing / checkout webpage screenshot or staged product visual. This becomes the real website underneath the extension panel, not a decorative illustration." aspectRatio="16 / 9" dimensions="1600 × 900" filePath="apps/web/public/home_image/target_website_pricing_001.webp" priorityLabel="FPO PRODUCT IMAGE" className="h-full min-h-[490px] w-full md:min-h-[620px]" />
+            <div className="relative min-h-[520px] md:min-h-[680px]">
+              <EditorialImage
+                src="/home_image/target_website_pricing_001.webp"
+                alt="A fictional near-future product pricing and configuration website shown underneath the testing extension."
+                sizes="(min-width: 1280px) 1120px, (min-width: 768px) 92vw, 100vw"
+                className="absolute inset-4 rounded-[1.4rem] md:inset-8"
+                imageClassName="object-cover"
+                objectPosition="50% 50%"
+                overlay={false}
+              />
+              <div aria-hidden="true" className="pointer-events-none absolute inset-4 rounded-[1.4rem] ring-1 ring-inset ring-black/10 md:inset-8" />
 
               <motion.div style={reduceMotion ? undefined : { x: cursorX, y: cursorY }} className="pointer-events-none absolute left-2 top-2 hidden h-10 w-10 items-center justify-center rounded-full border border-primary/25 bg-background/80 text-primary shadow-lg backdrop-blur md:flex"><MousePointer2 className="h-5 w-5" /></motion.div>
 
