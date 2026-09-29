@@ -1,132 +1,59 @@
 'use client';
 
-import { motion } from 'framer-motion';
-import { 
-  PlusCircle, 
-  MousePointerClick, 
-  Monitor, 
-  CheckSquare, 
-  MessageSquare,
-  Eye,
-  CheckCircle
-} from 'lucide-react';
+import { useRef } from 'react';
+import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion';
+import { CheckCircle, CheckSquare, Eye, MessageSquare, Monitor, MousePointerClick, PlusCircle } from 'lucide-react';
+import { ImagePlaceholder } from './ImagePlaceholder';
 
 const steps = [
-  {
-    id: 1,
-    role: 'OWNER',
-    title: 'Create Campaign',
-    description: 'Define the target URL and tasks you want users to complete.',
-    icon: PlusCircle,
-  },
-  {
-    id: 2,
-    role: 'TESTER',
-    title: 'Claim Job',
-    description: 'Testers discover and claim available testing jobs on the platform.',
-    icon: MousePointerClick,
-  },
-  {
-    id: 3,
-    role: 'TESTER',
-    title: 'Extension Activates',
-    description: 'The Chrome Extension overlay activates directly on the target website.',
-    icon: Monitor,
-  },
-  {
-    id: 4,
-    role: 'TESTER',
-    title: 'Complete Tasks',
-    description: 'Tester completes tasks and provides real-time feedback through the overlay.',
-    icon: CheckSquare,
-  },
-  {
-    id: 5,
-    role: 'TESTER',
-    title: 'Submit Response',
-    description: 'The completed session and feedback are submitted back to the platform.',
-    icon: MessageSquare,
-  },
-  {
-    id: 6,
-    role: 'OWNER',
-    title: 'Review Feedback',
-    description: 'Owner reviews the actionable feedback provided by the tester.',
-    icon: Eye,
-  },
-  {
-    id: 7,
-    role: 'OWNER',
-    title: 'Approve / Reject',
-    description: 'Approve satisfactory tests to finalize the testing loop.',
-    icon: CheckCircle,
-  }
+  { id: '01', role: 'OWNER', title: 'Create campaign', description: 'Set the target URL and the tasks you want people to complete.', icon: PlusCircle },
+  { id: '02', role: 'TESTER', title: 'Claim a job', description: 'A tester picks an available study from the tester dashboard.', icon: MousePointerClick },
+  { id: '03', role: 'TESTER', title: 'Open the real site', description: 'The extension activates only when the claimed target matches.', icon: Monitor },
+  { id: '04', role: 'TESTER', title: 'Complete tasks', description: 'The tester follows task prompts while using the real product.', icon: CheckSquare },
+  { id: '05', role: 'TESTER', title: 'Submit feedback', description: 'Task responses are sent back once every task is complete.', icon: MessageSquare },
+  { id: '06', role: 'OWNER', title: 'Review the session', description: 'The owner reads the task-by-task feedback in context.', icon: Eye },
+  { id: '07', role: 'OWNER', title: 'Approve or reject', description: 'The owner closes the loop with a one-way review decision.', icon: CheckCircle },
 ];
 
 export function WorkflowStory() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const reduceMotion = useReducedMotion();
+  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ['start 75%', 'end 25%'] });
+  const progressScale = useTransform(scrollYProgress, [0, 1], [0, 1]);
+  const imageY = useTransform(scrollYProgress, [0, 1], [40, -40]);
+  const imageRotate = useTransform(scrollYProgress, [0, 0.5, 1], [-1.5, 0, 1.5]);
+
   return (
-    <section id="how-it-works" className="py-32 bg-surface border-y border-border relative">
-      <div className="container mx-auto px-6 max-w-5xl">
-        <div className="text-center mb-24">
-          <motion.h2 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-4xl font-bold tracking-tight mb-4"
-          >
-            How it works
-          </motion.h2>
-          <motion.p 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.1 }}
-            className="text-lg text-muted"
-          >
-            A seamless bridge between your team and real users.
-          </motion.p>
+    <section id="how-it-works" ref={sectionRef} className="relative border-y border-border bg-surface py-28 md:py-36">
+      <div className="container mx-auto max-w-7xl px-6">
+        <div className="mb-16 grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-end">
+          <div><p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">How it works</p><h2 className="mt-4 max-w-3xl text-4xl font-bold tracking-[-0.035em] text-foreground sm:text-5xl lg:text-6xl">One study. Two roles. One continuous testing loop.</h2></div>
+          <p className="max-w-xl text-lg leading-8 text-muted lg:justify-self-end">The product moves between owner, tester, browser, and review. The page now visualizes that flow instead of stacking generic feature cards.</p>
         </div>
 
-        <div className="relative">
-          {/* Vertical line */}
-          <div className="absolute left-8 md:left-1/2 top-0 bottom-0 w-px bg-border -translate-x-1/2"></div>
+        <div className="grid gap-12 lg:grid-cols-[1.02fr_0.98fr] lg:gap-16">
+          <div className="lg:sticky lg:top-28 lg:self-start">
+            <motion.div style={reduceMotion ? undefined : { y: imageY, rotate: imageRotate }}>
+              <ImagePlaceholder title="Workflow photography — researcher observing a real product test" description="Wide editorial photo showing a participant using a laptop while a researcher observes from the side. Leave negative space for floating campaign / task UI overlays." aspectRatio="16 / 10" dimensions="1600 × 1000" filePath="apps/web/public/home_image/workflow_observation_001.webp" className="shadow-[0_32px_90px_rgba(15,23,42,0.22)]" />
+            </motion.div>
+            <motion.div initial={{ opacity: 0, x: -28 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: false, amount: 0.35 }} transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }} className="relative -mt-16 ml-4 max-w-sm rounded-2xl border border-border bg-background/95 p-5 shadow-2xl backdrop-blur md:ml-8">
+              <div className="flex items-center justify-between text-xs"><span className="font-semibold text-foreground">Checkout Flow Test</span><span className="rounded-full bg-primary/10 px-2 py-1 font-bold text-primary">IN PROGRESS</span></div>
+              <div className="mt-4 h-1.5 overflow-hidden rounded-full bg-border"><motion.div className="h-full origin-left rounded-full bg-primary" style={reduceMotion ? { scaleX: 1 } : { scaleX: progressScale }} /></div>
+              <div className="mt-3 flex justify-between text-[11px] text-muted"><span>Owner created</span><span>Review complete</span></div>
+            </motion.div>
+          </div>
 
-          <div className="space-y-24">
-            {steps.map((step, index) => {
-              const isEven = index % 2 === 0;
-              return (
-                <motion.div 
-                  key={step.id}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-100px" }}
-                  transition={{ duration: 0.6 }}
-                  className="relative flex items-center md:justify-between w-full flex-col md:flex-row gap-8 md:gap-0"
-                >
-                  {/* Left Side */}
-                  <div className={`w-full md:w-[45%] flex ${isEven ? 'md:justify-end' : 'md:justify-start order-1 md:order-2'} pl-16 md:pl-0`}>
-                    <div className="bg-background border border-border p-6 rounded-2xl shadow-sm w-full max-w-sm">
-                      <div className="flex items-center gap-2 mb-4">
-                        <span className={`text-xs font-bold px-2 py-1 rounded bg-muted/10 ${step.role === 'OWNER' ? 'text-primary' : 'text-orange-500'}`}>
-                          {step.role}
-                        </span>
-                      </div>
-                      <h3 className="text-xl font-semibold mb-2">{step.title}</h3>
-                      <p className="text-muted text-sm leading-relaxed">{step.description}</p>
-                    </div>
-                  </div>
-
-                  {/* Center Dot */}
-                  <div className="absolute left-8 md:left-1/2 top-0 md:top-1/2 -translate-x-1/2 md:-translate-y-1/2 w-12 h-12 rounded-full bg-background border-4 border-surface shadow-sm flex items-center justify-center z-10 text-primary">
-                    <step.icon className="w-5 h-5" />
-                  </div>
-
-                  {/* Right Side (Empty spacer for alternate layout) */}
-                  <div className={`w-full md:w-[45%] hidden md:block ${isEven ? 'order-2' : 'order-1'}`}>
-                  </div>
-                </motion.div>
-              );
-            })}
+          <div className="relative pl-9 md:pl-12">
+            <div className="absolute bottom-0 left-[9px] top-0 w-px bg-border md:left-[13px]" />
+            <motion.div aria-hidden="true" style={reduceMotion ? { scaleY: 1 } : { scaleY: progressScale }} className="absolute bottom-0 left-[9px] top-0 w-px origin-top bg-primary md:left-[13px]" />
+            <div className="space-y-6 md:space-y-8">
+              {steps.map((step, index) => (
+                <motion.article key={step.id} initial={{ opacity: 0, x: 44, scale: 0.98 }} whileInView={{ opacity: 1, x: 0, scale: 1 }} viewport={{ once: false, amount: 0.38 }} transition={{ duration: 0.6, delay: index % 2 === 0 ? 0 : 0.03, ease: [0.22, 1, 0.36, 1] }} className="relative rounded-[1.6rem] border border-border bg-background p-5 shadow-sm transition-shadow hover:shadow-lg md:p-6">
+                  <div className="absolute -left-[42px] top-7 flex h-7 w-7 items-center justify-center rounded-full border-4 border-surface bg-background text-primary shadow-sm md:-left-[50px] md:h-8 md:w-8"><step.icon className="h-3.5 w-3.5 md:h-4 md:w-4" /></div>
+                  <div className="flex items-start justify-between gap-5"><div><div className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.16em]"><span className={step.role === 'OWNER' ? 'text-primary' : 'text-orange-500'}>{step.role}</span><span className="text-muted/60">{step.id}</span></div><h3 className="mt-2 text-xl font-semibold tracking-tight text-foreground md:text-2xl">{step.title}</h3><p className="mt-2 max-w-lg text-sm leading-6 text-muted md:text-base">{step.description}</p></div></div>
+                </motion.article>
+              ))}
+            </div>
           </div>
         </div>
       </div>
