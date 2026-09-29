@@ -3,47 +3,65 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-  --background: #f8fafc;
-  --surface: #ffffff;
-  --foreground: #0f172a;
-  --muted: #64748b;
-  --border: #e2e8f0;
-  --primary: #2563eb;
-  --primary-hover: #1d4ed8;
-  --success-bg: #dcfce7;
-  --success-text: #166534;
-  --warning-bg: #fef3c7;
-  --warning-text: #92400e;
-  --danger: #dc2626;
-  --danger-bg: #fee2e2;
-  --danger-text: #991b1b;
+  --background: #f7f6f2;
+  --surface: #fffefb;
+  --surface-subtle: #f1eee7;
+  --surface-elevated: #ffffff;
+  --foreground: #181713;
+  --muted: #746f65;
+  --border: #e4ded2;
+  --primary: #8d6b2b;
+  --primary-hover: #755721;
+  --accent: #d6b56c;
+  --accent-hover: #c8a65c;
+  --accent-foreground: #17130b;
+  --ring: #b88f43;
+  --success-bg: #e7efe7;
+  --success-text: #386347;
+  --warning-bg: #f4e8d0;
+  --warning-text: #7a5a20;
+  --danger: #a14b41;
+  --danger-bg: #f4e1de;
+  --danger-text: #8a3d35;
 }
 
 .dark {
-  --background: #020617;
-  --surface: #0f172a;
-  --foreground: #f8fafc;
-  --muted: #94a3b8;
-  --border: #1e293b;
-  --primary: #3b82f6;
-  --primary-hover: #2563eb;
-  --success-bg: #064e3b;
-  --success-text: #34d399;
-  --warning-bg: #451a03;
-  --warning-text: #fbbf24;
-  --danger: #ef4444;
-  --danger-bg: #450a0a;
-  --danger-text: #f87171;
+  --background: #0b0d12;
+  --surface: #12151b;
+  --surface-subtle: #171a20;
+  --surface-elevated: #181c23;
+  --foreground: #f5f2ea;
+  --muted: #9c978c;
+  --border: #272a31;
+  --primary: #d6b56c;
+  --primary-hover: #e0c27d;
+  --accent: #d6b56c;
+  --accent-hover: #e2c67e;
+  --accent-foreground: #0b0d12;
+  --ring: #d6b56c;
+  --success-bg: #15221a;
+  --success-text: #78a986;
+  --warning-bg: #251f14;
+  --warning-text: #d7ba79;
+  --danger: #c96b60;
+  --danger-bg: #281817;
+  --danger-text: #d9897e;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-surface: var(--surface);
+  --color-surface-subtle: var(--surface-subtle);
+  --color-surface-elevated: var(--surface-elevated);
   --color-foreground: var(--foreground);
   --color-muted: var(--muted);
   --color-border: var(--border);
   --color-primary: var(--primary);
   --color-primary-hover: var(--primary-hover);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-ring: var(--ring);
   --color-success-bg: var(--success-bg);
   --color-success-text: var(--success-text);
   --color-warning-bg: var(--warning-bg);
@@ -52,6 +70,7 @@
   --color-danger-bg: var(--danger-bg);
   --color-danger-text: var(--danger-text);
   --font-sans: var(--font-inter);
+  --font-display: var(--font-manrope);
 }
 
 * {
@@ -68,6 +87,13 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-inter), Arial, Helvetica, sans-serif;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--accent) 28%, transparent);
+  color: var(--foreground);
 }
 
 button,
@@ -76,4 +102,14 @@ input,
 select,
 textarea {
   outline-offset: 2px;
+}
+
+input,
+select,
+textarea {
+  caret-color: var(--primary);
+}
+
+.font-display {
+  font-family: var(--font-manrope), var(--font-inter), Arial, Helvetica, sans-serif;
 }
