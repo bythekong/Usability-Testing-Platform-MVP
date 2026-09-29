@@ -73,14 +73,14 @@ function LoginContent() {
         <LanguageSwitcher />
         <ThemeToggle />
       </div>
-      <div className="w-full max-w-md bg-surface p-8 rounded-xl shadow-[0_2px_10px_rgba(0,0,0,0.06)] border border-border">
+      <div className="w-full max-w-md rounded-2xl border border-border bg-surface-elevated p-8 shadow-[0_18px_50px_rgba(0,0,0,0.08)]">
         <div className="text-center mb-8">
-          <h1 className="text-2xl font-semibold tracking-tight">{t('title')}</h1>
+          <h1 className="text-2xl font-semibold tracking-[-0.02em]">{t('title')}</h1>
           <p className="text-sm text-muted mt-2">{t('subtitle')}</p>
         </div>
 
         {error && (
-          <div className="mb-6 p-3 rounded-md bg-danger-bg text-danger-text text-sm font-medium border border-red-200">
+          <div className="mb-6 p-3 rounded-md bg-danger-bg text-danger-text text-sm font-medium border border-danger/20">
             {error}
           </div>
         )}
@@ -114,7 +114,7 @@ function LoginContent() {
               id="role"
               value={role}
               onChange={(e) => setRoleOverride(e.target.value as Role)}
-              className="flex h-10 w-full rounded-md border border-border bg-surface px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:border-primary disabled:cursor-not-allowed disabled:opacity-50"
+              className="flex h-10 w-full rounded-lg border border-border bg-background/70 px-3 py-2 text-sm text-foreground transition-[border-color,box-shadow,background-color] focus-visible:border-primary focus-visible:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/25 disabled:cursor-not-allowed disabled:opacity-50"
               disabled={loading}
             >
               <option value={Role.OWNER}>{t('roleOwner')}</option>
