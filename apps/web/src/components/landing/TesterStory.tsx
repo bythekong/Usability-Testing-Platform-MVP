@@ -11,8 +11,8 @@ export function TesterStory() {
       <div className="container mx-auto max-w-7xl px-6">
         <div className="grid items-center gap-14 lg:grid-cols-[0.88fr_1.12fr] lg:gap-20">
           <ScrollReveal direction="left">
-            <p className="text-xs font-bold uppercase tracking-[0.2em] text-orange-500">For testers</p>
-            <h2 className="mt-4 text-4xl font-bold tracking-[-0.035em] text-foreground sm:text-5xl">The testing interface follows the tester into the real website.</h2>
+            <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">For testers</p>
+            <h2 className="font-display mt-4 text-4xl font-semibold tracking-[-0.035em] text-foreground sm:text-5xl">The testing interface follows the tester into the real website.</h2>
             <p className="mt-6 text-lg leading-8 text-muted">Claim a study, open the target, and keep the instructions beside the product instead of switching between tabs and losing context.</p>
 
             <div className="mt-8 space-y-3">
@@ -22,7 +22,7 @@ export function TesterStory() {
                 ['03', 'Extension activates', 'Task guidance appears only on the matching website.'],
               ].map(([number, title, text], index) => (
                 <motion.div key={number} initial={{ opacity: 0, x: -28 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: false, amount: 0.6 }} transition={{ delay: index * 0.06 }} className="flex gap-4 rounded-2xl border border-border bg-background p-4">
-                  <span className="text-xs font-bold text-orange-500">{number}</span><div><p className="font-semibold text-foreground">{title}</p><p className="mt-1 text-sm leading-6 text-muted">{text}</p></div>
+                  <span className="text-xs font-bold text-primary">{number}</span><div><p className="font-semibold text-foreground">{title}</p><p className="mt-1 text-sm leading-6 text-muted">{text}</p></div>
                 </motion.div>
               ))}
             </div>
@@ -41,8 +41,8 @@ export function TesterStory() {
             </ScrollReveal>
 
             <motion.div initial={{ opacity: 0, x: 38, y: 18 }} whileInView={{ opacity: 1, x: 0, y: 0 }} viewport={{ once: false, amount: 0.35 }} transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }} className="relative -mt-16 ml-auto w-[90%] max-w-md rounded-2xl border border-border bg-background/95 p-5 shadow-2xl backdrop-blur md:-mt-24 md:mr-6">
-              <div className="flex items-center justify-between"><div className="flex items-center gap-2"><Monitor className="h-5 w-5 text-primary" /><span className="font-semibold text-foreground">Available Jobs</span></div><span className="rounded-full bg-orange-500/10 px-2 py-1 text-[10px] font-bold text-orange-500">TESTER</span></div>
-              <div className="mt-4 rounded-xl border border-border bg-surface p-4"><div className="flex items-start justify-between gap-4"><div><p className="text-sm font-semibold text-foreground">Checkout Flow Test</p><p className="mt-1 text-xs text-muted">example.com · 3 tasks</p></div><button className="inline-flex items-center gap-1 rounded-lg bg-primary px-3 py-2 text-xs font-semibold text-white">Claim <ArrowRight className="h-3 w-3" /></button></div></div>
+              <div className="flex items-center justify-between"><div className="flex items-center gap-2"><Monitor className="h-5 w-5 text-primary" /><span className="font-semibold text-foreground">Available Jobs</span></div><span className="rounded-full bg-primary/10 px-2 py-1 text-[10px] font-bold text-primary">TESTER</span></div>
+              <div className="mt-4 rounded-xl border border-border bg-surface p-4"><div className="flex items-start justify-between gap-4"><div><p className="text-sm font-semibold text-foreground">Checkout Flow Test</p><p className="mt-1 text-xs text-muted">example.com · 3 tasks</p></div><button className="inline-flex items-center gap-1 rounded-lg bg-accent px-3 py-2 text-xs font-semibold text-accent-foreground">Claim <ArrowRight className="h-3 w-3" /></button></div></div>
               <div className="mt-3 flex items-center gap-2 text-xs text-muted"><MousePointerClick className="h-4 w-4 text-primary" /> The next step opens the target website.</div>
             </motion.div>
           </div>
