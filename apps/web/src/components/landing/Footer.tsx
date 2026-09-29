@@ -7,7 +7,7 @@ export function Footer() {
     <footer className="bg-background border-t border-border/60 py-12">
       <div className="container mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
         <div className="flex items-center gap-2">
-          <div className="w-6 h-6 rounded bg-primary flex items-center justify-center text-white font-bold text-xs">
+          <div className="w-6 h-6 rounded bg-accent flex items-center justify-center text-accent-foreground font-bold text-xs">
             U
           </div>
           <span className="font-semibold text-foreground text-sm">Usability Platform</span>

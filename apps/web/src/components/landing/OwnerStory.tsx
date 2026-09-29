@@ -35,7 +35,7 @@ export function OwnerStory() {
 
           <ScrollReveal direction="right" className="order-1 lg:order-2">
             <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">For owners</p>
-            <h2 className="mt-4 text-4xl font-bold tracking-[-0.035em] text-foreground sm:text-5xl">Turn a research question into a live test in minutes.</h2>
+            <h2 className="font-display mt-4 text-4xl font-semibold tracking-[-0.035em] text-foreground sm:text-5xl">Turn a research question into a live test in minutes.</h2>
             <p className="mt-6 text-lg leading-8 text-muted">Paste the website you want tested, write the tasks, launch the campaign, and keep the study connected to the same workflow your team already reviews.</p>
             <div className="mt-8 grid gap-3 sm:grid-cols-3 lg:grid-cols-1 xl:grid-cols-3">
               {['Real target URL', 'Clear task sequence', 'No SDK required'].map((item, index) => (

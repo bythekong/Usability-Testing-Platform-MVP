@@ -21,7 +21,7 @@ export function Hero() {
   return (
     <section
       ref={sectionRef}
-      className="relative isolate flex min-h-[calc(100svh-4rem)] items-center justify-center overflow-hidden border-b border-border bg-slate-950 px-6 py-24 md:min-h-[860px] md:py-32"
+      className="relative isolate flex min-h-[calc(100svh-4rem)] items-center justify-center overflow-hidden border-b border-border bg-[#0B0D12] px-6 py-24 md:min-h-[860px] md:py-32"
     >
       <motion.div
         aria-hidden="true"
@@ -58,7 +58,7 @@ export function Hero() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1] }}
-          className="text-balance text-5xl font-bold leading-[0.96] tracking-[-0.05em] text-white sm:text-6xl md:text-7xl lg:text-[6.4rem]"
+          className="font-display text-balance text-5xl font-semibold leading-[0.96] tracking-[-0.05em] text-white sm:text-6xl md:text-7xl lg:text-[6.4rem]"
         >
           Watch real users use what you built.
         </motion.h1>

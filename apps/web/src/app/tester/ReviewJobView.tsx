@@ -56,11 +56,11 @@ interface Props {
 function LockedMultipleChoiceAnswer({ value }: { value: string }) {
   const t = useTranslations('tester');
   return (
-    <div className="flex items-start gap-2 rounded-lg border border-green-200 bg-green-50 p-3">
-      <Lock className="h-4 w-4 text-green-600 mt-0.5 shrink-0" />
+    <div className="flex items-start gap-2 rounded-lg border border-success-text/20 bg-success-bg p-3">
+      <Lock className="h-4 w-4 text-success-text mt-0.5 shrink-0" />
       <div>
-        <p className="text-xs font-semibold text-green-700 uppercase tracking-wide mb-1">{t("lockedAnswer")}</p>
-        <p className="text-sm font-medium text-green-900">{value}</p>
+        <p className="text-xs font-semibold text-success-text uppercase tracking-wide mb-1">{t("lockedAnswer")}</p>
+        <p className="text-sm font-medium text-success-text">{value}</p>
       </div>
     </div>
   );
@@ -72,10 +72,10 @@ function LockedRatingScaleAnswer({ value, task }: { value: number; task: Task })
   const min = task.ratingMin ?? 1;
   const max = task.ratingMax ?? 5;
   return (
-    <div className="flex items-start gap-2 rounded-lg border border-green-200 bg-green-50 p-3">
-      <Lock className="h-4 w-4 text-green-600 mt-0.5 shrink-0" />
+    <div className="flex items-start gap-2 rounded-lg border border-success-text/20 bg-success-bg p-3">
+      <Lock className="h-4 w-4 text-success-text mt-0.5 shrink-0" />
       <div className="flex-1">
-        <p className="text-xs font-semibold text-green-700 uppercase tracking-wide mb-2">{t("lockedRating")}</p>
+        <p className="text-xs font-semibold text-success-text uppercase tracking-wide mb-2">{t("lockedRating")}</p>
         <div className="flex items-center gap-2 flex-wrap">
           {task.ratingMinLabel && <span className="text-xs text-muted">{task.ratingMinLabel}</span>}
           {Array.from({ length: max - min + 1 }, (_, i) => min + i).map(n => (
@@ -84,7 +84,7 @@ function LockedRatingScaleAnswer({ value, task }: { value: number; task: Task })
               className={[
                 'h-9 w-9 flex items-center justify-center rounded-full text-sm font-bold border-2 transition-all',
                 n === value
-                  ? 'border-green-500 bg-green-500 text-white scale-110'
+                  ? 'border-success-text bg-success-bg0 text-white scale-110'
                   : 'border-border bg-surface text-muted'
               ].join(' ')}
             >
@@ -93,7 +93,7 @@ function LockedRatingScaleAnswer({ value, task }: { value: number; task: Task })
           ))}
           {task.ratingMaxLabel && <span className="text-xs text-muted">{task.ratingMaxLabel}</span>}
         </div>
-        <p className="mt-2 text-xs text-green-700">{t("selected")} <strong>{value}</strong> / {max}</p>
+        <p className="mt-2 text-xs text-success-text">{t("selected")} <strong>{value}</strong> / {max}</p>
       </div>
     </div>
   );
@@ -157,7 +157,7 @@ export function ReviewJobView({ job, onBack, onSubmitted }: Props) {
         <div className="flex items-center gap-4">
           <Button variant="outline" onClick={onBack}>&larr; Back</Button>
           <div>
-            <h2 className="text-xl font-bold text-foreground">{t("writeFinalReview")}</h2>
+            <h2 className="text-xl font-semibold text-foreground">{t("writeFinalReview")}</h2>
             <p className="text-sm text-muted">
               Watch your recorded videos and complete the review for each task.
             </p>
@@ -165,7 +165,7 @@ export function ReviewJobView({ job, onBack, onSubmitted }: Props) {
         </div>
         <Button 
           variant="outline" 
-          className="text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700"
+          className="text-danger border-danger/20 hover:bg-danger-bg hover:text-danger-text"
           onClick={async () => {
             if (!window.confirm('Are you sure you want to start over? This will permanently delete all your recorded videos and answers for this job.')) return;
             try {
@@ -201,15 +201,15 @@ export function ReviewJobView({ job, onBack, onSubmitted }: Props) {
         const isRatingScale = task.taskType === TaskType.RATING_SCALE;
 
         return (
-          <div key={task.id} className="rounded-xl border border-border bg-surface p-6 shadow-sm">
+          <div key={task.id} className="rounded-xl border border-border bg-surface p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
             {/* Task header */}
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-3">
                 <span className={[
                   'inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold',
-                  isFreeResponse ? 'bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300' :
-                  isMultipleChoice ? 'bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300' :
-                  'bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300'
+                  isFreeResponse ? 'bg-primary/12 dark:bg-primary/10 text-primary dark:text-primary' :
+                  isMultipleChoice ? 'bg-primary/8 dark:bg-primary/10 text-primary dark:text-primary' :
+                  'bg-amber-100 dark:bg-warning-bg text-warning-text dark:text-warning-text'
                 ].join(' ')}>
                   {isFreeResponse ? '🎙️ Free Response' : isMultipleChoice ? '☑️ Multiple Choice' : '⭐ Rating Scale'}
                 </span>
@@ -219,7 +219,7 @@ export function ReviewJobView({ job, onBack, onSubmitted }: Props) {
               {response && !job.campaign.isLocked && (
                 <Button 
                   variant="outline"
-                  className="h-8 px-3 text-xs text-amber-700 border-amber-200 hover:bg-amber-50"
+                  className="h-8 px-3 text-xs text-warning-text border-warning-text/20 hover:bg-warning-bg"
                   onClick={async () => {
                     if (!window.confirm(`Are you sure you want to retake Task ${index + 1}? This will delete your current recording for this task.`)) return;
                     try {
@@ -257,7 +257,7 @@ export function ReviewJobView({ job, onBack, onSubmitted }: Props) {
                 </Button>
               )}
             </div>
-            <p className="text-foreground mb-4 bg-muted/20 p-3 rounded-md border border-border">{task.instruction}</p>
+            <p className="text-foreground mb-4 bg-surface-subtle p-3 rounded-md border border-border">{task.instruction}</p>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Video player (left) */}
@@ -270,9 +270,9 @@ export function ReviewJobView({ job, onBack, onSubmitted }: Props) {
                     className="w-full rounded-md border border-border bg-black aspect-video object-contain"
                   />
                 ) : (
-                  <div className="flex aspect-video w-full flex-col p-4 text-center items-center justify-center rounded-md border border-border bg-muted/20 text-sm text-muted">
+                  <div className="flex aspect-video w-full flex-col p-4 text-center items-center justify-center rounded-md border border-border bg-surface-subtle text-sm text-muted">
                     <p>{t("noVideo")}</p>
-                    {job.campaign.isLocked && <p className="text-xs text-red-500 mt-1">{t("lockedCampaign")}</p>}
+                    {job.campaign.isLocked && <p className="text-xs text-danger mt-1">{t("lockedCampaign")}</p>}
                   </div>
                 )}
               </div>
@@ -289,7 +289,7 @@ export function ReviewJobView({ job, onBack, onSubmitted }: Props) {
 
                 {/* Warning if structured answer expected but missing */}
                 {(isMultipleChoice || isRatingScale) && !isLocked && (
-                  <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-xs text-amber-700">
+                  <div className="rounded-lg border border-warning-text/20 bg-warning-bg p-3 text-xs text-warning-text">
                     ⚠️ No answer recorded yet. Please use the extension to answer this task while recording.
                   </div>
                 )}
@@ -298,17 +298,17 @@ export function ReviewJobView({ job, onBack, onSubmitted }: Props) {
                 {isFreeResponse && (
                   <div className="flex flex-col flex-1">
                     <h4 className="text-sm font-semibold mb-2">
-                      Your Review <span className="text-red-500">*</span>
+                      Your Review <span className="text-danger">*</span>
                       <span className="font-normal text-muted ml-1">(Markdown supported)</span>
                     </h4>
                     <textarea
-                      className="w-full flex-1 min-h-[150px] p-3 text-sm rounded-md border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 font-mono"
+                      className="w-full flex-1 min-h-[150px] p-3 text-sm rounded-md border border-border focus:border-primary focus:ring-1 focus:ring-primary/25 font-mono"
                       placeholder="e.g. **Findings:** I found the button easily, but..."
                       value={answers[task.id] || ''}
                       onChange={(e) => handleAnswerChange(task.id, e.target.value)}
                     />
                     {answers[task.id] && (
-                      <div className="mt-3 rounded-md border border-border bg-muted/20 p-4 text-sm prose dark:prose-invert prose-sm max-w-none">
+                      <div className="mt-3 rounded-md border border-border bg-surface-subtle p-4 text-sm prose dark:prose-invert prose-sm max-w-none">
                         <p className="text-xs font-semibold text-muted uppercase tracking-wide mb-2">{t("preview")}</p>
                         <ReactMarkdown>{answers[task.id]}</ReactMarkdown>
                       </div>
@@ -323,7 +323,7 @@ export function ReviewJobView({ job, onBack, onSubmitted }: Props) {
                       Additional Comments <span className="font-normal">(optional)</span>
                     </h4>
                     <textarea
-                      className="w-full min-h-[100px] p-3 text-sm rounded-md border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                      className="w-full min-h-[100px] p-3 text-sm rounded-md border border-border focus:border-primary focus:ring-1 focus:ring-primary/25"
                       placeholder="Any extra thoughts about this task..."
                       value={answers[task.id] || ''}
                       onChange={(e) => handleAnswerChange(task.id, e.target.value)}
@@ -340,7 +340,7 @@ export function ReviewJobView({ job, onBack, onSubmitted }: Props) {
         <Button
           onClick={handleSubmit}
           disabled={submitting || !canSubmit}
-          className="px-8 py-2 font-bold text-white bg-green-600 hover:bg-green-700 disabled:opacity-50"
+          className="px-8 py-2 font-semibold disabled:opacity-50"
         >
           {submitting ? 'Submitting...' : 'Submit Final Review to Owner'}
         </Button>

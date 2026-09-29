@@ -16,7 +16,7 @@ export function Header() {
     >
       <div className="container mx-auto grid h-16 grid-cols-[1fr_auto] items-center gap-4 px-6 md:grid-cols-[1fr_auto_1fr]">
         <Link href="/" className="flex items-center gap-2 justify-self-start text-xl font-semibold tracking-tight text-foreground">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary font-bold text-white">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent font-bold text-accent-foreground">
             U
           </div>
           <span className="hidden sm:inline">Usability Platform</span>

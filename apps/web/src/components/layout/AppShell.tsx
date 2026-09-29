@@ -56,11 +56,11 @@ export function AppShell({ children }: AppShellProps) {
           isCollapsed ? "md:pl-20" : "md:pl-64"
         )}
       >
-        <div className="flex h-16 items-center border-b border-border bg-surface px-4 md:hidden">
+        <div className="flex h-16 items-center border-b border-border bg-surface/95 px-4 backdrop-blur md:hidden">
           <button
             type="button"
             onClick={() => setIsMobileOpen(true)}
-            className="-ml-2 rounded-md p-2 text-muted transition hover:bg-muted/10 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            className="-ml-2 rounded-md p-2 text-muted transition hover:bg-surface-subtle hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             aria-label="Open navigation"
           >
             <Menu className="h-5 w-5" />

@@ -299,13 +299,13 @@ function TesterDashboardContent() {
                             window.open(startUrl, '_blank');
                           }
                         }}
-                        className="inline-flex h-10 flex-1 items-center justify-center rounded-md bg-blue-100 dark:bg-blue-900/40 px-4 text-sm font-medium text-blue-700 dark:text-blue-300 transition hover:bg-blue-200 dark:hover:bg-blue-900/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+                        className="inline-flex h-10 flex-1 items-center justify-center rounded-md bg-primary/12 dark:bg-primary/10 px-4 text-sm font-medium text-primary dark:text-primary transition hover:bg-blue-200 dark:hover:bg-blue-900/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
                       >
                         Open URL
                         <ExternalLink className="ml-2 h-4 w-4" />
                       </button>
                     ) : (
-                      <div className="inline-flex h-10 flex-1 items-center justify-center rounded-md bg-muted/30 px-4 text-sm font-medium text-muted cursor-not-allowed">
+                      <div className="inline-flex h-10 flex-1 items-center justify-center rounded-md bg-surface-subtle px-4 text-sm font-medium text-muted cursor-not-allowed">
                         Locked by Owner
                       </div>
                     )}
@@ -328,7 +328,7 @@ function TesterDashboardContent() {
         {pastJobs.length > 0 && (
           <section className="mt-10">
             <h2 className="mb-4 text-xl font-semibold text-foreground">{t("pastSubmissions")}</h2>
-            <div className="overflow-hidden rounded-xl border border-border bg-surface shadow-sm">
+            <div className="overflow-hidden rounded-xl border border-border bg-surface shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
               {pastJobs.map((job, index) => (
                 <div key={job.id} className={['flex flex-col gap-3 px-5 py-4 sm:flex-row sm:items-center sm:justify-between', index > 0 ? 'border-t border-border' : ''].join(' ')}>
                   <div className="flex min-w-0 items-center gap-3">
@@ -365,14 +365,14 @@ function TesterDashboardContent() {
           
           <div className="space-y-6">
             <div className="flex gap-4">
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-muted/30 font-semibold text-muted">1</div>
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-surface-subtle font-semibold text-muted">1</div>
               <div>
                 <h3 className="font-semibold text-foreground">{t("installExt")}</h3>
                 <p className="mt-1 text-sm text-muted">{t("installExtDesc")}</p>
               </div>
             </div>
             <div className="flex gap-4">
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-muted/30 font-semibold text-muted">2</div>
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-surface-subtle font-semibold text-muted">2</div>
               <div>
                 <h3 className="font-semibold text-foreground">{t("syncAccount")}</h3>
                 <p className="mt-1 text-sm text-muted mb-3">{t("syncAccountDesc")}</p>
@@ -383,7 +383,7 @@ function TesterDashboardContent() {
               </div>
             </div>
             <div className="flex gap-4">
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-muted/30 font-semibold text-muted">3</div>
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-surface-subtle font-semibold text-muted">3</div>
               <div>
                 <h3 className="font-semibold text-foreground">{t("startTesting")}</h3>
                 <p className="mt-1 text-sm text-muted">{t("startTestingDesc")}</p>
@@ -445,10 +445,10 @@ function TesterDashboardContent() {
 
           <section className="rounded-xl border border-border bg-surface p-6 shadow-sm">
             <h2 className="text-lg font-semibold text-foreground mb-4">{t("payoutMethod")}</h2>
-            <div className="rounded-lg bg-muted/20 border border-border p-4 text-center">
+            <div className="rounded-lg bg-surface-subtle border border-border p-4 text-center">
               <p className="text-sm text-muted mb-3">{t("noPayout")}</p>
               <Button disabled variant="outline">{t("connectBank")}</Button>
-              <p className="mt-2 text-xs text-gray-400">{t("paymentComingSoon")}</p>
+              <p className="mt-2 text-xs text-muted">{t("paymentComingSoon")}</p>
             </div>
           </section>
         </div>
@@ -462,7 +462,7 @@ function TesterDashboardContent() {
       <PageHeader title={t("availableJobs.title")} description={t("availableJobs.desc")} />
 
       {error && (
-        <div className="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+        <div className="mb-6 rounded-lg border border-danger/20 bg-danger-bg px-4 py-3 text-sm text-danger-text">
           {error}
         </div>
       )}

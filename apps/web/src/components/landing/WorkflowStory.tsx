@@ -82,7 +82,7 @@ type WorkflowStep = (typeof steps)[number];
 
 function roleClass(role: WorkflowStep['role']) {
   if (role === 'OWNER') return 'text-primary';
-  if (role === 'TESTER') return 'text-orange-500';
+  if (role === 'TESTER') return 'text-primary';
   return 'text-cyan-400';
 }
 
@@ -110,7 +110,7 @@ function MockupBody({ step }: { step: WorkflowStep }) {
               ))}
             </div>
           </div>
-          <div className="rounded-xl bg-primary px-4 py-3 text-center text-xs font-semibold text-white">Launch study</div>
+          <div className="rounded-xl bg-accent px-4 py-3 text-center text-xs font-semibold text-accent-foreground">Launch study</div>
         </div>
       );
 
@@ -122,7 +122,7 @@ function MockupBody({ step }: { step: WorkflowStep }) {
               <p className="text-xs font-semibold text-foreground">Checkout Flow Test</p>
               <p className="mt-1 text-[11px] text-muted">example.com · 3 tasks</p>
             </div>
-            <span className="rounded-full bg-orange-500/10 px-2.5 py-1 text-[10px] font-bold text-orange-500">AVAILABLE</span>
+            <span className="rounded-full bg-primary/10 px-2.5 py-1 text-[10px] font-bold text-primary">AVAILABLE</span>
           </div>
           <div className="grid grid-cols-2 gap-3 text-[11px]">
             <div className="rounded-xl border border-border bg-surface p-3">
@@ -134,7 +134,7 @@ function MockupBody({ step }: { step: WorkflowStep }) {
               <p className="mt-1 font-semibold text-foreground">3 steps</p>
             </div>
           </div>
-          <div className="rounded-xl bg-primary px-4 py-3 text-center text-xs font-semibold text-white">Claim session</div>
+          <div className="rounded-xl bg-accent px-4 py-3 text-center text-xs font-semibold text-accent-foreground">Claim session</div>
         </div>
       );
 
@@ -159,7 +159,7 @@ function MockupBody({ step }: { step: WorkflowStep }) {
               <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-primary">Matched URL</p>
               <p className="mt-2 text-xs font-semibold text-foreground">Extension ready</p>
               <p className="mt-2 text-[11px] leading-5 text-muted">This page matches the claimed study.</p>
-              <div className="mt-4 rounded-lg bg-primary px-3 py-2 text-center text-[10px] font-semibold text-white">Start task</div>
+              <div className="mt-4 rounded-lg bg-accent px-3 py-2 text-center text-[10px] font-semibold text-accent-foreground">Start task</div>
             </div>
           </div>
         </div>
@@ -168,7 +168,7 @@ function MockupBody({ step }: { step: WorkflowStep }) {
     case 'tasks':
       return (
         <div className="overflow-hidden rounded-2xl border border-border bg-surface">
-          <div className="flex items-center justify-between bg-primary px-4 py-3 text-white">
+          <div className="flex items-center justify-between bg-accent px-4 py-3 text-accent-foreground">
             <span className="text-xs font-semibold">Testing Platform</span>
             <span className="rounded-full bg-white/15 px-2 py-1 text-[10px] font-bold">2 / 3</span>
           </div>
@@ -181,7 +181,7 @@ function MockupBody({ step }: { step: WorkflowStep }) {
             <div className="mt-4 min-h-20 rounded-xl border border-border bg-background p-3 text-[11px] leading-5 text-muted">
               I expected the support details to be closer to the plan name.
             </div>
-            <div className="mt-3 rounded-xl bg-primary px-4 py-3 text-center text-xs font-semibold text-white">Complete task</div>
+            <div className="mt-3 rounded-xl bg-accent px-4 py-3 text-center text-xs font-semibold text-accent-foreground">Complete task</div>
           </div>
         </div>
       );
@@ -199,7 +199,7 @@ function MockupBody({ step }: { step: WorkflowStep }) {
             <p className="text-xs font-semibold text-foreground">Ready to submit</p>
             <p className="mt-1 text-[11px] leading-5 text-muted">All task responses will be sent back as one submission.</p>
           </div>
-          <div className="rounded-xl bg-primary px-4 py-3 text-center text-xs font-semibold text-white">Submit responses</div>
+          <div className="rounded-xl bg-accent px-4 py-3 text-center text-xs font-semibold text-accent-foreground">Submit responses</div>
         </div>
       );
 
@@ -243,7 +243,7 @@ function MockupBody({ step }: { step: WorkflowStep }) {
           </div>
           <div className="mt-4 grid grid-cols-2 gap-3">
             <div className="rounded-xl border border-border bg-background px-4 py-3 text-center text-xs font-semibold text-foreground">Reject</div>
-            <div className="rounded-xl bg-primary px-4 py-3 text-center text-xs font-semibold text-white">Approve</div>
+            <div className="rounded-xl bg-accent px-4 py-3 text-center text-xs font-semibold text-accent-foreground">Approve</div>
           </div>
         </div>
       );
@@ -367,7 +367,7 @@ export function WorkflowStory() {
       <div className="container mx-auto max-w-7xl px-6 lg:grid lg:grid-cols-[0.78fr_1.22fr] lg:gap-16 xl:gap-24">
         <div className="lg:sticky lg:top-[18vh] lg:self-start lg:py-24">
           <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">How it works</p>
-          <h2 className="mt-4 max-w-xl text-4xl font-bold tracking-[-0.04em] text-foreground sm:text-5xl lg:text-[3.55rem] lg:leading-[1.02]">
+          <h2 className="font-display mt-4 max-w-xl text-4xl font-semibold tracking-[-0.04em] text-foreground sm:text-5xl lg:text-[3.55rem] lg:leading-[1.02]">
             One study. From setup to decision.
           </h2>
           <p className="mt-6 max-w-lg text-base leading-7 text-muted md:text-lg md:leading-8">

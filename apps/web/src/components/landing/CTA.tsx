@@ -14,7 +14,7 @@ export function CTA() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-4xl md:text-5xl font-bold tracking-tight mb-6"
+          className="font-display text-4xl md:text-5xl font-semibold tracking-tight mb-6"
         >
           Start testing the experience your users actually see.
         </motion.h2>
@@ -37,7 +37,7 @@ export function CTA() {
           className="flex flex-col sm:flex-row justify-center items-center gap-4"
         >
           <Link href="/login">
-            <Button size="lg" className="h-14 px-10 text-base rounded-full shadow-lg shadow-primary/20">
+            <Button size="lg" className="h-14 px-10 text-base rounded-full shadow-[0_8px_24px_rgba(0,0,0,0.10)]">
               Get Started
             </Button>
           </Link>

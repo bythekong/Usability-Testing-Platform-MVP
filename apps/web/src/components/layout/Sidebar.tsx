@@ -73,7 +73,7 @@ export function Sidebar({
           <button
             type="button"
             onClick={() => setIsCollapsed(!isCollapsed)}
-            className="hidden rounded-md p-1.5 text-muted transition hover:bg-muted/10 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary md:flex"
+            className="hidden rounded-md p-1.5 text-muted transition hover:bg-surface-subtle hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring md:flex"
             title={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
             aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
           >
@@ -82,7 +82,7 @@ export function Sidebar({
           <button
             type="button"
             onClick={() => setIsMobileOpen(false)}
-            className="rounded-md p-1.5 text-muted transition hover:bg-muted/10 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary md:hidden"
+            className="rounded-md p-1.5 text-muted transition hover:bg-surface-subtle hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring md:hidden"
             aria-label="Close navigation"
           >
             <X className="h-5 w-5" />
@@ -103,8 +103,8 @@ export function Sidebar({
               className={cn(
                 "group flex items-center rounded-lg px-3 py-2.5 text-sm transition-colors",
                 isActive
-                  ? "bg-primary/10 font-medium text-primary"
-                  : "text-muted hover:bg-muted/10 hover:text-foreground",
+                  ? "bg-primary/10 font-semibold text-foreground ring-1 ring-inset ring-primary/15"
+                  : "text-muted hover:bg-surface-subtle hover:text-foreground",
                 isCollapsed ? "justify-center" : "justify-start"
               )}
               title={isCollapsed ? item.name : undefined}
@@ -120,7 +120,7 @@ export function Sidebar({
         {user && (
           <div className={cn("flex items-center", isCollapsed ? "flex-col gap-3" : "justify-between gap-2")}>
             <div className={cn("flex min-w-0 items-center", isCollapsed && "justify-center")}>
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-muted/20">
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-surface-subtle">
                 <UserIcon className="h-4 w-4 text-muted" />
               </div>
               {!isCollapsed && (
@@ -136,7 +136,7 @@ export function Sidebar({
               <button
                 type="button"
                 onClick={handleLogout}
-                className="shrink-0 rounded-md p-1.5 text-muted transition hover:bg-muted/10 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                className="shrink-0 rounded-md p-1.5 text-muted transition hover:bg-surface-subtle hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 title="Logout"
                 aria-label="Logout"
               >

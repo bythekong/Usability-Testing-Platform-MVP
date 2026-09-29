@@ -86,12 +86,12 @@ export default function TesterJobPage() {
   if (error || !job) {
     return (
       <div className="mx-auto max-w-4xl p-4 sm:p-8">
-        <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-red-800">
+        <div className="rounded-lg border border-danger/20 bg-danger-bg p-4 text-danger-text">
           <p className="font-semibold">Error</p>
           <p>{error || 'Job not found'}</p>
           <button 
             onClick={() => router.push('/tester?tab=my-jobs')}
-            className="mt-4 text-sm font-medium text-red-600 hover:underline"
+            className="mt-4 text-sm font-medium text-danger hover:underline"
           >
             &larr; Back to My Jobs
           </button>
