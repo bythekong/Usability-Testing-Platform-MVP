@@ -2,7 +2,7 @@
 
 import { useRef } from 'react';
 import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion';
-import { Check, Chrome, MousePointer2 } from 'lucide-react';
+import { Check, Monitor, MousePointer2 } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { ImagePlaceholder } from './ImagePlaceholder';
 
@@ -20,7 +20,7 @@ export function BrowserDemo() {
       <div aria-hidden="true" className="absolute inset-x-0 top-0 h-72 bg-[radial-gradient(circle_at_50%_0%,rgba(37,99,235,0.12),transparent_60%)]" />
       <div className="container relative mx-auto max-w-7xl px-6">
         <div className="mx-auto mb-14 max-w-3xl text-center">
-          <motion.div initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false, amount: 0.6 }} className="inline-flex items-center gap-2 rounded-full border border-border bg-surface px-3 py-1.5 text-xs font-semibold text-muted"><Chrome className="h-4 w-4 text-primary" /> Chrome Extension experience</motion.div>
+          <motion.div initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false, amount: 0.6 }} className="inline-flex items-center gap-2 rounded-full border border-border bg-surface px-3 py-1.5 text-xs font-semibold text-muted"><Monitor className="h-4 w-4 text-primary" /> Chrome Extension experience</motion.div>
           <motion.h2 initial={{ opacity: 0, y: 28 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false, amount: 0.5 }} transition={{ delay: 0.05 }} className="mt-5 text-4xl font-bold tracking-[-0.035em] text-foreground sm:text-5xl lg:text-6xl">Keep the task beside the product.</motion.h2>
           <motion.p initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false, amount: 0.5 }} transition={{ delay: 0.1 }} className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-muted">The tester works on the real target site while the extension keeps progress, instructions, and feedback in context.</motion.p>
         </div>
