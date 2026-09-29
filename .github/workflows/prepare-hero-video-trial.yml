@@ -1,0 +1,50 @@
+name: Prepare hero video trial
+
+on:
+  push:
+    branches:
+      - hero-video-trial
+    paths:
+      - .github/workflows/prepare-hero-video-trial.yml
+
+permissions:
+  contents: write
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v4
+        with:
+          ref: hero-video-trial
+
+      - name: Download source video
+        run: |
+          curl -L --fail --retry 3 \
+            "https://videos.pexels.com/video-files/6561561/6561561-uhd_3840_2160_25fps.mp4" \
+            -o /tmp/hero-source.mp4
+
+      - name: Convert to 1080p WebM
+        run: |
+          mkdir -p apps/web/public/home_video
+          ffmpeg -y \
+            -i /tmp/hero-source.mp4 \
+            -vf "scale=1920:1080:force_original_aspect_ratio=decrease,pad=1920:1080:(ow-iw)/2:(oh-ih)/2" \
+            -c:v libvpx-vp9 \
+            -crf 34 \
+            -b:v 0 \
+            -row-mt 1 \
+            -deadline good \
+            -cpu-used 4 \
+            -an \
+            apps/web/public/home_video/hero_background_001.webm
+
+      - name: Commit generated asset
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add apps/web/public/home_video/hero_background_001.webm
+          git diff --cached --quiet && exit 0
+          git commit -m "feat(web): add 1080p hero background trial video"
+          git push origin HEAD:hero-video-trial
