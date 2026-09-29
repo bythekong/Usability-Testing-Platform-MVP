@@ -21,7 +21,7 @@ export function BrowserDemo() {
       <div className="container relative mx-auto max-w-7xl px-6">
         <div className="mx-auto mb-14 max-w-3xl text-center">
           <motion.div initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false, amount: 0.6 }} className="inline-flex items-center gap-2 rounded-full border border-border bg-surface px-3 py-1.5 text-xs font-semibold text-muted"><Monitor className="h-4 w-4 text-primary" /> Chrome Extension experience</motion.div>
-          <motion.h2 initial={{ opacity: 0, y: 28 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false, amount: 0.5 }} transition={{ delay: 0.05 }} className="mt-5 text-4xl font-bold tracking-[-0.035em] text-foreground sm:text-5xl lg:text-6xl">Keep the task beside the product.</motion.h2>
+          <motion.h2 initial={{ opacity: 0, y: 28 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false, amount: 0.5 }} transition={{ delay: 0.05 }} className="font-display mt-5 text-4xl font-semibold tracking-[-0.035em] text-foreground sm:text-5xl lg:text-6xl">Keep the task beside the product.</motion.h2>
           <motion.p initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false, amount: 0.5 }} transition={{ delay: 0.1 }} className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-muted">The tester works on the real target site while the extension keeps progress, instructions, and feedback in context.</motion.p>
         </div>
 
@@ -38,7 +38,7 @@ export function BrowserDemo() {
               <motion.div style={reduceMotion ? undefined : { x: cursorX, y: cursorY }} className="pointer-events-none absolute left-2 top-2 hidden h-10 w-10 items-center justify-center rounded-full border border-primary/25 bg-background/80 text-primary shadow-lg backdrop-blur md:flex"><MousePointer2 className="h-5 w-5" /></motion.div>
 
               <motion.aside style={reduceMotion ? undefined : { y: panelY }} initial={{ opacity: 0, x: 70 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: false, amount: 0.3 }} transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1] }} className="absolute bottom-7 right-6 w-[calc(100%-3rem)] max-w-sm overflow-hidden rounded-2xl border border-border bg-background/96 shadow-2xl backdrop-blur md:bottom-auto md:right-10 md:top-16 md:w-80">
-                <div className="flex items-center justify-between bg-primary px-4 py-3 text-white"><span className="text-sm font-semibold">Testing Platform</span><span className="rounded-full bg-white/15 px-2 py-1 text-[10px] font-bold">2 / 3</span></div>
+                <div className="flex items-center justify-between bg-accent px-4 py-3 text-accent-foreground"><span className="text-sm font-semibold">Testing Platform</span><span className="rounded-full bg-white/15 px-2 py-1 text-[10px] font-bold">2 / 3</span></div>
                 <div className="p-5">
                   <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-primary">Current task</p>
                   <h3 className="mt-2 font-semibold text-foreground">Find the Pro plan</h3>
