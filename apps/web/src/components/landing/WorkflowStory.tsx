@@ -376,8 +376,8 @@ export function WorkflowStory() {
 
           <div className="mt-8 hidden max-w-sm lg:block">
             <div className="flex items-center justify-between gap-4 text-[10px] font-bold uppercase tracking-[0.12em] text-muted">
-              <span className="whitespace-nowrap">1/7 Create study</span>
-              <span className="whitespace-nowrap text-right">7/7 Approve or reject</span>
+              <span className="whitespace-nowrap">Setup</span>
+              <span className="whitespace-nowrap text-right">Decision</span>
             </div>
             <div className="mt-3 h-1 overflow-hidden rounded-full bg-border">
               <motion.div
