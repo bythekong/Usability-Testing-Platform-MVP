@@ -1,21 +1,47 @@
-# Landing page image brief
+# Landing page visual assets
 
-These files are intentional FPO assets for the public landing page. Replace the visible FPO components with the matching optimized `.webp` files after photography / generation is approved.
+The public landing page now uses final media directly rather than FPO placeholders.
 
-| File | Ratio | Working size | Visual brief |
+## Active image assets
+
+| File | Ratio | Working size | Used in |
 | --- | --- | --- | --- |
-| `hero_test_session_001.webp` | 4:5 | 1200×1500 | Candid tester using a laptop on a real website with a nearby observer; documentary, human, premium. |
-| `workflow_observation_001.webp` | 16:10 | 1600×1000 | Participant using a laptop while researcher observes; wide composition with negative space for UI overlays. |
-| `owner_campaign_setup_001.webp` | 4:3 | 1400×1050 | Small product team preparing a usability study in a believable workspace. |
-| `tester_browser_session_001.webp` | 4:3 | 1400×1050 | Focused tester navigating a real website; laptop screen visible for later overlay compositing. |
-| `target_website_pricing_001.webp` | 16:9 | 1600×900 | Realistic target SaaS pricing/checkout screen used beneath the extension demo. |
-| `owner_review_feedback_001.webp` | 3:2 | 1500×1000 | Product researcher/founder reviewing participant feedback, with negative space for the submission UI card. |
+| `owner_campaign_setup_001.webp` | 4:3 | 1400×1050 | Owner section |
+| `tester_browser_session_001.webp` | 4:3 | 1400×1050 | Tester section |
+| `target_website_pricing_001.webp` | 16:9 | 1600×900 | Chrome Extension / Browser demo |
+| `owner_review_feedback_001.webp` | 3:2 | 1500×1000 | Review section |
+
+## Hero media
+
+The Hero no longer uses `hero_test_session_001.webp`.
+
+It now uses:
+
+`apps/web/public/home_video/hero_background_001.webm`
+
+The video is rendered as the full Hero background and follows the existing scroll-linked motion.
+
+## Workflow section
+
+`workflow_observation_001.webp` was part of an earlier image-first Workflow concept and is no longer required.
+
+The current `WorkflowStory` is a scroll-driven seven-step sequence:
+
+1. Create study
+2. Claim session
+3. Open live site
+4. Complete tasks
+5. Submit responses
+6. Review feedback
+7. Approve or reject
+
+It uses animated product UI cards instead of a background editorial image.
 
 ## Image direction
 
-- Prefer candid editorial photography over staged corporate stock photography.
-- Keep skin tones and environments natural; avoid heavy blue/cyan grading.
-- Use believable product / research settings rather than futuristic control rooms.
-- Compose with deliberate negative space where the landing page overlays product UI.
-- Do not include readable brand names from third-party products.
-- Export WebP and keep each final asset reasonably compressed for web delivery.
+- Prefer art-directed editorial imagery over staged corporate stock photography.
+- Keep the Future Test Lab 2030 visual language consistent across Owner, Tester, and Review imagery.
+- Use believable research / interaction environments rather than cafe or generic coworking scenes.
+- Preserve negative space where product UI overlays the photography.
+- Avoid readable third-party brands or copyrighted UI.
+- Export final stills as optimized WebP files.
