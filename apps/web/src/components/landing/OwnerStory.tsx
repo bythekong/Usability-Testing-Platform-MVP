@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion';
 import { ArrowUpRight, ListChecks, Link2 } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
-import { ImagePlaceholder } from './ImagePlaceholder';
+import { EditorialImage } from './EditorialImage';
 import { ScrollReveal } from './ScrollReveal';
 
 export function OwnerStory() {
@@ -13,13 +13,12 @@ export function OwnerStory() {
         <div className="grid items-center gap-14 lg:grid-cols-[1.08fr_0.92fr] lg:gap-20">
           <div className="relative order-2 lg:order-1">
             <ScrollReveal direction="left">
-              <ImagePlaceholder
-                title="Owner photography — product team preparing a usability study"
-                description="Editorial image of a small product team reviewing a website on a large screen or laptop. Human collaboration, warm natural lighting, believable workspace, no staged stock-photo handshake."
-                aspectRatio="4 / 3"
-                dimensions="1400 × 1050"
-                filePath="apps/web/public/home_image/owner_campaign_setup_001.webp"
-                className="shadow-[0_36px_90px_rgba(15,23,42,0.2)]"
+              <EditorialImage
+                src="/home_image/owner_campaign_setup_001.webp"
+                alt="A product research team arranging and reviewing a usability testing setup in a contemporary interaction lab."
+                sizes="(min-width: 1024px) 56vw, 100vw"
+                className="aspect-[4/3] shadow-[0_36px_90px_rgba(15,23,42,0.2)]"
+                objectPosition="50% 50%"
               />
             </ScrollReveal>
 
