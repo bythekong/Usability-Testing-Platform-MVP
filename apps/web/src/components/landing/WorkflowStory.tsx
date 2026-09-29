@@ -1,10 +1,12 @@
 'use client';
 
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import {
   motion,
+  useMotionValueEvent,
   useReducedMotion,
   useScroll,
+  useSpring,
   useTransform,
   type MotionValue,
 } from 'framer-motion';
@@ -259,45 +261,49 @@ function DesktopWorkflowCard({
   progress: MotionValue<number>;
 }) {
   const total = steps.length;
-  const activeAt = (index + 0.55) / total;
-  const enterAt = Math.max(0, activeAt - 0.12);
-  const ghostAt = Math.min(0.985, activeAt + 0.09);
-  const isLast = index === total - 1;
+  const segment = 1 / total;
+  const slotStart = index * segment;
+  const enterAt = Math.max(0, slotStart + segment * 0.06);
+  const settleAt = slotStart + segment * 0.42;
 
-  const finalX = isLast ? 0 : [-34, -18, -28, -14, -22, -10, 0][index];
-  const finalY = isLast ? 0 : [26, 18, 10, 0, -8, -16, 0][index];
-  const finalRotate = isLast ? 0 : [-4, 3, -2.5, 2, -3, 1.5, 0][index];
+  // Each card spends the first part of its scroll slot entering, then remains fully
+  // settled and opaque for the rest of the slot before the next card begins.
+  // On a conventional mouse wheel this creates a short visual pause of roughly
+  // a couple of wheel notches without relying on device-specific delta values.
+  const finalX = [-34, -18, -28, -14, -22, -10, 0][index];
+  const finalY = [26, 18, 10, 0, -8, -16, 0][index];
+  const finalRotate = [-4, 3, -2.5, 2, -3, 1.5, 0][index];
 
   const opacity = useTransform(
     progress,
-    isLast ? [enterAt, activeAt, 1] : [enterAt, activeAt, ghostAt, 1],
-    isLast ? [0.03, 1, 1] : [0.03, 1, 0.3, 0.16],
+    [enterAt, settleAt, 1],
+    [0.08, 1, 1],
   );
   const x = useTransform(
     progress,
-    isLast ? [enterAt, activeAt, 1] : [enterAt, activeAt, ghostAt, 1],
-    isLast ? [240, 0, 0] : [240, 0, finalX, finalX],
+    [enterAt, settleAt, 1],
+    [260, finalX, finalX],
   );
   const y = useTransform(
     progress,
-    isLast ? [enterAt, activeAt, 1] : [enterAt, activeAt, ghostAt, 1],
-    isLast ? [72, 0, 0] : [72, 0, finalY, finalY],
+    [enterAt, settleAt, 1],
+    [76, finalY, finalY],
   );
   const scale = useTransform(
     progress,
-    isLast ? [enterAt, activeAt, 1] : [enterAt, activeAt, ghostAt, 1],
-    isLast ? [0.94, 1, 1] : [0.94, 1, 0.965, 0.965],
+    [enterAt, settleAt, 1],
+    [0.94, 1, 1],
   );
   const rotate = useTransform(
     progress,
-    isLast ? [enterAt, activeAt, 1] : [enterAt, activeAt, ghostAt, 1],
-    isLast ? [7, 0, 0] : [index % 2 === 0 ? 7 : -7, 0, finalRotate, finalRotate],
+    [enterAt, settleAt, 1],
+    [index % 2 === 0 ? 7 : -7, finalRotate, finalRotate],
   );
 
   return (
     <motion.article
       style={{ opacity, x, y, scale, rotate, zIndex: index + 10 }}
-      className="absolute inset-x-0 top-1/2 mx-auto w-full max-w-[620px] -translate-y-1/2 rounded-[2rem] border border-border bg-background/96 p-5 shadow-[0_32px_110px_rgba(2,6,23,0.36)] backdrop-blur-xl xl:p-6"
+      className="absolute inset-x-0 top-1/2 mx-auto w-full max-w-[620px] -translate-y-1/2 rounded-[2rem] border border-border bg-background/98 p-5 shadow-[0_18px_48px_rgba(2,6,23,0.18)] backdrop-blur-md xl:p-6"
     >
       <div className="mb-5 flex items-start justify-between gap-4 border-b border-border pb-4">
         <div>
@@ -339,11 +345,24 @@ function StaticDesktopCard({ step, index }: { step: WorkflowStep; index: number 
 export function WorkflowStory() {
   const sectionRef = useRef<HTMLElement>(null);
   const reduceMotion = useReducedMotion();
+  const [activeStepIndex, setActiveStepIndex] = useState(0);
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ['start start', 'end end'],
   });
-  const progressScale = useTransform(scrollYProgress, [0.04, 0.96], [0, 1]);
+  const smoothScrollProgress = useSpring(scrollYProgress, {
+    stiffness: 135,
+    damping: 30,
+    mass: 0.35,
+  });
+  const progressScale = useTransform(smoothScrollProgress, [0.04, 0.96], [0, 1]);
+
+  useMotionValueEvent(smoothScrollProgress, 'change', (latest) => {
+    const nextIndex = Math.min(steps.length - 1, Math.max(0, Math.floor(latest * steps.length)));
+    setActiveStepIndex((current) => (current === nextIndex ? current : nextIndex));
+  });
+
+  const activeStep = steps[activeStepIndex];
 
   return (
     <section
@@ -362,9 +381,9 @@ export function WorkflowStory() {
           </p>
 
           <div className="mt-8 hidden max-w-sm lg:block">
-            <div className="flex items-center justify-between text-[10px] font-bold uppercase tracking-[0.16em] text-muted">
-              <span>Setup</span>
-              <span>Decision</span>
+            <div className="flex items-center justify-between gap-4 text-[10px] font-bold uppercase tracking-[0.12em] text-muted">
+              <span className="whitespace-nowrap">1/7 Create study</span>
+              <span className="whitespace-nowrap text-right">7/7 Approve or reject</span>
             </div>
             <div className="mt-3 h-1 overflow-hidden rounded-full bg-border">
               <motion.div
@@ -372,15 +391,16 @@ export function WorkflowStory() {
                 style={reduceMotion ? { scaleX: 1 } : { scaleX: progressScale }}
               />
             </div>
-            <p className="mt-4 text-xs leading-5 text-muted">
-              Scroll to follow the handoff from owner to tester, browser, and back to review.
-            </p>
+            <div className="mt-4 flex items-center gap-2 text-xs leading-5">
+              <span className="font-semibold text-foreground">{activeStepIndex + 1}/7</span>
+              <span className="text-muted">{activeStep.title}</span>
+            </div>
           </div>
         </div>
 
         <div>
           {!reduceMotion && (
-            <div className="relative hidden h-[390vh] lg:block">
+            <div className="relative hidden h-[410vh] lg:block">
               <div className="sticky top-20 flex h-[calc(100vh-5rem)] items-center">
                 <div className="relative h-[660px] w-full">
                   <div
@@ -392,7 +412,7 @@ export function WorkflowStory() {
                       key={step.id}
                       step={step}
                       index={index}
-                      progress={scrollYProgress}
+                      progress={smoothScrollProgress}
                     />
                   ))}
                 </div>
