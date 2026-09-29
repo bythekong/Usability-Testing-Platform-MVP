@@ -6,7 +6,6 @@ import {
   useMotionValueEvent,
   useReducedMotion,
   useScroll,
-  useSpring,
   useTransform,
   type MotionValue,
 } from 'framer-motion';
@@ -263,13 +262,13 @@ function DesktopWorkflowCard({
   const total = steps.length;
   const segment = 1 / total;
   const slotStart = index * segment;
-  const enterAt = Math.max(0, slotStart + segment * 0.06);
-  const settleAt = slotStart + segment * 0.42;
+  const enterAt = slotStart + segment * 0.02;
+  const settleAt = slotStart + segment * 0.3;
 
-  // Each card spends the first part of its scroll slot entering, then remains fully
-  // settled and opaque for the rest of the slot before the next card begins.
-  // On a conventional mouse wheel this creates a short visual pause of roughly
-  // a couple of wheel notches without relying on device-specific delta values.
+  // Three-beat rhythm per card:
+  // 1) transition in, 2) arrive on point, 3) hold.
+  // Waiting cards stay fully invisible and parked beyond the right edge.
+  // Once settled, a card remains fully opaque for the rest of the story.
   const finalX = [-34, -18, -28, -14, -22, -10, 0][index];
   const finalY = [26, 18, 10, 0, -8, -16, 0][index];
   const finalRotate = [-4, 3, -2.5, 2, -3, 1.5, 0][index];
@@ -277,27 +276,27 @@ function DesktopWorkflowCard({
   const opacity = useTransform(
     progress,
     [enterAt, settleAt, 1],
-    [0.08, 1, 1],
+    [0, 1, 1],
   );
   const x = useTransform(
     progress,
     [enterAt, settleAt, 1],
-    [260, finalX, finalX],
+    ['72vw', `${finalX}px`, `${finalX}px`],
   );
   const y = useTransform(
     progress,
     [enterAt, settleAt, 1],
-    [76, finalY, finalY],
+    [64, finalY, finalY],
   );
   const scale = useTransform(
     progress,
     [enterAt, settleAt, 1],
-    [0.94, 1, 1],
+    [0.96, 1, 1],
   );
   const rotate = useTransform(
     progress,
     [enterAt, settleAt, 1],
-    [index % 2 === 0 ? 7 : -7, finalRotate, finalRotate],
+    [index % 2 === 0 ? 5.5 : -5.5, finalRotate, finalRotate],
   );
 
   return (
@@ -350,14 +349,9 @@ export function WorkflowStory() {
     target: sectionRef,
     offset: ['start start', 'end end'],
   });
-  const smoothScrollProgress = useSpring(scrollYProgress, {
-    stiffness: 135,
-    damping: 30,
-    mass: 0.35,
-  });
-  const progressScale = useTransform(smoothScrollProgress, [0.04, 0.96], [0, 1]);
+  const progressScale = useTransform(scrollYProgress, [0.04, 0.96], [0, 1]);
 
-  useMotionValueEvent(smoothScrollProgress, 'change', (latest) => {
+  useMotionValueEvent(scrollYProgress, 'change', (latest) => {
     const nextIndex = Math.min(steps.length - 1, Math.max(0, Math.floor(latest * steps.length)));
     setActiveStepIndex((current) => (current === nextIndex ? current : nextIndex));
   });
@@ -412,7 +406,7 @@ export function WorkflowStory() {
                       key={step.id}
                       step={step}
                       index={index}
-                      progress={smoothScrollProgress}
+                      progress={scrollYProgress}
                     />
                   ))}
                 </div>
