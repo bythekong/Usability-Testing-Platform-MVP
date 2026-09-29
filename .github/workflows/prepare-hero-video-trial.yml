@@ -19,6 +19,11 @@ jobs:
         with:
           ref: hero-video-trial
 
+      - name: Install ffmpeg
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+
       - name: Download source video
         run: |
           curl -L --fail --retry 3 \
@@ -30,13 +35,15 @@ jobs:
           mkdir -p apps/web/public/home_video
           ffmpeg -y \
             -i /tmp/hero-source.mp4 \
-            -vf "scale=1920:1080:force_original_aspect_ratio=decrease,pad=1920:1080:(ow-iw)/2:(oh-ih)/2" \
+            -vf "scale=1920:1080" \
             -c:v libvpx-vp9 \
-            -crf 34 \
-            -b:v 0 \
+            -b:v 700k \
+            -maxrate 900k \
+            -bufsize 1800k \
+            -crf 38 \
             -row-mt 1 \
-            -deadline good \
-            -cpu-used 4 \
+            -deadline realtime \
+            -cpu-used 7 \
             -an \
             apps/web/public/home_video/hero_background_001.webm
 
