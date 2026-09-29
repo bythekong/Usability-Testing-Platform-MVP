@@ -1,4 +1,0 @@
-fix(extension): resolve unauthorized upload and sticky overlay bugs
-
-- Ensure `token` is correctly passed from the frontend to the extension's `START_SESSION` handler and saved in local storage. This fixes the "Unauthorized" error when uploading videos to the backend.
-- Reset the extension task state to `READY` instead of keeping it in `RECORDING` when a task upload fails. This prevents the overlay from incorrectly remaining visible across all websites after a failed upload.
