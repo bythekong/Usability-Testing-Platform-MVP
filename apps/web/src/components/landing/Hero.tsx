@@ -65,11 +65,11 @@ export function Hero() {
           Find the right participants, send them into the live product, and observe the moments that reveal what needs work.
         </motion.p>
         <motion.div initial={reduceMotion ? false : { opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.72, delay: 0.27, ease }} className="mt-9 flex w-full max-w-lg flex-col justify-center gap-3 sm:flex-row">
-          <Link href="/login?role=OWNER" className="group inline-flex h-14 flex-1 items-center justify-center gap-2 rounded-full bg-[var(--lab-bone)] px-6 text-sm font-semibold text-[var(--lab-graphite)] transition-transform duration-200 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--lab-bone)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--lab-graphite)]">
+          <Link href="/login?role=OWNER" className="landing-action group inline-flex h-14 flex-1 items-center justify-center gap-2 rounded-full bg-[var(--lab-bone)] px-6 text-sm font-semibold text-[var(--lab-graphite)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--lab-bone)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--lab-graphite)]">
             Create a study
             <ArrowUpRight className="h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" aria-hidden="true" />
           </Link>
-          <Link href="/login?role=TESTER" className="group inline-flex h-14 flex-1 items-center justify-center gap-2 rounded-full border border-white/30 bg-black/10 px-6 text-sm font-semibold text-[var(--lab-bone)] backdrop-blur-sm transition-colors hover:border-white/55 hover:bg-white/[0.06] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--lab-bone)]">
+          <Link href="/login?role=TESTER" className="landing-action group inline-flex h-14 flex-1 items-center justify-center gap-2 rounded-full border border-white/30 bg-black/10 px-6 text-sm font-semibold text-[var(--lab-bone)] backdrop-blur-sm hover:border-white/55 hover:bg-white/[0.06] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--lab-bone)]">
             Explore as a tester
             <ArrowUpRight className="h-4 w-4 opacity-70 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" aria-hidden="true" />
           </Link>

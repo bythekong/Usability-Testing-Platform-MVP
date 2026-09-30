@@ -57,8 +57,29 @@ export function OwnerStory() {
                 </div>
               </div>
               <div className="flex items-center justify-between border-t border-[var(--lab-light-border)] px-5 py-4">
-                <span className="font-research text-[9px] uppercase tracking-[0.11em] text-[#747478]">Ready to launch</span>
-                <span className="inline-flex items-center gap-2 rounded-full bg-[var(--lab-graphite)] px-4 py-2 text-xs font-semibold text-[var(--lab-bone)]"><CheckCircle2 className="h-3.5 w-3.5" /> Launch study</span>
+                <span className="font-research inline-flex items-center gap-2 text-[9px] uppercase tracking-[0.11em] text-[#747478]">
+                  <span className="relative flex h-2 w-2">
+                    {!reduceMotion && (
+                      <motion.span
+                        aria-hidden="true"
+                        animate={{ opacity: [0.16, 0.44, 0.16], scale: [0.8, 1.65, 0.8] }}
+                        transition={{ duration: 2.1, repeat: Infinity, ease: 'easeInOut' }}
+                        className="absolute inset-0 rounded-full bg-[var(--lab-sage)]"
+                      />
+                    )}
+                    <span className="relative h-2 w-2 rounded-full bg-[var(--lab-sage)]" />
+                  </span>
+                  Ready to launch
+                </span>
+                <motion.span
+                  whileHover={reduceMotion ? undefined : { y: -2, scale: 1.015 }}
+                  whileTap={reduceMotion ? undefined : { scale: 0.985 }}
+                  transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
+                  className="inline-flex items-center gap-2 rounded-full bg-[var(--lab-graphite)] px-4 py-2 text-xs font-semibold text-[var(--lab-bone)] shadow-[0_10px_24px_rgba(11,13,18,.12)]"
+                >
+                  <CheckCircle2 className="h-3.5 w-3.5" />
+                  Launch study
+                </motion.span>
               </div>
             </motion.div>
           </div>

@@ -95,7 +95,17 @@ export function QualificationStory() {
                   <p className="mt-1 text-sm font-semibold">Question 03 / 05</p>
                 </div>
                 <div className="flex items-center gap-2 text-[10px] text-[#656569]">
-                  <Mic2 className="h-3.5 w-3.5 text-[var(--lab-oxide)]" />
+                  <span className="relative flex h-5 w-5 items-center justify-center">
+                    {!reduceMotion && (
+                      <motion.span
+                        aria-hidden="true"
+                        animate={{ opacity: [0.18, 0.48, 0.18], scale: [0.82, 1.2, 0.82] }}
+                        transition={{ duration: 1.9, repeat: Infinity, ease: 'easeInOut' }}
+                        className="absolute inset-0 rounded-full bg-[rgba(169,101,80,.16)]"
+                      />
+                    )}
+                    <Mic2 className="relative h-3.5 w-3.5 text-[var(--lab-oxide)]" />
+                  </span>
                   Listening…
                 </div>
               </div>
@@ -120,15 +130,23 @@ export function QualificationStory() {
                       return (
                         <motion.div
                           key={label}
-                          animate={{ opacity: visible ? 1 : 0.2, y: visible ? 0 : 8 }}
+                          animate={{
+                            opacity: visible ? 1 : 0.2,
+                            y: visible ? 0 : 8,
+                            backgroundColor: visible ? 'rgba(127,137,120,.055)' : 'rgba(127,137,120,0)',
+                          }}
                           transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
-                          className="flex items-center justify-between gap-5 py-3"
+                          className="flex items-center justify-between gap-5 px-2 py-3"
                         >
                           <span className="text-sm text-[#55565a]">{label}</span>
-                          <span className="font-research inline-flex items-center gap-1.5 text-[9px] font-medium tracking-[0.1em] text-[var(--lab-sage)]">
+                          <motion.span
+                            animate={visible ? { scale: [0.96, 1.04, 1] } : { scale: 0.96 }}
+                            transition={{ duration: 0.34, ease: [0.22, 1, 0.36, 1] }}
+                            className="font-research inline-flex items-center gap-1.5 text-[9px] font-medium tracking-[0.1em] text-[var(--lab-sage)]"
+                          >
                             <Check className="h-3 w-3" />
                             {value}
-                          </span>
+                          </motion.span>
                         </motion.div>
                       );
                     })}
