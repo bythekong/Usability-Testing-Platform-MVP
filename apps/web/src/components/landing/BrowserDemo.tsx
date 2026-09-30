@@ -315,9 +315,9 @@ export function BrowserDemo() {
   return (
     <section
       id="in-context"
-      className="landing-scene landing-grain relative bg-[var(--lab-graphite)] text-[var(--lab-bone)]"
+      className="landing-scene landing-dark-scene landing-grain relative bg-[var(--lab-graphite)] text-[var(--lab-bone)]"
     >
-      <div className="mx-auto flex min-h-[64vh] max-w-6xl items-end px-6 pb-16 pt-24 md:min-h-[72vh] md:pb-20 md:pt-32 lg:min-h-[78vh]">
+      <div className="mx-auto flex min-h-[58vh] max-w-6xl items-end px-5 pb-14 pt-20 sm:min-h-[64vh] sm:px-6 sm:pb-16 sm:pt-24 md:min-h-[70vh] md:pb-20 md:pt-28 lg:min-h-[76vh]">
         <div className="max-w-4xl">
           <h2 className="font-display text-[clamp(2.9rem,7.5vw,6.5rem)] font-semibold leading-[0.93] tracking-[-0.055em]">
             <TypeLine duration={0.8} fromY={34}>Keep the task</TypeLine>
@@ -330,10 +330,10 @@ export function BrowserDemo() {
       </div>
 
       <div ref={stageRef} className="landing-pin-browser relative lg:min-h-[285vh]">
-        <div className="landing-pinned-stage relative px-2 pb-8 sm:px-4 md:px-6 lg:sticky lg:top-0 lg:flex lg:h-screen lg:items-center lg:justify-center lg:overflow-hidden lg:py-2">
+        <div className="landing-pinned-stage relative px-2 pb-6 sm:px-4 sm:pb-8 md:px-6 lg:sticky lg:top-0 lg:flex lg:h-screen lg:items-center lg:justify-center lg:overflow-hidden lg:py-2">
           <motion.div
             style={reduceMotion ? undefined : { scale: frameScale, y: frameY }}
-            className="relative mx-auto min-h-[760px] w-full max-w-[1580px] overflow-hidden rounded-[1.5rem] border border-white/10 bg-[var(--lab-carbon)] shadow-[0_50px_150px_rgba(0,0,0,.5)] lg:h-[94vh] lg:min-h-0 lg:rounded-[1.8rem]"
+            className="relative mx-auto min-h-[700px] w-full max-w-[1580px] overflow-hidden rounded-[1.35rem] border border-white/10 bg-[var(--lab-carbon)] shadow-[0_42px_120px_rgba(0,0,0,.46)] sm:min-h-[740px] sm:rounded-[1.5rem] lg:h-[92vh] lg:min-h-0 lg:rounded-[1.8rem] xl:h-[94vh]"
           >
             <div className="flex h-11 items-center gap-3 border-b border-[rgba(17,18,21,.10)] bg-[#d9d3c8] px-4 md:h-12">
               <div className="flex gap-1.5" aria-hidden="true">
@@ -353,7 +353,7 @@ export function BrowserDemo() {
 
             <div
               ref={surfaceRef}
-              className="relative min-h-[716px] overflow-hidden bg-[#ece8df] lg:h-[calc(100%-3rem)] lg:min-h-0"
+              className="relative min-h-[656px] overflow-hidden bg-[#ece8df] sm:min-h-[696px] lg:h-[calc(100%-3rem)] lg:min-h-0"
             >
               <div aria-hidden="true" className="absolute inset-0 z-0 overflow-hidden">
                 <Image
@@ -379,7 +379,7 @@ export function BrowserDemo() {
               <div
                 className="absolute inset-4 z-10 overflow-hidden rounded-[1.35rem] border border-[rgba(17,18,21,.08)] bg-[rgba(248,245,238,.94)] shadow-[0_24px_70px_rgba(24,22,18,.12)] backdrop-blur-sm sm:inset-5 md:inset-6"
               >
-                <div className="grid h-full min-h-[680px] lg:min-h-0 lg:grid-cols-[minmax(0,1fr)_320px] xl:grid-cols-[minmax(0,1fr)_350px]">
+                <div className="grid h-full min-h-[620px] sm:min-h-[660px] lg:min-h-0 lg:grid-cols-[minmax(0,1fr)_320px] xl:grid-cols-[minmax(0,1fr)_350px]">
                   <div className="flex min-w-0 flex-col px-5 pb-5 pt-5 sm:px-7 sm:pb-6 sm:pt-6 md:px-8 md:pb-7 md:pt-7 lg:px-9 lg:pb-7 lg:pt-7 xl:px-11 xl:pt-9">
                     <div className="flex items-start justify-between gap-6">
                       <div className="max-w-[720px]">

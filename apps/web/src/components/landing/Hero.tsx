@@ -24,7 +24,7 @@ export function Hero() {
     <section
       id="lab"
       ref={sectionRef}
-      className="landing-scene landing-grain relative isolate flex min-h-[94svh] items-center overflow-hidden bg-[var(--lab-graphite)] px-6 pb-20 pt-28 text-[var(--lab-bone)] md:min-h-[900px] md:pb-28 md:pt-32"
+      className="landing-scene landing-dark-scene landing-grain relative isolate flex min-h-[100svh] items-center overflow-hidden bg-[var(--lab-graphite)] px-5 pb-16 pt-24 text-[var(--lab-bone)] sm:px-6 sm:pb-20 sm:pt-28 md:min-h-[860px] md:pb-24 md:pt-28 xl:min-h-[900px]"
     >
       <motion.div
         aria-hidden="true"
@@ -61,10 +61,10 @@ export function Hero() {
             </motion.span>
           </span>
         </h1>
-        <motion.p initial={reduceMotion ? false : { opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.72, delay: 0.17, ease }} className="mt-7 max-w-2xl text-balance text-base leading-7 text-[rgba(243,239,231,.72)] sm:text-lg md:text-xl md:leading-8">
+        <motion.p initial={reduceMotion ? false : { opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.72, delay: 0.17, ease }} className="mt-6 max-w-2xl text-balance text-base leading-7 text-[rgba(243,239,231,.72)] sm:mt-7 sm:text-lg md:text-xl md:leading-8">
           Find the right participants, send them into the live product, and observe the moments that reveal what needs work.
         </motion.p>
-        <motion.div initial={reduceMotion ? false : { opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.72, delay: 0.27, ease }} className="mt-9 flex w-full max-w-lg flex-col justify-center gap-3 sm:flex-row">
+        <motion.div initial={reduceMotion ? false : { opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.72, delay: 0.27, ease }} className="mt-8 flex w-full max-w-lg flex-col justify-center gap-3 sm:mt-9 sm:flex-row">
           <Link href="/login?role=OWNER" className="landing-action group inline-flex h-14 flex-1 items-center justify-center gap-2 rounded-full bg-[var(--lab-bone)] px-6 text-sm font-semibold text-[var(--lab-graphite)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--lab-bone)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--lab-graphite)]">
             Create a study
             <ArrowUpRight className="h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" aria-hidden="true" />

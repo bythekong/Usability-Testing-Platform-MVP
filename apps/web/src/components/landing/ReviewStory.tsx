@@ -14,9 +14,9 @@ export function ReviewStory() {
   const reduceMotion = useReducedMotion();
 
   return (
-    <section id="evidence" className="landing-scene relative overflow-hidden bg-[var(--lab-stone)] py-24 text-[var(--lab-ink)] md:py-32 lg:py-36">
-      <div className="container mx-auto max-w-7xl px-6">
-        <div className="grid items-center gap-14 lg:grid-cols-[1.05fr_0.95fr] lg:gap-20">
+    <section id="evidence" className="landing-scene landing-light-scene landing-section-space relative overflow-hidden bg-[var(--lab-stone)] text-[var(--lab-ink)]">
+      <div className="container mx-auto max-w-7xl px-5 sm:px-6">
+        <div className="grid items-center gap-12 md:gap-14 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16 xl:gap-20">
           <div className="relative order-2 lg:order-1">
             <EditorialImage src="/home_image/owner_review_feedback_001.webp" alt="A product researcher reviewing participant feedback and interaction evidence in a contemporary research studio." sizes="(min-width: 1024px) 54vw, 100vw" className="aspect-[3/2] rounded-[2rem] shadow-[0_32px_90px_rgba(31,27,22,.18)]" objectPosition="50% 50%" />
 
