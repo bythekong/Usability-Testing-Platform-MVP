@@ -12,6 +12,15 @@ const { prisma } = require('../dist/db.js');
 let server;
 let baseUrl;
 
+const runId = (process.env.TEST_RUN_ID || `${Date.now()}-${process.pid}`)
+  .replace(/[^a-zA-Z0-9-]/g, '')
+  .toLowerCase();
+const testEmailPrefix = `utp-it-${runId}-`;
+
+function testEmail(name) {
+  return `${testEmailPrefix}${name}@example.com`;
+}
+
 async function request(path, options = {}) {
   const response = await fetch(baseUrl + path, {
     ...options,
@@ -62,16 +71,64 @@ async function createCampaign(token, suffix = '') {
   return response.data;
 }
 
-async function resetDatabase() {
-  await prisma.taskResponse.deleteMany();
-  await prisma.jobAssignment.deleteMany();
-  await prisma.task.deleteMany();
-  await prisma.testCampaign.deleteMany();
-  await prisma.user.deleteMany();
+async function cleanupCurrentRunData() {
+  const users = await prisma.user.findMany({
+    where: { email: { startsWith: testEmailPrefix } },
+    select: { id: true }
+  });
+
+  if (users.length === 0) {
+    return;
+  }
+
+  const userIds = users.map((user) => user.id);
+  const campaigns = await prisma.testCampaign.findMany({
+    where: { ownerId: { in: userIds } },
+    select: { id: true }
+  });
+  const campaignIds = campaigns.map((campaign) => campaign.id);
+
+  if (campaignIds.length > 0) {
+    const [jobs, tasks] = await Promise.all([
+      prisma.jobAssignment.findMany({
+        where: { campaignId: { in: campaignIds } },
+        select: { id: true }
+      }),
+      prisma.task.findMany({
+        where: { campaignId: { in: campaignIds } },
+        select: { id: true }
+      })
+    ]);
+
+    const jobIds = jobs.map((job) => job.id);
+    const taskIds = tasks.map((task) => task.id);
+    const responseFilters = [];
+
+    if (jobIds.length > 0) {
+      responseFilters.push({ jobId: { in: jobIds } });
+    }
+    if (taskIds.length > 0) {
+      responseFilters.push({ taskId: { in: taskIds } });
+    }
+
+    if (responseFilters.length > 0) {
+      await prisma.taskResponse.deleteMany({ where: { OR: responseFilters } });
+    }
+    if (jobIds.length > 0) {
+      await prisma.jobAssignment.deleteMany({ where: { id: { in: jobIds } } });
+    }
+    if (taskIds.length > 0) {
+      await prisma.task.deleteMany({ where: { id: { in: taskIds } } });
+    }
+
+    await prisma.testCampaign.deleteMany({ where: { id: { in: campaignIds } } });
+  }
+
+  await prisma.user.deleteMany({ where: { id: { in: userIds } } });
 }
 
 test.before(async () => {
-  await resetDatabase();
+  await cleanupCurrentRunData();
   await new Promise((resolve) => {
     server = app.listen(0, '127.0.0.1', () => {
       const address = server.address();
@@ -82,7 +139,7 @@ test.before(async () => {
 });
 
 test.after(async () => {
-  await resetDatabase();
+  await cleanupCurrentRunData();
   await prisma.$disconnect();
   await new Promise((resolve, reject) => {
     server.close((error) => (error ? reject(error) : resolve()));
@@ -90,10 +147,24 @@ test.after(async () => {
 });
 
 test('MVP vertical slice enforces auth, ownership, and lifecycle integrity', async (t) => {
-  const owner = await register('owner@example.com', 'OWNER');
-  const otherOwner = await register('other-owner@example.com', 'OWNER');
-  const testerOne = await register('tester-one@example.com', 'TESTER');
-  const testerTwo = await register('tester-two@example.com', 'TESTER');
+  const owner = await register(testEmail('owner'), 'OWNER');
+  const otherOwner = await register(testEmail('other-owner'), 'OWNER');
+  const testerOne = await register(testEmail('tester-one'), 'TESTER');
+  const testerTwo = await register(testEmail('tester-two'), 'TESTER');
+
+  await t.test('duplicate registration returns a conflict without polluting later runs', async () => {
+    const duplicate = await request('/auth/register', {
+      method: 'POST',
+      body: JSON.stringify({
+        email: testEmail('owner'),
+        password: 'password123',
+        role: 'OWNER'
+      })
+    });
+
+    assert.equal(duplicate.status, 409);
+    assert.equal(duplicate.data.error, 'Email already exists');
+  });
 
   await t.test('role authorization rejects cross-role actions', async () => {
     const testerCreatesCampaign = await request('/campaigns', {
