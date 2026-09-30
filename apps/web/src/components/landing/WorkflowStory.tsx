@@ -160,7 +160,7 @@ export function WorkflowStory() {
             </div>
           )}
 
-          <div className={`${reduceMotion ? 'hidden lg:block' : ''} py-10 lg:py-24`}>
+          <div className={`py-10 ${reduceMotion ? 'lg:py-24' : 'lg:py-0'}`}>
             <div className="relative space-y-5 lg:hidden">
               <div aria-hidden="true" className="absolute bottom-4 left-[13px] top-4 w-px bg-white/12" />
               {steps.map((step) => (
