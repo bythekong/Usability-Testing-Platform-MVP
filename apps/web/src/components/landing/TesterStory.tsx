@@ -33,9 +33,38 @@ export function TesterStory() {
             </motion.div>
 
             <motion.div initial={reduceMotion ? false : { opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false, amount: 0.35 }} transition={{ duration: 0.72, ease: [0.22, 1, 0.36, 1] }} className="absolute bottom-5 left-5 max-w-[280px] rounded-[1.15rem] border border-white/16 bg-[rgba(11,13,18,.78)] p-4 text-[var(--lab-bone)] shadow-2xl backdrop-blur-xl md:bottom-8 md:left-8">
-              <div className="flex items-center justify-between gap-5"><p className="font-research text-[8px] uppercase tracking-[0.15em] text-[var(--lab-amber)]">Task 02 / 03</p><span className="font-research text-[8px] uppercase tracking-[0.13em] text-white/38">Session active</span></div>
+              <div className="flex items-center justify-between gap-5">
+                <p className="font-research text-[8px] uppercase tracking-[0.15em] text-[var(--lab-amber)]">Task 02 / 03</p>
+                <span className="font-research inline-flex items-center gap-1.5 text-[8px] uppercase tracking-[0.13em] text-white/38">
+                  <span className="relative h-1.5 w-1.5 rounded-full bg-[var(--lab-sage)]">
+                    {!reduceMotion && (
+                      <motion.span
+                        aria-hidden="true"
+                        animate={{ opacity: [0.2, 0.55, 0.2], scale: [1, 2, 1] }}
+                        transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}
+                        className="absolute inset-0 rounded-full bg-[var(--lab-sage)]"
+                      />
+                    )}
+                  </span>
+                  Session active
+                </span>
+              </div>
               <p className="mt-3 text-sm font-medium leading-6">Find the plan you would choose.</p>
-              <p className="font-research mt-3 text-[8px] uppercase tracking-[0.12em] text-white/42">Thinking aloud…</p>
+              <div className="mt-3 flex items-center gap-2">
+                <p className="font-research text-[8px] uppercase tracking-[0.12em] text-white/42">Thinking aloud…</p>
+                {!reduceMotion && (
+                  <span aria-hidden="true" className="flex items-end gap-[2px]">
+                    {[0, 1, 2].map((index) => (
+                      <motion.span
+                        key={index}
+                        animate={{ height: [3, 9 - index * 2, 3] }}
+                        transition={{ duration: 1.05, repeat: Infinity, delay: index * 0.12, ease: 'easeInOut' }}
+                        className="block w-[2px] rounded-full bg-[var(--lab-amber)]/65"
+                      />
+                    ))}
+                  </span>
+                )}
+              </div>
             </motion.div>
 
             {!reduceMotion && (

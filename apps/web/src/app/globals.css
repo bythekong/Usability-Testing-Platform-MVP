@@ -164,6 +164,86 @@ textarea {
   will-change: transform;
 }
 
+.landing-action {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  transition:
+    transform 180ms var(--lab-ease),
+    border-color 220ms var(--lab-ease),
+    background-color 220ms var(--lab-ease),
+    box-shadow 220ms var(--lab-ease);
+}
+
+.landing-action::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateX(-118%);
+  background: linear-gradient(
+    100deg,
+    transparent 20%,
+    rgba(255, 255, 255, 0.18) 48%,
+    transparent 76%
+  );
+  transition:
+    transform 560ms var(--lab-ease),
+    opacity 220ms ease;
+}
+
+.landing-action:hover::before,
+.landing-action:focus-visible::before {
+  opacity: 1;
+  transform: translateX(118%);
+}
+
+.landing-action:hover {
+  transform: translateY(-2px);
+}
+
+.landing-action:active {
+  transform: translateY(0) scale(0.985);
+}
+
+.landing-nav-link {
+  position: relative;
+  transition: color 180ms ease;
+}
+
+.landing-nav-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -0.45rem;
+  height: 1px;
+  background: var(--lab-amber);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 260ms var(--lab-ease);
+}
+
+.landing-nav-link:hover::after,
+.landing-nav-link:focus-visible::after {
+  transform: scaleX(1);
+}
+
+.landing-evidence-card {
+  transition:
+    transform 260ms var(--lab-ease),
+    box-shadow 260ms var(--lab-ease),
+    border-color 260ms var(--lab-ease);
+}
+
+.landing-evidence-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 22px 52px rgba(37, 31, 24, 0.14);
+  border-color: rgba(24, 25, 28, 0.16);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .landing-lab *,
   .landing-lab *::before,
@@ -182,5 +262,21 @@ textarea {
     height: auto !important;
     min-height: auto !important;
     will-change: auto;
+  }
+
+  .landing-action,
+  .landing-nav-link::after,
+  .landing-evidence-card {
+    transition: none !important;
+  }
+
+  .landing-action::before {
+    display: none;
+  }
+
+  .landing-action:hover,
+  .landing-action:active,
+  .landing-evidence-card:hover {
+    transform: none !important;
   }
 }
