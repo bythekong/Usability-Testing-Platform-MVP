@@ -17,13 +17,13 @@ export function TesterStory() {
   return (
     <section id="observation" ref={sectionRef} className="landing-scene relative overflow-hidden bg-[var(--lab-bone)] py-24 text-[var(--lab-ink)] md:py-32 lg:py-36">
       <div className="container mx-auto max-w-7xl px-6">
-        <div className="grid items-center gap-14 lg:grid-cols-[0.78fr_1.22fr] lg:gap-20">
+        <div className="grid items-center gap-14 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16 xl:gap-20">
           <div>
-            <h2 className="font-editorial text-[clamp(2.9rem,5.5vw,4.7rem)] font-normal leading-[0.96] tracking-[-0.035em]">
+            <h2 className="font-editorial max-w-[6.6ch] text-[clamp(3.5rem,6.25vw,5.8rem)] font-medium leading-[0.9] tracking-[-0.045em]">
               <TypeLine duration={0.82} fromY={28}>The moment before</TypeLine>
-              <TypeLine delay={0.28} duration={0.9} fromY={30} className="italic text-[rgba(24,25,28,.88)]">the click matters.</TypeLine>
+              <TypeLine delay={0.28} duration={0.9} fromY={30} className="italic font-medium text-[rgba(24,25,28,.9)]">the click matters.</TypeLine>
             </h2>
-            <p className="mt-6 max-w-xl text-base leading-7 text-[#5f6064] md:text-lg md:leading-8">People do not experience interfaces as funnels or metrics. They search, hesitate, misunderstand, recover, and decide.</p>
+            <p className="mt-8 max-w-xl text-base leading-7 text-[#5f6064] md:text-lg md:leading-8">People do not experience interfaces as funnels or metrics. They search, hesitate, misunderstand, recover, and decide.</p>
             <div className="mt-9 max-w-md border-t border-black/10 pt-5"><p className="font-research text-[9px] uppercase tracking-[0.14em] text-[#77787c]">Observed moment</p><p className="mt-2 text-sm leading-6 text-[#626367]">The pause is part of the evidence. The interface does not need to explain it away.</p></div>
           </div>
 

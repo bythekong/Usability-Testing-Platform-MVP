@@ -4,7 +4,6 @@ import { useRef } from 'react';
 import Link from 'next/link';
 import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion';
 import { ArrowUpRight } from 'lucide-react';
-import { TypeLine } from './TypeLine';
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
@@ -41,8 +40,26 @@ export function Hero() {
 
       <motion.div style={reduceMotion ? undefined : { y: contentY, opacity: contentOpacity }} className="relative z-10 mx-auto flex w-full max-w-6xl flex-col items-center text-center">
         <h1 className="font-display max-w-5xl text-balance text-[clamp(3.15rem,8vw,6.5rem)] font-semibold leading-[0.94] tracking-[-0.055em] text-[var(--lab-bone)]">
-          <TypeLine delay={0.06} duration={0.9} fromY={44}>Watch real users</TypeLine>
-          <TypeLine delay={0.15} duration={0.92} fromY={48}>use what you built.</TypeLine>
+          <span className="block overflow-hidden pb-[0.08em] -mb-[0.08em]">
+            <motion.span
+              initial={reduceMotion ? false : { opacity: 0, y: 44 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.9, delay: 0.06, ease }}
+              className="block"
+            >
+              Watch real users
+            </motion.span>
+          </span>
+          <span className="block overflow-hidden pb-[0.08em] -mb-[0.08em]">
+            <motion.span
+              initial={reduceMotion ? false : { opacity: 0, y: 48 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.92, delay: 0.15, ease }}
+              className="block"
+            >
+              use what you built.
+            </motion.span>
+          </span>
         </h1>
         <motion.p initial={reduceMotion ? false : { opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.72, delay: 0.17, ease }} className="mt-7 max-w-2xl text-balance text-base leading-7 text-[rgba(243,239,231,.72)] sm:text-lg md:text-xl md:leading-8">
           Find the right participants, send them into the live product, and observe the moments that reveal what needs work.
