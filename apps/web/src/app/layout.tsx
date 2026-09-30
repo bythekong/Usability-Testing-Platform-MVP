@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { IBM_Plex_Mono, Instrument_Serif, Inter, Manrope, Noto_Sans_Thai } from "next/font/google";
+import { Fraunces, IBM_Plex_Mono, Inter, Manrope, Noto_Sans_Thai } from "next/font/google";
 import "./globals.css";
 
 const inter = Inter({
@@ -14,10 +14,10 @@ const manrope = Manrope({
   display: "swap",
 });
 
-const instrumentSerif = Instrument_Serif({
-  variable: "--font-instrument-serif",
+const fraunces = Fraunces({
+  variable: "--font-fraunces",
   subsets: ["latin"],
-  weight: "400",
+  weight: ["400", "500", "600"],
   style: ["normal", "italic"],
   display: "swap",
 });
@@ -50,7 +50,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
   const messages = await getMessages();
 
   return (
-    <html lang={locale} className={`${inter.variable} ${manrope.variable} ${instrumentSerif.variable} ${ibmPlexMono.variable} ${notoSansThai.variable} h-full antialiased`} suppressHydrationWarning>
+    <html lang={locale} className={`${inter.variable} ${manrope.variable} ${fraunces.variable} ${ibmPlexMono.variable} ${notoSansThai.variable} h-full antialiased`} suppressHydrationWarning>
       <body className="min-h-full">
         <NextIntlClientProvider messages={messages}>
           <ThemeProvider
