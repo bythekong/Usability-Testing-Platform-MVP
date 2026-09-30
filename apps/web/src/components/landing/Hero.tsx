@@ -4,6 +4,7 @@ import { useRef } from 'react';
 import Link from 'next/link';
 import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion';
 import { ArrowUpRight } from 'lucide-react';
+import { TypeLine } from './TypeLine';
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
@@ -39,10 +40,10 @@ export function Hero() {
       <div aria-hidden="true" className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_55%_34%,rgba(201,161,95,.10),transparent_31%)]" />
 
       <motion.div style={reduceMotion ? undefined : { y: contentY, opacity: contentOpacity }} className="relative z-10 mx-auto flex w-full max-w-6xl flex-col items-center text-center">
-        <motion.h1 initial={reduceMotion ? false : { opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.82, delay: 0.08, ease }} className="font-display max-w-5xl text-balance text-[clamp(3.15rem,8vw,6.5rem)] font-semibold leading-[0.94] tracking-[-0.055em] text-[var(--lab-bone)]">
-          Watch real users
-          <br className="hidden sm:block" /> use what you built.
-        </motion.h1>
+        <h1 className="font-display max-w-5xl text-balance text-[clamp(3.15rem,8vw,6.5rem)] font-semibold leading-[0.94] tracking-[-0.055em] text-[var(--lab-bone)]">
+          <TypeLine delay={0.06} duration={0.9} fromY={44}>Watch real users</TypeLine>
+          <TypeLine delay={0.15} duration={0.92} fromY={48}>use what you built.</TypeLine>
+        </h1>
         <motion.p initial={reduceMotion ? false : { opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.72, delay: 0.17, ease }} className="mt-7 max-w-2xl text-balance text-base leading-7 text-[rgba(243,239,231,.72)] sm:text-lg md:text-xl md:leading-8">
           Find the right participants, send them into the live product, and observe the moments that reveal what needs work.
         </motion.p>

@@ -4,6 +4,7 @@ import { useRef } from 'react';
 import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion';
 import { CheckCircle2 } from 'lucide-react';
 import { EditorialImage } from './EditorialImage';
+import { TypeLine } from './TypeLine';
 
 const fragments = [
   { label: 'TARGET', value: 'yourproduct.com', className: 'left-2 top-10 md:-left-5 md:top-16' },
@@ -63,7 +64,10 @@ export function OwnerStory() {
           </div>
 
           <div className="order-1 lg:order-2">
-            <h2 className="font-display text-[clamp(2.55rem,5vw,4.15rem)] font-semibold leading-[1.01] tracking-[-0.045em]">Turn a question<br /> into an experiment.</h2>
+            <h2 className="font-display text-[clamp(2.55rem,5vw,4.15rem)] font-semibold leading-[1.01] tracking-[-0.045em]">
+              <TypeLine duration={0.72} fromX={-12} fromY={20}>Turn a question</TypeLine>
+              <TypeLine delay={0.16} duration={0.8} fromX={16} fromY={22} className="text-[rgba(24,25,28,.82)]">into an experiment.</TypeLine>
+            </h2>
             <p className="mt-6 max-w-xl text-base leading-7 text-[#616267] md:text-lg md:leading-8">Define the real product, the tasks participants should complete, and the context that matters to the study.</p>
             <div className="mt-8 h-px w-24 bg-[var(--lab-oxide)]/35" />
             <p className="font-research mt-5 max-w-md text-[10px] uppercase leading-5 tracking-[0.11em] text-[#78797d]">Research question → participant context → task sequence → live study</p>
