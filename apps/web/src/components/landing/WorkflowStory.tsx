@@ -10,334 +10,115 @@ import {
   type MotionValue,
 } from 'framer-motion';
 import {
-  CheckCircle,
-  CheckSquare,
+  CheckCircle2,
+  ClipboardList,
   Eye,
-  MessageSquare,
-  Monitor,
+  FileCheck2,
+  MessageSquareText,
+  MonitorUp,
   MousePointerClick,
-  PlusCircle,
 } from 'lucide-react';
+import { ResearchLabel } from './ResearchLabel';
 
 const steps = [
   {
     id: '01',
     role: 'OWNER',
     title: 'Create study',
-    description: 'Set the target URL and define the tasks.',
-    icon: PlusCircle,
-    kind: 'create',
+    description: 'Target URL, participant context, and tasks become one study.',
+    icon: ClipboardList,
+    facts: ['TARGET / example.com', 'TASKS / 3 defined', 'STATE / READY'],
   },
   {
     id: '02',
     role: 'TESTER',
     title: 'Claim session',
-    description: 'A tester picks an available study.',
+    description: 'An eligible tester accepts an available research session.',
     icon: MousePointerClick,
-    kind: 'claim',
+    facts: ['SESSION / checkout-flow', 'ESTIMATE / 8–10 min', 'STATE / CLAIMED'],
   },
   {
     id: '03',
     role: 'BROWSER',
     title: 'Open live site',
-    description: 'The extension activates on the matched URL.',
-    icon: Monitor,
-    kind: 'browser',
+    description: 'The claimed URL opens in the browser and context is verified.',
+    icon: MonitorUp,
+    facts: ['URL / matched', 'EXTENSION / ready', 'STATE / LIVE'],
   },
   {
     id: '04',
     role: 'EXTENSION',
     title: 'Complete tasks',
-    description: 'The tester follows prompts and leaves feedback in context.',
-    icon: CheckSquare,
-    kind: 'tasks',
+    description: 'Guidance stays beside the real product while the tester works.',
+    icon: FileCheck2,
+    facts: ['TASK / 02 of 03', 'THINK-ALOUD / active', 'TRACE / in context'],
   },
   {
     id: '05',
     role: 'TESTER',
     title: 'Submit responses',
-    description: 'Completed answers are sent back as one submission.',
-    icon: MessageSquare,
-    kind: 'submit',
+    description: 'Completed responses return as one research submission.',
+    icon: MessageSquareText,
+    facts: ['RESPONSES / 3 of 3', 'SUBMISSION / complete', 'STATE / SUBMITTED'],
   },
   {
     id: '06',
     role: 'OWNER',
     title: 'Review feedback',
-    description: 'The owner reads responses task by task.',
+    description: 'Responses remain attached to the task and context that produced them.',
     icon: Eye,
-    kind: 'review',
+    facts: ['CONTEXT / preserved', 'RESPONSES / ordered', 'REVIEW / open'],
   },
   {
     id: '07',
     role: 'OWNER',
     title: 'Approve or reject',
-    description: 'Close the loop with a clear final decision.',
-    icon: CheckCircle,
-    kind: 'decision',
+    description: 'A researcher closes the lifecycle with an explicit human decision.',
+    icon: CheckCircle2,
+    facts: ['EVIDENCE / reviewed', 'DECISION / human', 'STATE / final'],
   },
 ] as const;
 
 type WorkflowStep = (typeof steps)[number];
 
-function roleClass(role: WorkflowStep['role']) {
-  if (role === 'OWNER') return 'text-primary';
-  if (role === 'TESTER') return 'text-primary';
-  return 'text-cyan-400';
-}
-
-function MockupBody({ step }: { step: WorkflowStep }) {
-  switch (step.kind) {
-    case 'create':
-      return (
-        <div className="space-y-4">
-          <div>
-            <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">Target URL</p>
-            <div className="mt-2 rounded-xl border border-border bg-surface px-3 py-2.5 text-xs text-foreground">
-              https://example.com/checkout
-            </div>
-          </div>
-          <div>
-            <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">Tasks</p>
-            <div className="mt-2 space-y-2">
-              {['Find the pricing page', 'Choose a plan', 'Start checkout'].map((task, index) => (
-                <div key={task} className="flex items-center gap-3 rounded-xl border border-border bg-surface px-3 py-2.5">
-                  <span className="flex h-5 w-5 items-center justify-center rounded-md bg-primary/10 text-[10px] font-bold text-primary">
-                    {index + 1}
-                  </span>
-                  <span className="text-xs text-foreground">{task}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-          <div className="rounded-xl bg-accent px-4 py-3 text-center text-xs font-semibold text-accent-foreground">Launch study</div>
-        </div>
-      );
-
-    case 'claim':
-      return (
-        <div className="space-y-3">
-          <div className="flex items-center justify-between rounded-xl border border-border bg-surface p-4">
-            <div>
-              <p className="text-xs font-semibold text-foreground">Checkout Flow Test</p>
-              <p className="mt-1 text-[11px] text-muted">example.com · 3 tasks</p>
-            </div>
-            <span className="rounded-full bg-primary/10 px-2.5 py-1 text-[10px] font-bold text-primary">AVAILABLE</span>
-          </div>
-          <div className="grid grid-cols-2 gap-3 text-[11px]">
-            <div className="rounded-xl border border-border bg-surface p-3">
-              <p className="text-muted">Estimated time</p>
-              <p className="mt-1 font-semibold text-foreground">8–10 min</p>
-            </div>
-            <div className="rounded-xl border border-border bg-surface p-3">
-              <p className="text-muted">Tasks</p>
-              <p className="mt-1 font-semibold text-foreground">3 steps</p>
-            </div>
-          </div>
-          <div className="rounded-xl bg-accent px-4 py-3 text-center text-xs font-semibold text-accent-foreground">Claim session</div>
-        </div>
-      );
-
-    case 'browser':
-      return (
-        <div className="overflow-hidden rounded-2xl border border-border bg-surface">
-          <div className="flex items-center gap-2 border-b border-border px-3 py-2.5">
-            <span className="h-2 w-2 rounded-full bg-danger" />
-            <span className="h-2 w-2 rounded-full bg-warning-text" />
-            <span className="h-2 w-2 rounded-full bg-success-text" />
-            <div className="ml-2 flex-1 rounded-md border border-border bg-background px-2.5 py-1.5 text-[10px] text-muted">
-              example.com/checkout
-            </div>
-          </div>
-          <div className="grid min-h-48 grid-cols-[1fr_0.72fr] gap-3 p-4">
-            <div className="space-y-3">
-              <div className="h-4 w-1/2 rounded bg-border" />
-              <div className="h-16 rounded-xl bg-background" />
-              <div className="h-14 rounded-xl bg-background" />
-            </div>
-            <div className="rounded-xl border border-primary/25 bg-primary/5 p-3">
-              <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-primary">Matched URL</p>
-              <p className="mt-2 text-xs font-semibold text-foreground">Extension ready</p>
-              <p className="mt-2 text-[11px] leading-5 text-muted">This page matches the claimed study.</p>
-              <div className="mt-4 rounded-lg bg-accent px-3 py-2 text-center text-[10px] font-semibold text-accent-foreground">Start task</div>
-            </div>
-          </div>
-        </div>
-      );
-
-    case 'tasks':
-      return (
-        <div className="overflow-hidden rounded-2xl border border-border bg-surface">
-          <div className="flex items-center justify-between bg-accent px-4 py-3 text-accent-foreground">
-            <span className="text-xs font-semibold">Testing Platform</span>
-            <span className="rounded-full bg-white/15 px-2 py-1 text-[10px] font-bold">2 / 3</span>
-          </div>
-          <div className="p-4">
-            <div className="h-1.5 overflow-hidden rounded-full bg-border">
-              <div className="h-full w-2/3 rounded-full bg-primary" />
-            </div>
-            <p className="mt-4 text-[10px] font-bold uppercase tracking-[0.14em] text-primary">Current task</p>
-            <p className="mt-2 text-sm font-semibold text-foreground">Choose the plan that best fits a small team.</p>
-            <div className="mt-4 min-h-20 rounded-xl border border-border bg-background p-3 text-[11px] leading-5 text-muted">
-              I expected the support details to be closer to the plan name.
-            </div>
-            <div className="mt-3 rounded-xl bg-accent px-4 py-3 text-center text-xs font-semibold text-accent-foreground">Complete task</div>
-          </div>
-        </div>
-      );
-
-    case 'submit':
-      return (
-        <div className="space-y-3">
-          {['Pricing page found', 'Plan selected', 'Checkout started'].map((label) => (
-            <div key={label} className="flex items-center gap-3 rounded-xl border border-border bg-surface px-3 py-3">
-              <CheckCircle className="h-4 w-4 text-success-text" />
-              <span className="text-xs text-foreground">{label}</span>
-            </div>
-          ))}
-          <div className="rounded-xl border border-primary/20 bg-primary/5 p-4">
-            <p className="text-xs font-semibold text-foreground">Ready to submit</p>
-            <p className="mt-1 text-[11px] leading-5 text-muted">All task responses will be sent back as one submission.</p>
-          </div>
-          <div className="rounded-xl bg-accent px-4 py-3 text-center text-xs font-semibold text-accent-foreground">Submit responses</div>
-        </div>
-      );
-
-    case 'review':
-      return (
-        <div className="space-y-3">
-          {[
-            ['Task 1', 'Pricing was easy to find, but plan differences needed a second read.'],
-            ['Task 2', 'The checkout button was clear; I hesitated on the support details.'],
-          ].map(([label, response]) => (
-            <div key={label} className="rounded-xl border border-border bg-surface p-4">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold text-foreground">{label}</span>
-                <span className="text-[10px] font-bold text-primary">RESPONSE</span>
-              </div>
-              <p className="mt-2 text-[11px] leading-5 text-muted">{response}</p>
-            </div>
-          ))}
-          <div className="rounded-xl border border-border bg-background p-3 text-[11px] text-muted">
-            3 tasks completed · submission received
-          </div>
-        </div>
-      );
-
-    case 'decision':
-      return (
-        <div>
-          <div className="rounded-2xl border border-border bg-surface p-4">
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <p className="text-xs font-semibold text-foreground">Tester submission</p>
-                <p className="mt-1 text-[11px] text-muted">Checkout Flow Test · 3 responses</p>
-              </div>
-              <span className="rounded-full bg-warning-bg px-2.5 py-1 text-[10px] font-bold text-warning-text">SUBMITTED</span>
-            </div>
-            <div className="mt-4 grid grid-cols-3 gap-2 text-center text-[10px]">
-              {['3 / 3 tasks', '8m 42s', 'Ready'].map((item) => (
-                <div key={item} className="rounded-lg border border-border bg-background px-2 py-2 text-muted">{item}</div>
-              ))}
-            </div>
-          </div>
-          <div className="mt-4 grid grid-cols-2 gap-3">
-            <div className="rounded-xl border border-border bg-background px-4 py-3 text-center text-xs font-semibold text-foreground">Reject</div>
-            <div className="rounded-xl bg-accent px-4 py-3 text-center text-xs font-semibold text-accent-foreground">Approve</div>
-          </div>
-        </div>
-      );
-  }
-}
-
-function DesktopWorkflowCard({
-  step,
-  index,
-  progress,
-}: {
-  step: WorkflowStep;
-  index: number;
-  progress: MotionValue<number>;
-}) {
+function DesktopArtifact({ step, index, progress }: { step: WorkflowStep; index: number; progress: MotionValue<number> }) {
   const total = steps.length;
   const segment = 1 / total;
-  const slotStart = index * segment;
-  const enterAt = slotStart + segment * 0.02;
-  const settleAt = slotStart + segment * 0.3;
+  const enterAt = index * segment + segment * 0.04;
+  const settleAt = index * segment + segment * 0.34;
+  const finalX = [-38, -26, -18, -9, 0, 10, 18][index];
+  const finalY = [40, 28, 17, 6, -5, -16, -28][index];
+  const finalRotate = [-2.6, 1.9, -1.5, 1.1, -0.8, 0.6, 0][index];
 
-  // Three-beat rhythm per card:
-  // 1) transition in, 2) arrive on point, 3) hold.
-  // Waiting cards stay fully invisible and parked beyond the right edge.
-  // Once settled, a card remains fully opaque for the rest of the story.
-  const finalX = [-34, -18, -28, -14, -22, -10, 0][index];
-  const finalY = [26, 18, 10, 0, -8, -16, 0][index];
-  const finalRotate = [-4, 3, -2.5, 2, -3, 1.5, 0][index];
-
-  const opacity = useTransform(
-    progress,
-    [enterAt, settleAt, 1],
-    [0, 1, 1],
-  );
-  const x = useTransform(
-    progress,
-    [enterAt, settleAt, 1],
-    ['72vw', `${finalX}px`, `${finalX}px`],
-  );
-  const y = useTransform(
-    progress,
-    [enterAt, settleAt, 1],
-    [64, finalY, finalY],
-  );
-  const scale = useTransform(
-    progress,
-    [enterAt, settleAt, 1],
-    [0.96, 1, 1],
-  );
-  const rotate = useTransform(
-    progress,
-    [enterAt, settleAt, 1],
-    [index % 2 === 0 ? 5.5 : -5.5, finalRotate, finalRotate],
-  );
+  const opacity = useTransform(progress, [enterAt, settleAt, 1], [0, 1, 1]);
+  const x = useTransform(progress, [enterAt, settleAt, 1], ['58vw', `${finalX}px`, `${finalX}px`]);
+  const y = useTransform(progress, [enterAt, settleAt, 1], [56, finalY, finalY]);
+  const rotate = useTransform(progress, [enterAt, settleAt, 1], [index % 2 ? -3.5 : 3.5, finalRotate, finalRotate]);
+  const scale = useTransform(progress, [enterAt, settleAt, 1], [0.97, 1, 1]);
 
   return (
-    <motion.article
-      style={{ opacity, x, y, scale, rotate, zIndex: index + 10 }}
-      className="absolute inset-x-0 top-1/2 mx-auto w-full max-w-[620px] -translate-y-1/2 rounded-[2rem] border border-border bg-background/98 p-5 shadow-[0_18px_48px_rgba(2,6,23,0.18)] backdrop-blur-md xl:p-6"
-    >
-      <div className="mb-5 flex items-start justify-between gap-4 border-b border-border pb-4">
+    <motion.article style={{ opacity, x, y, rotate, scale, zIndex: index + 10 }} className="absolute inset-x-0 top-1/2 mx-auto w-full max-w-[610px] -translate-y-1/2 overflow-hidden rounded-[1.35rem] border border-white/10 bg-[rgba(20,23,29,.94)] p-5 text-[var(--lab-bone)] shadow-[0_22px_70px_rgba(0,0,0,.34)] backdrop-blur-xl xl:p-6">
+      <div className="flex items-start justify-between gap-5">
         <div>
-          <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.16em]">
-            <span className={roleClass(step.role)}>{step.role}</span>
-            <span className="text-muted/55">{step.id}</span>
-          </div>
-          <h3 className="mt-2 text-2xl font-semibold tracking-[-0.02em] text-foreground">{step.title}</h3>
-          <p className="mt-1 text-sm leading-6 text-muted">{step.description}</p>
+          <div className="font-research flex items-center gap-2 text-[9px] uppercase tracking-[0.16em] text-[var(--lab-amber)]"><span>{step.role}</span><span className="text-white/25">/</span><span className="text-white/45">{step.id}</span></div>
+          <h3 className="font-display mt-2 text-2xl font-semibold tracking-[-0.025em]">{step.title}</h3>
+          <p className="mt-2 max-w-md text-sm leading-6 text-white/56">{step.description}</p>
         </div>
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-border bg-surface text-primary">
-          <step.icon className="h-4 w-4" />
-        </div>
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/[0.035] text-[var(--lab-amber)]"><step.icon className="h-4 w-4" /></div>
       </div>
-      <MockupBody step={step} />
+      <div className="mt-6 border-y border-white/8">
+        {step.facts.map((fact) => {
+          const [label, value] = fact.split(' / ');
+          return (
+            <div key={fact} className="flex items-center justify-between gap-6 border-b border-white/8 py-3 last:border-b-0">
+              <span className="font-research text-[9px] uppercase tracking-[0.13em] text-white/35">{label}</span>
+              <span className="text-xs font-medium text-white/72">{value}</span>
+            </div>
+          );
+        })}
+      </div>
+      <div className="font-research mt-5 flex items-center justify-between text-[8px] uppercase tracking-[0.15em] text-white/30"><span>Research artifact</span><span>Trace {step.id} / 07</span></div>
     </motion.article>
-  );
-}
-
-function StaticDesktopCard({ step, index }: { step: WorkflowStep; index: number }) {
-  return (
-    <article className="rounded-[2rem] border border-border bg-background p-6 shadow-sm">
-      <div className="mb-5 flex items-start justify-between gap-4 border-b border-border pb-4">
-        <div>
-          <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.16em]">
-            <span className={roleClass(step.role)}>{step.role}</span>
-            <span className="text-muted/55">{step.id}</span>
-          </div>
-          <h3 className="mt-2 text-2xl font-semibold tracking-tight text-foreground">{step.title}</h3>
-          <p className="mt-1 text-sm leading-6 text-muted">{step.description}</p>
-        </div>
-        <span className="text-xs font-semibold text-muted">0{index + 1}</span>
-      </div>
-      <MockupBody step={step} />
-    </article>
   );
 }
 
@@ -345,113 +126,65 @@ export function WorkflowStory() {
   const sectionRef = useRef<HTMLElement>(null);
   const reduceMotion = useReducedMotion();
   const [activeStepIndex, setActiveStepIndex] = useState(0);
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ['start start', 'end end'],
-  });
-  const progressScale = useTransform(scrollYProgress, [0.04, 0.96], [0, 1]);
+  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ['start start', 'end end'] });
+  const progressScale = useTransform(scrollYProgress, [0.03, 0.96], [0, 1]);
 
   useMotionValueEvent(scrollYProgress, 'change', (latest) => {
-    const nextIndex = Math.min(steps.length - 1, Math.max(0, Math.floor(latest * steps.length)));
-    setActiveStepIndex((current) => (current === nextIndex ? current : nextIndex));
+    const next = Math.min(steps.length - 1, Math.max(0, Math.floor(latest * steps.length)));
+    setActiveStepIndex((current) => (current === next ? current : next));
   });
 
-  const activeStep = steps[activeStepIndex];
-
   return (
-    <section
-      id="how-it-works"
-      ref={sectionRef}
-      className="relative border-y border-border bg-surface py-20 md:py-24 lg:py-0"
-    >
-      <div className="container mx-auto max-w-7xl px-6 lg:grid lg:grid-cols-[0.78fr_1.22fr] lg:gap-16 xl:gap-24">
-        <div className="lg:sticky lg:top-[18vh] lg:self-start lg:py-24">
-          <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">How it works</p>
-          <h2 className="font-display mt-4 max-w-xl text-4xl font-semibold tracking-[-0.04em] text-foreground sm:text-5xl lg:text-[3.55rem] lg:leading-[1.02]">
-            One study. From setup to decision.
-          </h2>
-          <p className="mt-6 max-w-lg text-base leading-7 text-muted md:text-lg md:leading-8">
-            Owners launch a test, testers complete it on the live site, and responses return as a review-ready submission.
-          </p>
-
-          <div className="mt-8 hidden max-w-sm lg:block">
-            <div className="flex items-center justify-between gap-4 text-[10px] font-bold uppercase tracking-[0.12em] text-muted">
-              <span className="whitespace-nowrap">Setup</span>
-              <span className="whitespace-nowrap text-right">Decision</span>
-            </div>
-            <div className="mt-3 h-1 overflow-hidden rounded-full bg-border">
-              <motion.div
-                className="h-full origin-left rounded-full bg-primary"
-                style={reduceMotion ? { scaleX: 1 } : { scaleX: progressScale }}
-              />
-            </div>
-            <div className="mt-4 flex items-center gap-2 text-xs leading-5">
-              <span className="font-semibold text-foreground">{activeStepIndex + 1}/7</span>
-              <span className="text-muted">{activeStep.title}</span>
-            </div>
+    <section id="research-flow" ref={sectionRef} className="landing-scene landing-grain relative overflow-hidden bg-[var(--lab-graphite)] py-24 text-[var(--lab-bone)] lg:py-0">
+      <div aria-hidden="true" className="absolute left-1/2 top-1/3 h-[520px] w-[720px] -translate-x-1/2 rounded-full bg-[rgba(201,161,95,.06)] blur-3xl" />
+      <div className="container relative mx-auto max-w-7xl px-6 lg:grid lg:grid-cols-[0.72fr_1.28fr] lg:gap-16 xl:gap-24">
+        <div className="lg:sticky lg:top-[17vh] lg:self-start lg:py-24">
+          <ResearchLabel index="04" label="RESEARCH FLOW" tone="dark" />
+          <h2 className="font-display mt-5 max-w-xl text-[clamp(2.6rem,5.1vw,4.1rem)] font-semibold leading-[1] tracking-[-0.045em]">One study.<br /> From setup to evidence.</h2>
+          <p className="mt-6 max-w-lg text-base leading-7 text-white/58 md:text-lg md:leading-8">Follow the research from setup, through the live product, and back into a review-ready submission.</p>
+          <div className="mt-9 hidden max-w-sm lg:block">
+            <div className="font-research flex items-center justify-between text-[9px] uppercase tracking-[0.14em] text-white/38"><span>Setup</span><span>Evidence</span></div>
+            <div className="mt-3 h-px bg-white/12"><motion.div className="h-px origin-left bg-[var(--lab-amber)]" style={reduceMotion ? { scaleX: 1 } : { scaleX: progressScale }} /></div>
+            <div className="font-research mt-4 flex items-center gap-3 text-[9px] uppercase tracking-[0.11em]"><span className="text-[var(--lab-amber)]">{String(activeStepIndex + 1).padStart(2, '0')} / 07</span><span className="text-white/42">{steps[activeStepIndex].title}</span></div>
           </div>
         </div>
 
         <div>
           {!reduceMotion && (
-            <div className="relative hidden h-[410vh] lg:block">
+            <div className="relative hidden h-[400vh] lg:block">
               <div className="sticky top-20 flex h-[calc(100vh-5rem)] items-center">
                 <div className="relative h-[660px] w-full">
-                  <div
-                    aria-hidden="true"
-                    className="absolute left-1/2 top-1/2 h-[72%] w-[78%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/8 blur-3xl"
-                  />
-                  {steps.map((step, index) => (
-                    <DesktopWorkflowCard
-                      key={step.id}
-                      step={step}
-                      index={index}
-                      progress={scrollYProgress}
-                    />
-                  ))}
+                  {steps.map((step, index) => <DesktopArtifact key={step.id} step={step} index={index} progress={scrollYProgress} />)}
                 </div>
               </div>
             </div>
           )}
 
-          {reduceMotion && (
-            <div className="hidden space-y-6 py-24 lg:block">
-              {steps.map((step, index) => (
-                <StaticDesktopCard key={step.id} step={step} index={index} />
-              ))}
-            </div>
-          )}
-
-          <div className="relative mt-14 lg:hidden">
-            <div className="absolute bottom-0 left-[15px] top-0 w-px bg-border" />
-            <div className="space-y-6 pl-10">
-              {steps.map((step, index) => (
-                <motion.article
-                  key={step.id}
-                  initial={reduceMotion ? false : { opacity: 0, y: 28, scale: 0.985 }}
-                  whileInView={reduceMotion ? undefined : { opacity: 1, y: 0, scale: 1 }}
-                  viewport={{ once: false, amount: 0.24 }}
-                  transition={{ duration: 0.62, ease: [0.22, 1, 0.36, 1] }}
-                  className="relative rounded-[1.6rem] border border-border bg-background p-4 shadow-sm sm:p-5"
-                >
-                  <div className="absolute -left-[34px] top-6 flex h-7 w-7 items-center justify-center rounded-full border-4 border-surface bg-background text-primary shadow-sm">
-                    <step.icon className="h-3.5 w-3.5" />
-                  </div>
-                  <div className="mb-4 flex items-start justify-between gap-4">
-                    <div>
-                      <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.16em]">
-                        <span className={roleClass(step.role)}>{step.role}</span>
-                        <span className="text-muted/55">{step.id}</span>
-                      </div>
-                      <h3 className="mt-2 text-xl font-semibold tracking-tight text-foreground">{step.title}</h3>
-                      <p className="mt-1 text-sm leading-6 text-muted">{step.description}</p>
-                    </div>
-                    <span className="text-[10px] font-semibold text-muted">0{index + 1}</span>
-                  </div>
-                  <MockupBody step={step} />
+          <div className={`py-10 ${reduceMotion ? 'lg:py-24' : 'lg:py-0'}`}>
+            <div className="relative space-y-5 lg:hidden">
+              <div aria-hidden="true" className="absolute bottom-4 left-[13px] top-4 w-px bg-white/12" />
+              {steps.map((step) => (
+                <motion.article key={step.id} initial={reduceMotion ? false : { opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false, amount: 0.26 }} transition={{ duration: 0.62, ease: [0.22, 1, 0.36, 1] }} className="relative ml-10 rounded-[1.2rem] border border-white/10 bg-[var(--lab-carbon)] p-5">
+                  <div className="absolute -left-[38px] top-6 flex h-7 w-7 items-center justify-center rounded-full border border-white/15 bg-[var(--lab-graphite)] text-[var(--lab-amber)]"><step.icon className="h-3.5 w-3.5" /></div>
+                  <p className="font-research text-[9px] uppercase tracking-[0.15em] text-[var(--lab-amber)]">{step.id} / {step.role}</p>
+                  <h3 className="font-display mt-2 text-xl font-semibold">{step.title}</h3>
+                  <p className="mt-2 text-sm leading-6 text-white/55">{step.description}</p>
+                  <div className="mt-4 border-t border-white/8 pt-3">{step.facts.slice(0, 2).map((fact) => <p key={fact} className="font-research mt-2 text-[8px] uppercase tracking-[0.12em] text-white/35">{fact}</p>)}</div>
                 </motion.article>
               ))}
             </div>
+
+            {reduceMotion && (
+              <div className="hidden space-y-5 lg:block">
+                {steps.map((step) => (
+                  <article key={step.id} className="rounded-[1.3rem] border border-white/10 bg-[var(--lab-carbon)] p-6">
+                    <p className="font-research text-[9px] uppercase tracking-[0.15em] text-[var(--lab-amber)]">{step.id} / {step.role}</p>
+                    <h3 className="font-display mt-2 text-2xl font-semibold">{step.title}</h3>
+                    <p className="mt-2 text-sm text-white/55">{step.description}</p>
+                  </article>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>
