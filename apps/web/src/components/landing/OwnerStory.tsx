@@ -20,9 +20,9 @@ export function OwnerStory() {
   const panelY = useTransform(scrollYProgress, [0.15, 0.55, 0.9], [58, 0, -28]);
 
   return (
-    <section id="study" ref={sectionRef} className="landing-scene relative overflow-hidden bg-[var(--lab-stone)] py-24 text-[var(--lab-ink)] md:py-32 lg:py-36">
-      <div className="container mx-auto max-w-7xl px-6">
-        <div className="grid items-center gap-14 lg:grid-cols-[1.18fr_0.82fr] lg:gap-20">
+    <section id="study" ref={sectionRef} className="landing-scene landing-light-scene landing-section-space relative overflow-hidden bg-[var(--lab-stone)] text-[var(--lab-ink)]">
+      <div className="container mx-auto max-w-7xl px-5 sm:px-6">
+        <div className="grid items-center gap-12 md:gap-14 lg:grid-cols-[1.18fr_0.82fr] lg:gap-16 xl:gap-20">
           <div className="relative order-2 lg:order-1">
             <motion.div style={reduceMotion ? undefined : { y: imageY }}>
               <EditorialImage src="/home_image/owner_campaign_setup_001.webp" alt="A product research team preparing a usability study inside a contemporary interaction lab." sizes="(min-width: 1024px) 58vw, 100vw" className="aspect-[4/3] rounded-[2rem] shadow-[0_30px_85px_rgba(33,29,24,.18)]" objectPosition="50% 50%" />
