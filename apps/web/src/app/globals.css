@@ -140,6 +140,12 @@ textarea {
   font-family: var(--font-ibm-plex-mono), ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 }
 
+.landing-lab .font-editorial {
+  font-family: var(--font-instrument-serif), Georgia, "Times New Roman", serif;
+  font-feature-settings: "kern", "liga", "calt";
+  text-wrap: balance;
+}
+
 .landing-scene {
   scroll-margin-top: 4.5rem;
 }
