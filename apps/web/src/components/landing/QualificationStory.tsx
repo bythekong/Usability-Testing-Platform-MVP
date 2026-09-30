@@ -44,12 +44,12 @@ export function QualificationStory() {
     <section
       id="qualification"
       ref={sectionRef}
-      className="landing-scene landing-pin-qualification relative overflow-clip bg-[var(--lab-bone)] text-[var(--lab-ink)] lg:min-h-[165vh]"
+      className="landing-scene landing-light-scene landing-pin-qualification relative overflow-clip bg-[var(--lab-bone)] text-[var(--lab-ink)] lg:min-h-[165vh]"
     >
       <div aria-hidden="true" className="absolute -right-32 top-10 h-80 w-80 rounded-full bg-[rgba(169,101,80,.09)] blur-3xl" />
 
-      <div className="landing-pinned-stage container relative mx-auto max-w-7xl px-6 py-24 md:py-32 lg:sticky lg:top-0 lg:flex lg:h-screen lg:items-center lg:py-8">
-        <div className="grid w-full items-center gap-12 lg:grid-cols-[0.76fr_1.24fr] lg:gap-20">
+      <div className="landing-pinned-stage container relative mx-auto max-w-7xl px-5 py-20 sm:px-6 sm:py-24 md:py-28 lg:sticky lg:top-0 lg:flex lg:h-screen lg:items-center lg:py-8">
+        <div className="grid w-full items-center gap-10 md:gap-12 lg:grid-cols-[0.76fr_1.24fr] lg:gap-16 xl:gap-20">
           <div>
             <p className="font-research inline-flex rounded-full border border-[var(--lab-light-border)] px-3 py-1.5 text-[9px] font-medium uppercase tracking-[0.15em] text-[var(--lab-muted)]">
               Planned research capability
