@@ -2,6 +2,7 @@
 
 import { motion, useReducedMotion } from 'framer-motion';
 import { EditorialImage } from './EditorialImage';
+import { TypeLine } from './TypeLine';
 
 const evidence = [
   ['TASK 01', '“Plan differences needed a second read.”'],
@@ -27,14 +28,17 @@ export function ReviewStory() {
                   </motion.div>
                 ))}
                 <motion.div initial={reduceMotion ? false : { opacity: 0, y: 28, scale: 0.97 }} whileInView={{ opacity: 1, y: 0, scale: 1 }} viewport={{ once: false, amount: 0.55 }} transition={{ delay: 0.24, duration: 0.7, ease: [0.22, 1, 0.36, 1] }} className="rounded-[1.05rem] border border-[rgba(127,137,120,.35)] bg-[rgba(127,137,120,.12)] p-4">
-                  <p className="font-research text-[8px] uppercase tracking-[0.15em] text-[var(--lab-sage)]">Surfaced pattern</p><p className="mt-2 text-sm font-medium leading-6 text-[#45484a]">Plan comparison requires repeated scanning.</p>
+                  <p className="font-research text-[8px] uppercase tracking-[0.15em] text-[var(--lab-sage)]">Surfaced pattern</p><p className="font-editorial mt-2 text-[1.08rem] italic leading-6 text-[#45484a]">Plan comparison requires repeated scanning.</p>
                 </motion.div>
               </div>
             </div>
           </div>
 
           <div className="order-1 lg:order-2">
-            <h2 className="font-display text-[clamp(2.65rem,5.1vw,4.15rem)] font-semibold leading-[1] tracking-[-0.045em]">What happened<br /> becomes evidence.</h2>
+            <h2 className="font-editorial text-[clamp(2.9rem,5.35vw,4.65rem)] font-normal leading-[0.96] tracking-[-0.035em]">
+              <TypeLine duration={0.82} fromX={-10} fromY={24}>What happened</TypeLine>
+              <TypeLine delay={0.18} duration={0.9} fromX={12} fromY={26} className="italic text-[rgba(24,25,28,.86)]">becomes evidence.</TypeLine>
+            </h2>
             <p className="mt-6 max-w-xl text-base leading-7 text-[#5f6064] md:text-lg md:leading-8">Responses stay connected to the tasks and context that produced them. AI can help organize the material. Researchers interpret what it means.</p>
             <div className="mt-8 border-l border-[var(--lab-sage)]/45 pl-4"><p className="font-research text-[9px] uppercase tracking-[0.14em] text-[#77787c]">Research principle</p><p className="mt-2 text-sm font-medium text-[#515257]">Researchers interpret what it means.</p></div>
           </div>

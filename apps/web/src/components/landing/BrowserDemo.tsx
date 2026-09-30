@@ -15,6 +15,7 @@ import {
 } from 'framer-motion';
 import Image from 'next/image';
 import { Check, MousePointer2 } from 'lucide-react';
+import { TypeLine } from './TypeLine';
 
 type Point = {
   x: number;
@@ -319,8 +320,8 @@ export function BrowserDemo() {
       <div className="mx-auto flex min-h-[64vh] max-w-6xl items-end px-6 pb-16 pt-24 md:min-h-[72vh] md:pb-20 md:pt-32 lg:min-h-[78vh]">
         <div className="max-w-4xl">
           <h2 className="font-display text-[clamp(2.9rem,7.5vw,6.5rem)] font-semibold leading-[0.93] tracking-[-0.055em]">
-            Keep the task
-            <br /> beside the experience.
+            <TypeLine duration={0.8} fromY={34}>Keep the task</TypeLine>
+            <TypeLine delay={0.12} duration={0.88} fromY={38}>beside the experience.</TypeLine>
           </h2>
           <p className="mt-7 max-w-2xl text-base leading-7 text-white/56 md:text-xl md:leading-8">
             The tester works on the real target while instructions, progress, and feedback stay in context.

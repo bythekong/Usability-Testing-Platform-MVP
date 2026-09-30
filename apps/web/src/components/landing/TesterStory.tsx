@@ -4,6 +4,7 @@ import { useRef } from 'react';
 import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion';
 import { MousePointer2 } from 'lucide-react';
 import { EditorialImage } from './EditorialImage';
+import { TypeLine } from './TypeLine';
 
 export function TesterStory() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -18,7 +19,10 @@ export function TesterStory() {
       <div className="container mx-auto max-w-7xl px-6">
         <div className="grid items-center gap-14 lg:grid-cols-[0.78fr_1.22fr] lg:gap-20">
           <div>
-            <h2 className="font-display text-[clamp(2.65rem,5.2vw,4.2rem)] font-semibold leading-[1] tracking-[-0.045em]">The moment before<br /> the click matters.</h2>
+            <h2 className="font-editorial text-[clamp(2.9rem,5.5vw,4.7rem)] font-normal leading-[0.96] tracking-[-0.035em]">
+              <TypeLine duration={0.82} fromY={28}>The moment before</TypeLine>
+              <TypeLine delay={0.28} duration={0.9} fromY={30} className="italic text-[rgba(24,25,28,.88)]">the click matters.</TypeLine>
+            </h2>
             <p className="mt-6 max-w-xl text-base leading-7 text-[#5f6064] md:text-lg md:leading-8">People do not experience interfaces as funnels or metrics. They search, hesitate, misunderstand, recover, and decide.</p>
             <div className="mt-9 max-w-md border-t border-black/10 pt-5"><p className="font-research text-[9px] uppercase tracking-[0.14em] text-[#77787c]">Observed moment</p><p className="mt-2 text-sm leading-6 text-[#626367]">The pause is part of the evidence. The interface does not need to explain it away.</p></div>
           </div>

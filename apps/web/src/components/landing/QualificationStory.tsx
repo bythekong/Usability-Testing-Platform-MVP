@@ -10,6 +10,7 @@ import {
 } from 'framer-motion';
 import { Check, Mic2 } from 'lucide-react';
 import { EditorialImage } from './EditorialImage';
+import { TypeLine } from './TypeLine';
 
 const criteria = [
   ['Mobile banking experience', 'MATCH'],
@@ -54,8 +55,8 @@ export function QualificationStory() {
               Planned research capability
             </p>
             <h2 className="font-display mt-6 max-w-xl text-[clamp(2.55rem,5.3vw,4.25rem)] font-semibold leading-[1.01] tracking-[-0.045em]">
-              Find the people
-              <br /> who fit the question.
+              <TypeLine duration={0.72} fromY={26}>Find the people</TypeLine>
+              <TypeLine delay={0.08} duration={0.76} fromY={28}>who fit the question.</TypeLine>
             </h2>
             <p className="mt-6 max-w-xl text-base leading-7 text-[#5f6064] md:text-lg md:leading-8">
               Good research starts with the right context. We&apos;re designing AI-assisted screening to structure study-relevant information before a participant enters a test.
