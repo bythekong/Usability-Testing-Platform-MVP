@@ -2,7 +2,6 @@
 
 import { motion, useReducedMotion } from 'framer-motion';
 import { EditorialImage } from './EditorialImage';
-import { ResearchLabel } from './ResearchLabel';
 
 const evidence = [
   ['TASK 01', '“Plan differences needed a second read.”'],
@@ -35,8 +34,7 @@ export function ReviewStory() {
           </div>
 
           <div className="order-1 lg:order-2">
-            <ResearchLabel index="07" label="EVIDENCE" />
-            <h2 className="font-display mt-5 text-[clamp(2.65rem,5.1vw,4.15rem)] font-semibold leading-[1] tracking-[-0.045em]">What happened<br /> becomes evidence.</h2>
+            <h2 className="font-display text-[clamp(2.65rem,5.1vw,4.15rem)] font-semibold leading-[1] tracking-[-0.045em]">What happened<br /> becomes evidence.</h2>
             <p className="mt-6 max-w-xl text-base leading-7 text-[#5f6064] md:text-lg md:leading-8">Responses stay connected to the tasks and context that produced them. AI can help organize the material. Researchers interpret what it means.</p>
             <div className="mt-8 border-l border-[var(--lab-sage)]/45 pl-4"><p className="font-research text-[9px] uppercase tracking-[0.14em] text-[#77787c]">Research principle</p><p className="mt-2 text-sm font-medium text-[#515257]">Researchers interpret what it means.</p></div>
           </div>

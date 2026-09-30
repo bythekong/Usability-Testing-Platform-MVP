@@ -18,7 +18,6 @@ import {
   MonitorUp,
   MousePointerClick,
 } from 'lucide-react';
-import { ResearchLabel } from './ResearchLabel';
 
 const steps = [
   {
@@ -187,8 +186,7 @@ export function WorkflowStory() {
       <div className="landing-pinned-stage container relative mx-auto max-w-7xl px-6 py-24 lg:sticky lg:top-0 lg:flex lg:h-screen lg:items-center lg:py-10">
         <div className="grid w-full items-center gap-14 lg:grid-cols-[0.72fr_1.28fr] lg:gap-16 xl:gap-24">
           <div>
-            <ResearchLabel index="04" label="RESEARCH FLOW" tone="dark" />
-            <h2 className="font-display mt-5 max-w-xl text-[clamp(2.6rem,5.1vw,4.1rem)] font-semibold leading-[1] tracking-[-0.045em]">
+            <h2 className="font-display max-w-xl text-[clamp(2.6rem,5.1vw,4.1rem)] font-semibold leading-[1] tracking-[-0.045em]">
               One study.
               <br /> From setup to evidence.
             </h2>
