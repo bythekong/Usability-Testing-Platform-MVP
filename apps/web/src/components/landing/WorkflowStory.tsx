@@ -180,12 +180,12 @@ export function WorkflowStory() {
     <section
       id="research-flow"
       ref={sectionRef}
-      className="landing-scene landing-grain landing-pin-workflow relative overflow-clip bg-[var(--lab-graphite)] text-[var(--lab-bone)] lg:min-h-[420vh]"
+      className="landing-scene landing-dark-scene landing-grain landing-pin-workflow relative overflow-clip bg-[var(--lab-graphite)] text-[var(--lab-bone)] lg:min-h-[420vh]"
     >
       <div aria-hidden="true" className="absolute left-1/2 top-1/3 h-[520px] w-[720px] -translate-x-1/2 rounded-full bg-[rgba(201,161,95,.06)] blur-3xl" />
 
-      <div className="landing-pinned-stage container relative mx-auto max-w-7xl px-6 py-24 lg:sticky lg:top-0 lg:flex lg:h-screen lg:items-center lg:py-10">
-        <div className="grid w-full items-center gap-14 lg:grid-cols-[0.72fr_1.28fr] lg:gap-16 xl:gap-24">
+      <div className="landing-pinned-stage container relative mx-auto max-w-7xl px-5 py-20 sm:px-6 sm:py-24 lg:sticky lg:top-0 lg:flex lg:h-screen lg:items-center lg:py-10">
+        <div className="grid w-full items-center gap-12 md:gap-14 lg:grid-cols-[0.72fr_1.28fr] lg:gap-16 xl:gap-24">
           <div>
             <h2 className="font-display max-w-xl text-[clamp(2.6rem,5.1vw,4.1rem)] font-semibold leading-[1] tracking-[-0.045em]">
               <TypeLine duration={0.74} fromY={28}>One study.</TypeLine>
@@ -242,7 +242,7 @@ export function WorkflowStory() {
               </div>
             )}
 
-            <div className="relative space-y-5 lg:hidden">
+            <div className="relative space-y-4 sm:space-y-5 lg:hidden">
               <div aria-hidden="true" className="absolute bottom-4 left-[13px] top-4 w-px bg-white/12" />
               {steps.map((step) => (
                 <motion.article
