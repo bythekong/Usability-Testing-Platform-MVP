@@ -5,8 +5,54 @@ on:
     branches: [main]
   pull_request:
 
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+env:
+  JWT_SECRET: ci-only-secret-that-is-long-enough-for-tests
+  NEXT_PUBLIC_API_URL: http://localhost:4000
+  NEXT_PUBLIC_EXTENSION_ID: test-extension-id
+  EXTENSION_API_URL: http://localhost:4000
+  WEB_APP_ORIGINS: http://localhost/*
+  DATABASE_URL: postgresql://postgres:password@localhost:5432/usability_ci?schema=public
+
 jobs:
-  verify:
+  quality:
+    name: Typecheck, build and lint
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Restore build caches
+        uses: actions/cache@v4
+        with:
+          path: |
+            .turbo
+            apps/web/.next/cache
+          key: ${{ runner.os }}-build-${{ hashFiles('pnpm-lock.yaml') }}-${{ github.ref_name }}-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ hashFiles('pnpm-lock.yaml') }}-${{ github.ref_name }}-
+            ${{ runner.os }}-build-${{ hashFiles('pnpm-lock.yaml') }}-
+
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @usability-testing/api db:generate
+      - run: pnpm typecheck
+      - run: pnpm build
+      - run: pnpm lint
+
+  integration:
+    name: API integration tests
     runs-on: ubuntu-latest
 
     services:
@@ -27,10 +73,7 @@ jobs:
     env:
       DATABASE_URL: postgresql://postgres:password@localhost:5432/usability_ci?schema=public
       JWT_SECRET: ci-only-secret-that-is-long-enough-for-tests
-      NEXT_PUBLIC_API_URL: http://localhost:4000
-      NEXT_PUBLIC_EXTENSION_ID: test-extension-id
-      EXTENSION_API_URL: http://localhost:4000
-      WEB_APP_ORIGINS: http://localhost/*
+      TEST_RUN_ID: gh-${{ github.run_id }}-${{ github.run_attempt }}
 
     steps:
       - uses: actions/checkout@v4
@@ -47,7 +90,6 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm --filter @usability-testing/api db:generate
       - run: pnpm --filter @usability-testing/api db:migrate:deploy
-      - run: pnpm typecheck
-      - run: pnpm build
-      - run: pnpm lint
-      - run: pnpm test
+      - run: pnpm --filter @usability-testing/shared build
+      - run: pnpm --filter @usability-testing/api build
+      - run: pnpm --filter @usability-testing/api test:run
