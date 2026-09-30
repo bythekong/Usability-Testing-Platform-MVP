@@ -1,53 +1,27 @@
 'use client';
 
-import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { Button } from '@/components/ui/Button';
+import { motion, useReducedMotion } from 'framer-motion';
+import { ArrowUpRight } from 'lucide-react';
+import { ResearchLabel } from './ResearchLabel';
 
 export function CTA() {
+  const reduceMotion = useReducedMotion();
+
   return (
-    <section className="py-32 bg-surface relative overflow-hidden border-t border-border">
-      <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_bottom,_var(--tw-gradient-stops))] from-primary/5 via-background to-background"></div>
-      
-      <div className="container mx-auto px-6 text-center max-w-3xl">
-        <motion.h2 
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="font-display text-4xl md:text-5xl font-semibold tracking-tight mb-6"
-        >
-          Start testing the experience your users actually see.
-        </motion.h2>
-        
-        <motion.p 
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.1 }}
-          className="text-xl text-muted mb-10"
-        >
-          Connect real users with your product in minutes. Stop guessing and start validating.
-        </motion.p>
-        
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.2 }}
-          className="flex flex-col sm:flex-row justify-center items-center gap-4"
-        >
-          <Link href="/login">
-            <Button size="lg" className="h-14 px-10 text-base rounded-full shadow-[0_8px_24px_rgba(0,0,0,0.10)]">
-              Get Started
-            </Button>
-          </Link>
-          <Link href="/login">
-            <Button variant="ghost" size="lg" className="h-14 px-10 text-base rounded-full">
-              Log in to Dashboard
-            </Button>
-          </Link>
-        </motion.div>
-      </div>
+    <section id="decision" className="landing-scene landing-grain relative overflow-hidden bg-[var(--lab-graphite)] px-6 py-28 text-[var(--lab-bone)] md:py-40">
+      <div aria-hidden="true" className="absolute left-1/2 top-0 h-80 w-[640px] -translate-x-1/2 rounded-full bg-[rgba(201,161,95,.06)] blur-3xl" />
+      <motion.div initial={reduceMotion ? false : { opacity: 0, y: 28 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false, amount: 0.35 }} transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }} className="relative mx-auto max-w-5xl text-center">
+        <ResearchLabel index="08" label="DECISION" tone="dark" />
+        <h2 className="font-display mt-6 text-[clamp(3rem,7vw,6rem)] font-semibold leading-[0.95] tracking-[-0.055em]">See what your users see.</h2>
+        <p className="mx-auto mt-7 max-w-2xl text-base leading-7 text-white/56 md:text-lg md:leading-8">Find the right participants, observe real behavior, and build evidence your team can reason about.</p>
+        <div className="mx-auto mt-10 flex max-w-lg flex-col justify-center gap-3 sm:flex-row">
+          <Link href="/login?role=OWNER" className="group inline-flex h-14 flex-1 items-center justify-center gap-2 rounded-full bg-[var(--lab-bone)] px-6 text-sm font-semibold text-[var(--lab-graphite)] transition-transform duration-200 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white">Create a study <ArrowUpRight className="h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" /></Link>
+          <Link href="/login?role=TESTER" className="inline-flex h-14 flex-1 items-center justify-center rounded-full border border-white/22 px-6 text-sm font-semibold text-[var(--lab-bone)] transition-colors hover:border-white/45 hover:bg-white/[0.04] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white">Explore as a tester</Link>
+        </div>
+        <div className="mx-auto mt-16 h-px max-w-xl bg-white/10" />
+        <p className="font-research mt-6 text-[9px] uppercase tracking-[0.15em] text-white/36">AI assists. Humans experience. Researchers decide.</p>
+      </motion.div>
     </section>
   );
 }
