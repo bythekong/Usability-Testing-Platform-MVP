@@ -13,8 +13,8 @@ import {
   useScroll,
   useTransform,
 } from 'framer-motion';
+import Image from 'next/image';
 import { Check, MousePointer2 } from 'lucide-react';
-import { EditorialImage } from './EditorialImage';
 
 type Point = {
   x: number;
@@ -354,15 +354,16 @@ export function BrowserDemo() {
               ref={surfaceRef}
               className="relative min-h-[716px] overflow-hidden bg-[#ece8df] lg:h-[calc(100%-3rem)] lg:min-h-0"
             >
-              <EditorialImage
-                src="/home_image/target_website_pricing_001.webp"
-                alt=""
-                sizes="100vw"
-                className="absolute inset-0 z-0 h-full w-full rounded-none opacity-[0.1]"
-                imageClassName="scale-[1.025] object-cover"
-                objectPosition="50% 48%"
-                overlay={false}
-              />
+              <div aria-hidden="true" className="absolute inset-0 z-0 overflow-hidden">
+                <Image
+                  src="/home_image/target_website_pricing_001.webp"
+                  alt=""
+                  fill
+                  sizes="100vw"
+                  className="scale-[1.025] object-cover opacity-[0.1]"
+                  style={{ objectPosition: '50% 48%' }}
+                />
+              </div>
 
               <div
                 aria-hidden="true"
