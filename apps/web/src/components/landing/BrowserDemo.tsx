@@ -33,9 +33,9 @@ export function BrowserDemo() {
   });
 
   return (
-    <section id="in-context" ref={sectionRef} className="landing-scene landing-grain relative overflow-hidden bg-[var(--lab-graphite)] text-[var(--lab-bone)] lg:min-h-[210vh]">
-      <div className="container relative mx-auto max-w-[1440px] px-4 py-24 sm:px-6 md:py-32 lg:sticky lg:top-0 lg:flex lg:min-h-screen lg:flex-col lg:justify-center lg:py-20">
-        <div className="mx-auto mb-10 max-w-3xl text-center md:mb-14">
+    <section id="in-context" ref={sectionRef} className="landing-scene landing-grain landing-pin-browser relative overflow-clip bg-[var(--lab-graphite)] text-[var(--lab-bone)] lg:min-h-[210vh]">
+      <div className="landing-pinned-stage container relative mx-auto max-w-[1440px] px-4 py-24 sm:px-6 md:py-32 lg:sticky lg:top-0 lg:flex lg:h-screen lg:flex-col lg:justify-center lg:py-8">
+        <div className="mx-auto mb-8 max-w-3xl text-center md:mb-10">
           <ResearchLabel index="06" label="IN CONTEXT" tone="dark" />
           <h2 className="font-display mt-5 text-[clamp(2.7rem,5.7vw,4.7rem)] font-semibold leading-[0.98] tracking-[-0.048em]">Keep the task<br /> beside the experience.</h2>
           <p className="mx-auto mt-6 max-w-2xl text-base leading-7 text-white/56 md:text-lg md:leading-8">The tester works on the real target while instructions, progress, and feedback stay in context.</p>
@@ -48,7 +48,7 @@ export function BrowserDemo() {
               <div className="mx-auto flex h-8 w-[68%] max-w-xl items-center rounded-lg border border-black/10 bg-white/55 px-3 font-research text-[9px] text-black/45">https://acme-corp.com/pricing</div>
             </div>
 
-            <div className="relative min-h-[510px] md:min-h-[630px] lg:min-h-[650px]">
+            <div className="relative min-h-[510px] md:min-h-[600px] lg:h-[58vh] lg:min-h-[420px] lg:max-h-[620px]">
               <div className="absolute inset-3 md:inset-5 lg:inset-7">
                 <EditorialImage src="/home_image/target_website_pricing_001.webp" alt="A fictional near-future product pricing and configuration website underneath the testing extension." sizes="(min-width: 1280px) 1180px, (min-width: 768px) 94vw, 100vw" className="h-full w-full rounded-[1rem]" imageClassName="object-cover" objectPosition="50% 50%" overlay={false} />
               </div>

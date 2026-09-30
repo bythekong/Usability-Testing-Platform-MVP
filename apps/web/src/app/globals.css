@@ -154,10 +154,27 @@ textarea {
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.42'/%3E%3C/svg%3E");
 }
 
+.landing-pinned-stage {
+  will-change: transform;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .landing-lab *,
   .landing-lab *::before,
   .landing-lab *::after {
     scroll-behavior: auto !important;
+  }
+
+  .landing-pin-qualification,
+  .landing-pin-workflow,
+  .landing-pin-browser {
+    min-height: auto !important;
+  }
+
+  .landing-pinned-stage {
+    position: static !important;
+    height: auto !important;
+    min-height: auto !important;
+    will-change: auto;
   }
 }
