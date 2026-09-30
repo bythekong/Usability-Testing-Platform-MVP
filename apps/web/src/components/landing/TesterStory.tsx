@@ -15,9 +15,9 @@ export function TesterStory() {
   const cursorY = useTransform(scrollYProgress, [0.12, 0.34, 0.5, 0.68, 0.9], ['62%', '52%', '52%', '44%', '48%']);
 
   return (
-    <section id="observation" ref={sectionRef} className="landing-scene relative overflow-hidden bg-[var(--lab-bone)] py-24 text-[var(--lab-ink)] md:py-32 lg:py-36">
-      <div className="container mx-auto max-w-7xl px-6">
-        <div className="grid items-center gap-14 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16 xl:gap-20">
+    <section id="observation" ref={sectionRef} className="landing-scene landing-light-scene landing-section-space relative overflow-hidden bg-[var(--lab-bone)] text-[var(--lab-ink)]">
+      <div className="container mx-auto max-w-7xl px-5 sm:px-6">
+        <div className="grid items-center gap-12 md:gap-14 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16 xl:gap-20">
           <div>
             <h2 className="font-editorial max-w-[6.6ch] text-[clamp(3.5rem,6.25vw,5.8rem)] font-medium leading-[0.9] tracking-[-0.045em]">
               <TypeLine duration={0.82} fromY={28}>The moment before</TypeLine>
