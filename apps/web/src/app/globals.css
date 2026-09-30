@@ -141,7 +141,7 @@ textarea {
 }
 
 .landing-lab .font-editorial {
-  font-family: var(--font-instrument-serif), Georgia, "Times New Roman", serif;
+  font-family: var(--font-fraunces), Georgia, "Times New Roman", serif;
   font-feature-settings: "kern", "liga", "calt";
   text-wrap: balance;
 }
