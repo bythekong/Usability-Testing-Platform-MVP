@@ -10,7 +10,6 @@ import {
 } from 'framer-motion';
 import { Check, Mic2 } from 'lucide-react';
 import { EditorialImage } from './EditorialImage';
-import { ResearchLabel } from './ResearchLabel';
 
 const criteria = [
   ['Mobile banking experience', 'MATCH'],
@@ -31,7 +30,7 @@ export function QualificationStory() {
 
   const imageScale = useTransform(scrollYProgress, [0, 0.48, 1], [0.985, 1, 1.015]);
   const panelY = useTransform(scrollYProgress, [0.08, 0.42, 0.9], [44, 0, -18]);
-  const panelOpacity = useTransform(scrollYProgress, [0.04, 0.24, 0.94], [0.62, 1, 0.9]);
+  const panelOpacity = useTransform(scrollYProgress, [0.04, 0.24, 1], [0.62, 1, 1]);
   const transcriptOpacity = useTransform(scrollYProgress, [0.12, 0.3], [0, 1]);
   const transcriptY = useTransform(scrollYProgress, [0.12, 0.3], [10, 0]);
 
@@ -51,8 +50,7 @@ export function QualificationStory() {
       <div className="landing-pinned-stage container relative mx-auto max-w-7xl px-6 py-24 md:py-32 lg:sticky lg:top-0 lg:flex lg:h-screen lg:items-center lg:py-8">
         <div className="grid w-full items-center gap-12 lg:grid-cols-[0.76fr_1.24fr] lg:gap-20">
           <div>
-            <ResearchLabel index="02" label="QUALIFICATION" />
-            <p className="font-research mt-5 inline-flex rounded-full border border-[var(--lab-light-border)] px-3 py-1.5 text-[9px] font-medium uppercase tracking-[0.15em] text-[var(--lab-muted)]">
+            <p className="font-research inline-flex rounded-full border border-[var(--lab-light-border)] px-3 py-1.5 text-[9px] font-medium uppercase tracking-[0.15em] text-[var(--lab-muted)]">
               Planned research capability
             </p>
             <h2 className="font-display mt-6 max-w-xl text-[clamp(2.55rem,5.3vw,4.25rem)] font-semibold leading-[1.01] tracking-[-0.045em]">

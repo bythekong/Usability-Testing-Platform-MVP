@@ -39,10 +39,7 @@ export function Hero() {
       <div aria-hidden="true" className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_55%_34%,rgba(201,161,95,.10),transparent_31%)]" />
 
       <motion.div style={reduceMotion ? undefined : { y: contentY, opacity: contentOpacity }} className="relative z-10 mx-auto flex w-full max-w-6xl flex-col items-center text-center">
-        <motion.p initial={reduceMotion ? false : { opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.65, ease }} className="font-research text-[10px] font-medium uppercase tracking-[0.2em] text-[var(--lab-amber)] sm:text-[11px]">
-          Future Test Lab / 2030
-        </motion.p>
-        <motion.h1 initial={reduceMotion ? false : { opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.82, delay: 0.08, ease }} className="font-display mt-6 max-w-5xl text-balance text-[clamp(3.15rem,8vw,6.5rem)] font-semibold leading-[0.94] tracking-[-0.055em] text-[var(--lab-bone)]">
+        <motion.h1 initial={reduceMotion ? false : { opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.82, delay: 0.08, ease }} className="font-display max-w-5xl text-balance text-[clamp(3.15rem,8vw,6.5rem)] font-semibold leading-[0.94] tracking-[-0.055em] text-[var(--lab-bone)]">
           Watch real users
           <br className="hidden sm:block" /> use what you built.
         </motion.h1>
