@@ -18,6 +18,7 @@ import {
   MonitorUp,
   MousePointerClick,
 } from 'lucide-react';
+import { TypeLine } from './TypeLine';
 
 const steps = [
   {
@@ -187,8 +188,8 @@ export function WorkflowStory() {
         <div className="grid w-full items-center gap-14 lg:grid-cols-[0.72fr_1.28fr] lg:gap-16 xl:gap-24">
           <div>
             <h2 className="font-display max-w-xl text-[clamp(2.6rem,5.1vw,4.1rem)] font-semibold leading-[1] tracking-[-0.045em]">
-              One study.
-              <br /> From setup to evidence.
+              <TypeLine duration={0.74} fromY={28}>One study.</TypeLine>
+              <TypeLine delay={0.1} duration={0.78} fromY={30}>From setup to evidence.</TypeLine>
             </h2>
             <p className="mt-6 max-w-lg text-base leading-7 text-white/58 md:text-lg md:leading-8">
               Follow the research from setup, through the live product, and back into a review-ready submission.
@@ -203,8 +204,25 @@ export function WorkflowStory() {
                 <motion.div className="h-px origin-left bg-[var(--lab-amber)]" style={reduceMotion ? { scaleX: 1 } : { scaleX: progressScale }} />
               </div>
               <div className="font-research mt-4 flex items-center gap-3 text-[9px] uppercase tracking-[0.11em]">
-                <span className="text-[var(--lab-amber)]">{String(activeStepIndex + 1).padStart(2, '0')} / 07</span>
-                <span className="text-white/42">{steps[activeStepIndex].title}</span>
+                <span className="relative inline-flex h-4 min-w-[58px] items-center overflow-hidden text-[var(--lab-amber)]">
+                  <motion.span
+                    key={activeStepIndex}
+                    initial={reduceMotion ? false : { opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+                  >
+                    {String(activeStepIndex + 1).padStart(2, '0')} / 07
+                  </motion.span>
+                </span>
+                <motion.span
+                  key={`step-title-${activeStepIndex}`}
+                  initial={reduceMotion ? false : { opacity: 0, x: 8 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.34, ease: [0.22, 1, 0.36, 1] }}
+                  className="text-white/42"
+                >
+                  {steps[activeStepIndex].title}
+                </motion.span>
               </div>
             </div>
           </div>
