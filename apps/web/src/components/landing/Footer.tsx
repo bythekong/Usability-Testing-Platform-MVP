@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 export function Footer() {
   return (
-    <footer className="border-t border-white/8 bg-[var(--lab-graphite)] px-6 py-12 text-[var(--lab-bone)]">
+    <footer className="border-t border-white/8 bg-[var(--lab-graphite)] px-5 pb-[max(2.5rem,env(safe-area-inset-bottom))] pt-10 text-[var(--lab-bone)] sm:px-6 sm:pt-12">
       <div className="mx-auto max-w-7xl">
         <div className="flex flex-col justify-between gap-9 md:flex-row md:items-start">
           <div>
@@ -15,7 +15,7 @@ export function Footer() {
             <Link href="/login" className="landing-nav-link transition-colors hover:text-white focus-visible:text-white focus-visible:outline-none">Sign in</Link>
           </div>
         </div>
-        <div className="mt-10 flex flex-col gap-3 border-t border-white/8 pt-6 font-research text-[8px] uppercase tracking-[0.13em] text-white/28 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-9 flex flex-col gap-3 border-t border-white/8 pt-6 font-research sm:mt-10 text-[8px] uppercase tracking-[0.13em] text-white/28 sm:flex-row sm:items-center sm:justify-between">
           <span>AI assists. Humans experience. Researchers decide.</span>
           <span>© {new Date().getFullYear()} Usability Testing Platform</span>
         </div>
