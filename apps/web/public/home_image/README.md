@@ -6,6 +6,10 @@ The public landing page now uses final media directly rather than FPO placeholde
 
 | File | Ratio | Working size | Used in |
 | --- | --- | --- | --- |
+| `ai_qualification_interview_001.webp` | 3:2 | 1500×1000 | Qualification stage 1 — establishing interview |
+| `ai_qualification_interview_002.webp` | 3:2 | 1500×1000 | Qualification stage 2 — different participant context |
+| `ai_qualification_interview_003.webp` | 3:2 | 1500×1000 | Qualification stage 3 — task-relevant context |
+| `ai_qualification_interview_004.webp` | 3:2 | 1500×1000 | Qualification stage 4 — resolved / aligned context |
 | `owner_campaign_setup_001.webp` | 4:3 | 1400×1050 | Owner section |
 | `tester_browser_session_001.webp` | 4:3 | 1400×1050 | Tester section |
 | `target_website_pricing_001.webp` | 16:9 | 1600×900 | Chrome Extension / Browser demo |
@@ -45,3 +49,19 @@ It uses animated product UI cards instead of a background editorial image.
 - Preserve negative space where product UI overlays the photography.
 - Avoid readable third-party brands or copyrighted UI.
 - Export final stills as optimized WebP files.
+
+
+## Qualification image sequence
+
+The Qualification scene is designed as a four-stage pinned story on desktop.
+
+- Stage 1 uses `ai_qualification_interview_001.webp`
+- Stage 2 uses `ai_qualification_interview_002.webp`
+- Stage 3 uses `ai_qualification_interview_003.webp`
+- Stage 4 uses `ai_qualification_interview_004.webp`
+
+All four images should share the same editorial research-world direction: similar room family, warm-neutral light, believable HCI/research environment, consistent lens language, and different participant contexts.
+
+Image changes are intentional hard cuts with no dissolve, fade, scale, or image-transition animation.
+
+Only `ai_qualification_interview_001.webp` currently exists in the repository. Until the remaining files are uploaded, the implementation falls back safely to the first image rather than displaying a broken asset.
